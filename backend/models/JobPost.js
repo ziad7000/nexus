@@ -27,11 +27,10 @@ const jobPostSchema = new mongoose.Schema(
 );
 
 // Pre-save hook to initialize remainingSlots on new documents if not explicitly provided
-jobPostSchema.pre('validate', function (next) {
+jobPostSchema.pre('validate', function () {
   if (this.isNew && (this.remainingSlots === undefined || this.remainingSlots === null)) {
     this.remainingSlots = this.totalSlots;
   }
-  next();
 });
 
 module.exports = mongoose.model('JobPost', jobPostSchema);
