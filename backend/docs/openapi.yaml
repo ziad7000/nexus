@@ -1,0 +1,446 @@
+openapi: 3.0.3
+info:
+  title: GIU Nexus API
+  description: |
+    Production-grade RESTful API for GIU Nexus — AI-Powered University Career Platform.
+    Features atomic concurrency-controlled job applications, automated database migrations,
+    Hugging Face semantic embeddings matching, NER skill extraction, and RFC 7807 problem details.
+  version: 1.0.0
+  contact:
+    name: Ziad Islam
+    url: https://github.com/ziad7000/giu-nexus
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local Development Server
+  - url: https://giu-nexus-api.onrender.com/api/v1
+    description: Cloud Production Server
+
+tags:
+  - name: Health
+    description: Service health monitoring and uptime checks
+  - name: Authentication
+    description: User registration, JWT login, and password management
+  - name: Jobs
+    description: Job discovery, creation, semantic recommendations, and bookmarking
+  - name: Applications
+    description: High-concurrency job applications and applicant review workflow
+  - name: Profile
+    description: User profile management and AI skill extraction from bios
+  - name: Admin
+    description: Platform administration, user moderation, and platform analytics
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Service health check
+      description: Returns real-time service status, database connectivity, memory usage, and uptime.
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Database disconnected or degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '422':
+          description: Validation error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Authenticate user and issue JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /jobs:
+    get:
+      tags: [Jobs]
+      summary: Search and list job posts
+      parameters:
+        - name: keyword
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [full-time, part-time, internship]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated jobs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  jobs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobPost'
+    post:
+      tags: [Jobs]
+      summary: Create a job post (Recruiter only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  job:
+                    $ref: '#/components/schemas/JobPost'
+
+  /jobs/{id}:
+    get:
+      tags: [Jobs]
+      summary: Get job details by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  job:
+                    $ref: '#/components/schemas/JobPost'
+        '404':
+          description: Job not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /jobs/{jobId}/apply:
+    post:
+      tags: [Applications]
+      summary: Apply to job with atomic slot reservation (Concurrency-Controlled)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coverLetter:
+                  type: string
+      responses:
+        '201':
+          description: Slot successfully reserved and application submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      application:
+                        $ref: '#/components/schemas/Application'
+                      remainingSlots:
+                        type: integer
+        '409':
+          description: All slots exhausted or duplicate application
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /jobs/recommended:
+    get:
+      tags: [Jobs]
+      summary: Get AI-powered job recommendations based on candidate skills
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Semantically ranked jobs matching candidate profile
+
+  /profile/extract-skills:
+    post:
+      tags: [Profile]
+      summary: Extract technical skills from candidate bio using AI NER model
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Extracted skills
+
+  /admin/stats:
+    get:
+      tags: [Admin]
+      summary: Platform analytics summary
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User, job, and application statistics
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: UP
+        service:
+          type: string
+          example: giu-nexus-api
+        version:
+          type: string
+          example: 1.0.0
+        database:
+          type: object
+          properties:
+            status:
+              type: string
+              example: connected
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          example: Ziad Islam
+        email:
+          type: string
+          format: email
+          example: ziad@example.com
+        password:
+          type: string
+          format: password
+          example: Password123!
+        role:
+          type: string
+          enum: [jobSeeker, recruiter]
+          default: jobSeeker
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: ziad@example.com
+        password:
+          type: string
+          format: password
+          example: Password123!
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          type: object
+
+    JobPost:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        company:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [full-time, part-time, internship]
+        category:
+          type: string
+        totalSlots:
+          type: integer
+        remainingSlots:
+          type: integer
+        status:
+          type: string
+          enum: [open, closed]
+
+    CreateJobRequest:
+      type: object
+      required: [title, company, description, location, type]
+      properties:
+        title:
+          type: string
+        company:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        type:
+          type: string
+          enum: [full-time, part-time, internship]
+        totalSlots:
+          type: integer
+          default: 1
+        requirements:
+          type: array
+          items:
+            type: string
+
+    Application:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+        job:
+          type: string
+        status:
+          type: string
+          enum: [pending, shortlisted, rejected]
+        coverLetter:
+          type: string
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://api.giu-nexus.com/errors/slot-exhausted
+        title:
+          type: string
+          example: Conflict
+        status:
+          type: integer
+          example: 409
+        detail:
+          type: string
+          example: All available slots for this position have been filled.
+        instance:
+          type: string
+          example: /api/v1/jobs/65fa.../apply
+        code:
+          type: string
+          example: SLOT_EXHAUSTED
+        timestamp:
+          type: string
+          format: date-time
+        invalidParams:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              reason:
+                type: string
