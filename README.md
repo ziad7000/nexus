@@ -1,26 +1,26 @@
-# Nexus — Production-Grade AI Career Platform
+# Nexus — Full-Stack MERN AI Career Platform
 
 [![Live Application](https://img.shields.io/badge/Live_App-nexus--web.onrender.com-success?logo=render&logoColor=white)](https://nexus-web-lzfk.onrender.com)
 [![Swagger UI](https://img.shields.io/badge/Swagger_UI-Live_Interactive_Docs-blue?logo=swagger&logoColor=white)](https://nexus-api-ullk.onrender.com/api/v1/docs)
 [![CI Pipeline](https://github.com/ziad7000/nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/ziad7000/nexus/actions/workflows/ci.yml)
+[![Stack](https://img.shields.io/badge/Stack-MERN-F05A28?logo=mongodb&logoColor=white)](https://www.mongodb.com/mern-stack)
+[![AI](https://img.shields.io/badge/AI-Hugging_Face-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/)
 [![Node.js](https://img.shields.io/badge/Node.js-22_LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Nexus is a production-hardened career and recruitment platform engineered by **Ziad Islam**. It connects candidates with high-impact job opportunities using AI-powered semantic matching, automated NER skill extraction from bios, and zero-shot category classification.
+**Nexus** is a production-grade **MERN** career and hiring platform integrated with **Hugging Face AI** for intelligent candidate-job matching, automated skill extraction from developer bios, and zero-shot taxonomy classification.
 
-The platform is built to modern cloud-native standards, featuring **atomic concurrency control** for limited job vacancies, **RFC 7807 problem details** error handling, **version-controlled database migrations**, **multi-stage Docker containerization**, **GitHub Actions CI/CD**, and **declarative cloud infrastructure**.
+Built for high concurrency and cloud-native reliability, Nexus implements **atomic database concurrency controls** to guarantee zero-oversubscription during high-velocity application bursts, stateless JWT authentication with role-based access control, multi-stage Docker containerization, and continuous deployment via GitHub Actions to Render Cloud PaaS.
 
 ---
 
 ## Live Deployments & Quick Links
 - **Live Web Application:** [https://nexus-web-lzfk.onrender.com](https://nexus-web-lzfk.onrender.com)
 - **Interactive Swagger UI (Cloud):** [https://nexus-api-ullk.onrender.com/api/v1/docs](https://nexus-api-ullk.onrender.com/api/v1/docs)
-- **Live Cloud Health Check:** [https://nexus-api-ullk.onrender.com/health](https://nexus-api-ullk.onrender.com/health)
+- **Live Cloud Health Telemetry:** [https://nexus-api-ullk.onrender.com/health](https://nexus-api-ullk.onrender.com/health)
 - **Architecture Decision Records:** [docs/DECISIONS.md](docs/DECISIONS.md)
 - **REST Client Collection:** [requests/](requests/)
 
@@ -31,23 +31,23 @@ The platform is built to modern cloud-native standards, featuring **atomic concu
 ```mermaid
 flowchart TD
     subgraph Client Layer
-        SPA["React 19 / Vite SPA\n(Client Web App)"]
+        SPA["React 19 / Vite SPA\n(Custom Dark Obsidian Glassmorphism)"]
     end
 
     subgraph Ingress & Web Server
-        Nginx["Nginx Alpine\n(Gzip, Security Headers, SPA Routing)"]
+        Nginx["Nginx Alpine\n(Gzip, Security Headers, SPA Rewrites)"]
     end
 
     subgraph API Application Layer
         Express["Express 5 REST API\n(Node.js 22 LTS)"]
-        Zod["Zod Validation & RFC 7807\nProblem Details Handler"]
-        Auth["JWT & Role-Based Guard\n(Candidate, Recruiter, Admin)"]
-        Concurrency["Atomic Concurrency Engine\n(Condition-Based Slot Updates)"]
+        Zod["Zod Validation Layer\n(Request Input Validation)"]
+        Auth["JWT & Role-Based Guard\n(Job Seeker, Recruiter, Admin)"]
+        Concurrency["Atomic Concurrency Engine\n(Condition-Based Slot Allocation)"]
     end
 
-    subgraph Data & External Services
-        MongoDB[("MongoDB 7.0 / Replica Set\n(Indexes, Migrations, changelog)")]
-        HF["Hugging Face Inference API\n(Zero-Shot & NER Embeddings)"]
+    subgraph Data & External AI Services
+        MongoDB[("MongoDB Atlas\n(Mongoose 9, Indexes, Migrations)")]
+        HF["Hugging Face Inference API\n(Zero-Shot BART-MNLI & Skill NER)"]
     end
 
     SPA -->|HTTPS / REST| Nginx
@@ -61,11 +61,17 @@ flowchart TD
 
 ---
 
-## Key Engineering Differentiators
+## Key Technical Highlights
 
-### 1. Atomic Condition-Based Concurrency Control
+### 1. Hugging Face AI Integration & Skill Matching
+- **Zero-Shot Job Classification (`facebook/bart-large-mnli`):** Analyzes job descriptions in real-time to tag them into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering) with automated keyword fallback heuristics.
+- **NLP Bio Skill Extraction:** Parses unstructured candidate bios to automatically extract technical competencies (React, Node.js, Docker, Kubernetes, PyTorch, MongoDB, Redis, etc.).
+- **Cosine Similarity Recommendation Engine:** Calculates vector overlap between candidate skills and job requirements to generate real-time AI-recommended opportunities.
+- **Cover Letter Generation:** Leverages AI text generation to draft tailored, role-specific cover letters directly from candidate profiles.
+
+### 2. Atomic Concurrency Control (Zero Oversubscription)
 - **The Challenge:** When an in-demand job post has limited vacancies (e.g. 5 open positions), concurrent submissions by dozens of candidates cause race conditions, resulting in oversubscription.
-- **The Solution:** Rather than relying on naive read-modify-write patterns, the application leverages atomic condition-based updates directly in the database engine:
+- **The Solution:** Rather than relying on naive read-modify-write patterns, Nexus leverages condition-based atomic decrements directly in the database engine:
   ```javascript
   const updatedJob = await JobPost.findOneAndUpdate(
     { _id: jobId, status: 'open', remainingSlots: { $gt: 0 } },
@@ -73,31 +79,21 @@ flowchart TD
     { returnDocument: 'after' }
   );
   ```
-  If application creation fails downstream, an automated rollback restores the slot.
-- **Proof Test:** Verified via an automated multi-threaded stress test ([applicationSlotRace.test.js](backend/tests/concurrency/applicationSlotRace.test.js)). When 25 candidates submit parallel applications for 5 slots:
+  If application processing fails downstream, an automated compensation rollback restores the slot.
+- **Multi-Threaded Proof Test:** Verified via an automated concurrent stress test ([applicationSlotRace.test.js](backend/tests/concurrency/applicationSlotRace.test.js)). When 25 candidates submit parallel applications for 5 slots:
   - Exactly **5 requests succeed** (`HTTP 201 Created`).
-  - Exactly **20 requests are rejected** with RFC 7807 problem details (`HTTP 409 Conflict: SLOT_EXHAUSTED`).
-  - Final database `remainingSlots` ends up at exactly `0`.
+  - Exactly **20 requests are safely rejected** (`HTTP 409 Conflict: SLOT_EXHAUSTED`).
+  - Database `remainingSlots` ends up at exactly `0`.
 
-### 2. RFC 7807 Standardized Problem Details
-All API errors return standardized `application/problem+json` envelopes:
-```json
-{
-  "type": "https://api.nexus-platform.com/errors/slot-exhausted",
-  "title": "Conflict",
-  "status": 409,
-  "detail": "All available slots for this position have been filled.",
-  "instance": "/api/v1/jobs/65fa3.../apply",
-  "code": "SLOT_EXHAUSTED",
-  "timestamp": "2026-11-19T18:50:00.000Z"
-}
-```
-
-### 3. Version-Controlled Automated Migrations (`migrate-mongo`)
-Eliminated manual SQL/NoSQL scripting. Migrations define reproducible database indexes and schema backfills versioned in source control (`backend/migrations/`) executed automatically in CI and container entrypoints.
+### 3. Production MERN Stack Hardening
+- **Decoupled Architecture:** Express `app.js` is completely decoupled from `server.js`, enabling sub-second in-memory integration testing via Supertest without binding network ports.
+- **Automated Database Migrations (`migrate-mongo`):** Version-controlled schema migrations (`backend/migrations/`) executed automatically in CI and production before server boot, provisioning unique compound indexes (e.g. `user + job` uniqueness).
+- **Stateless JWT & Role-Based Access Control:** Secure authentication with distinct privilege tiers for Job Seekers, Recruiters, and System Administrators.
 
 ### 4. Production Containerization & CI/CD
-- **Multi-Stage Dockerfiles:** Built on `node:22-alpine` and `nginx:1.27-alpine`. Non-root unprivileged execution (`USER node`).
+- **Multi-Stage Dockerfiles:** Built on `node:22-alpine` and `nginx:1.27-alpine` with minimal attack surface, dropping root privileges to execute as unprivileged `USER node`.
+- **One-Command Orchestration:** `docker compose up --build` launches MongoDB with healthchecks, the hardened API, and the production frontend web server.
+- **GitHub Actions CI:** Complete automation pipeline running full builds, database migrations, unit tests, and the multi-threaded race condition proof test against a live MongoDB container.
 - **One-Command Orchestration:** `docker compose up --build` launches MongoDB with healthcheck, the hardened API, and the optimized frontend web server.
 - **GitHub Actions CI:** Complete automation pipeline running full builds, database migrations, unit tests, and the multi-threaded race condition proof test against a real MongoDB service container.
 

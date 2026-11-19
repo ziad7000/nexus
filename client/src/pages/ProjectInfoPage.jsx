@@ -49,12 +49,12 @@ export default function ProjectInfoPage() {
         {/* Page Hero */}
         <div style={styles.hero}>
           <div style={styles.creatorBadge}>
-            Sole Author & Lead Engineer: <strong style={{ color: '#fff', marginLeft: '4px' }}>Ziad Islam</strong>
+            Full-Stack MERN Architecture • Hugging Face AI • Cloud Native
           </div>
-          <h1 style={styles.title}>Nexus Engineering & Architecture</h1>
+          <h1 style={styles.title}>Nexus Technical Architecture</h1>
           <p style={styles.subtitle}>
-            A comprehensive overview of the design patterns, concurrency controls, automated pipelines,
-            and cloud infrastructure powering the Nexus career platform.
+            A comprehensive overview of the full-stack MERN architecture, Hugging Face AI pipelines,
+            atomic database concurrency controls, Docker containers, and cloud infrastructure powering Nexus.
           </p>
 
           <div style={styles.heroLinkRow}>
@@ -100,14 +100,14 @@ export default function ProjectInfoPage() {
             <div style={styles.telemetryItem}>
               <span style={styles.telLabel}>Database Engine</span>
               <span style={styles.telValue}>
-                MongoDB Atlas (v7.0)
+                MongoDB Atlas (Connected)
               </span>
             </div>
 
             <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Cluster Shard</span>
-              <span style={styles.telValueMono}>
-                {healthData?.database?.host?.split('.')[0] || 'ac-m223djx-shard'}
+              <span style={styles.telLabel}>AI Engine</span>
+              <span style={styles.telValueEmerald}>
+                Hugging Face (BART-MNLI)
               </span>
             </div>
 
@@ -136,9 +136,34 @@ export default function ProjectInfoPage() {
 
         {/* ARCHITECTURAL DIFFERENTIATORS */}
         <div style={styles.section}>
-          <h2 style={styles.sectionHeading}>Core Engineering Differentiators</h2>
+          <h2 style={styles.sectionHeading}>Core Technical Highlights</h2>
 
           <div style={styles.featureGrid}>
+            <div style={styles.featureCard} className="nexus-glass-card">
+              <div style={styles.featureIconBadge}>🤖</div>
+              <h3 style={styles.featureTitle}>Hugging Face AI & Smart Matching</h3>
+              <p style={styles.featureDesc}>
+                Integrates Hugging Face's <code>facebook/bart-large-mnli</code> model for zero-shot job classification into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering). Uses NLP entity extraction to parse candidate bios and computes cosine similarity vector overlap for personalized job recommendations.
+              </p>
+              <div style={styles.proofBox}>
+                <span style={styles.proofBadge}>AI PIPELINE</span>
+                <p style={styles.proofText}>
+                  Zero-shot classification • Automated bio skill extraction • Cosine similarity scoring • AI cover letter generator
+                </p>
+              </div>
+            </div>
+
+            <div style={styles.featureCard} className="nexus-glass-card">
+              <div style={styles.featureIconBadge}>🌐</div>
+              <h3 style={styles.featureTitle}>Full-Stack MERN Architecture</h3>
+              <p style={styles.featureDesc}>
+                Modern React 19 client with custom glassmorphism design system, dark obsidian palette, and integrated dropdowns. Powered by Express 5 REST APIs, Node.js 22 LTS, and MongoDB Atlas with Mongoose 9 ODM and version-controlled automated migrations (<code>migrate-mongo</code>).
+              </p>
+              <div style={styles.codeSnippet}>
+                <code>MongoDB Atlas • Express 5 • React 19 • Node.js 22 LTS</code>
+              </div>
+            </div>
+
             <div style={styles.featureCard} className="nexus-glass-card">
               <div style={styles.featureIconBadge}>⚡</div>
               <h3 style={styles.featureTitle}>Atomic Concurrency Control</h3>
@@ -149,41 +174,19 @@ export default function ProjectInfoPage() {
               <div style={styles.proofBox}>
                 <span style={styles.proofBadge}>VERIFIED PROOF TEST</span>
                 <p style={styles.proofText}>
-                  <code>applicationSlotRace.test.js</code> fired 25 parallel asynchronous HTTP requests for 5 vacancies: exactly 5 succeeded (201) and 20 were rejected (409 Conflict) with 0 remaining slots.
+                  <code>applicationSlotRace.test.js</code> fired 25 parallel asynchronous HTTP requests for 5 vacancies: exactly 5 succeeded (201) and 20 were safely rejected (409 Conflict) with 0 remaining slots.
                 </p>
               </div>
             </div>
 
             <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>🗄️</div>
-              <h3 style={styles.featureTitle}>Automated Database Migrations</h3>
-              <p style={styles.featureDesc}>
-                Eliminated manual schema scripts. Version-controlled migrations managed via <code>migrate-mongo</code> automatically provision unique compound indexes (e.g. <code>user + job</code> unique constraints) and schema backfills across CI and cloud deployments before API startup.
-              </p>
-              <div style={styles.codeSnippet}>
-                <code>npm run migrate:up → changelog collection synced</code>
-              </div>
-            </div>
-
-            <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>🛡️</div>
-              <h3 style={styles.featureTitle}>RFC 7807 Standardized Errors</h3>
-              <p style={styles.featureDesc}>
-                Every client error is formatted as an RFC 7807 <code>application/problem+json</code> document containing machine-readable error codes, human titles, request instance paths, and structured validation arrays powered by <code>Zod</code> schemas.
-              </p>
-              <div style={styles.codeSnippet}>
-                <code>type: "https://api.nexus-platform.com/errors/slot-exhausted"</code>
-              </div>
-            </div>
-
-            <div style={styles.featureCard} className="nexus-glass-card">
               <div style={styles.featureIconBadge}>🐳</div>
-              <h3 style={styles.featureTitle}>Multi-Stage Minimal Containers</h3>
+              <h3 style={styles.featureTitle}>Multi-Stage Docker & Cloud CI/CD</h3>
               <p style={styles.featureDesc}>
-                Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips all dev dependencies and drops root privileges to run as the unprivileged <code>node</code> user with built-in HTTP healthchecks.
+                Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips dev dependencies and drops root privileges to run as unprivileged <code>USER node</code>. Automated GitHub Actions CI runs migrations and test suites against live database containers before deployment to Render.
               </p>
               <div style={styles.codeSnippet}>
-                <code>USER node • Docker Compose 1-command parity</code>
+                <code>USER node • Docker Compose 1-command startup • GitHub Actions CI</code>
               </div>
             </div>
           </div>
@@ -210,8 +213,8 @@ export default function ProjectInfoPage() {
             <div style={styles.adrItem}>
               <span style={styles.adrId}>ADR-002</span>
               <div>
-                <h4 style={styles.adrTitle}>Document Store with Version-Controlled Migrations</h4>
-                <p style={styles.adrSummary}>Leveraged MongoDB 7.0 with Mongoose 9 and migrate-mongo for deterministic index enforcement and schema evolution.</p>
+                <h4 style={styles.adrTitle}>Hugging Face AI Integration & Hybrid Heuristics</h4>
+                <p style={styles.adrSummary}>Integrated zero-shot BART-MNLI model with robust local regex fallback heuristics, ensuring high categorization accuracy with graceful offline resilience.</p>
               </div>
             </div>
 
@@ -219,7 +222,7 @@ export default function ProjectInfoPage() {
               <span style={styles.adrId}>ADR-003</span>
               <div>
                 <h4 style={styles.adrTitle}>Stateless JWT Security & Role-Based Access Control</h4>
-                <p style={styles.adrSummary}>Stateless HMAC-SHA256 JWT tokens with role claims, eliminating session store bottlenecks across distributed cloud instances.</p>
+                <p style={styles.adrSummary}>Stateless HMAC-SHA256 JWT tokens with role claims (Job Seeker, Recruiter, Admin), eliminating session store bottlenecks across distributed cloud instances.</p>
               </div>
             </div>
 
