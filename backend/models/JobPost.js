@@ -19,7 +19,13 @@ const jobPostSchema = new mongoose.Schema(
       default: 'Other'
     },
     totalSlots: { type: Number, required: true, default: 1, min: 1 },
-    remainingSlots: { type: Number, required: true, default: 1, min: 0 },
+    remainingSlots: {
+      type: Number,
+      default: function () {
+        return this.totalSlots !== undefined ? this.totalSlots : 1;
+      },
+      min: 0
+    },
     status: { type: String, enum: ['open', 'closed'], default: 'open' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
   },

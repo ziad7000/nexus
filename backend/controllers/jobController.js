@@ -166,8 +166,13 @@ exports.createJob = async (req, res) => {
     // AI Classification
     const category = await classifyCategory(req.body.description);
 
+    const totalSlots = req.body.totalSlots ? parseInt(req.body.totalSlots, 10) : 1;
+    const remainingSlots = req.body.remainingSlots !== undefined ? parseInt(req.body.remainingSlots, 10) : totalSlots;
+
     const job = await JobPost.create({
       ...req.body,
+      totalSlots,
+      remainingSlots,
       category,           // auto-assigned by AI
       createdBy: req.user._id
     });
