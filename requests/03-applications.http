@@ -1,0 +1,35 @@
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+@candidateToken = YOUR_CANDIDATE_JWT_HERE
+@recruiterToken = YOUR_RECRUITER_JWT_HERE
+@jobId = YOUR_TARGET_JOB_ID
+
+### 1. Apply to Job (Atomic Concurrency-Controlled Slot Reservation)
+# @name submitApplication
+POST {{baseUrl}}/jobs/{{jobId}}/apply
+Content-Type: application/json
+Authorization: Bearer {{candidateToken}}
+
+{
+  "coverLetter": "Experienced software engineer passionate about high-concurrency architectures and cloud infrastructure."
+}
+
+### 2. View My Applications (Candidate)
+GET {{baseUrl}}/applications/my
+Authorization: Bearer {{candidateToken}}
+
+### 3. View Applicants for Job (Recruiter Owner)
+GET {{baseUrl}}/jobs/{{jobId}}/applicants
+Authorization: Bearer {{recruiterToken}}
+
+### Capture Application ID
+@applicationId = YOUR_APPLICATION_ID_HERE
+
+### 4. Update Application Status (Recruiter Owner)
+PATCH {{baseUrl}}/applications/{{applicationId}}/status
+Content-Type: application/json
+Authorization: Bearer {{recruiterToken}}
+
+{
+  "status": "shortlisted"
+}

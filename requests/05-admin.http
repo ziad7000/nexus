@@ -1,0 +1,25 @@
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+@adminToken = YOUR_ADMIN_JWT_HERE
+@targetUserId = TARGET_USER_ID_HERE
+
+### 1. Platform Statistics Dashboard
+GET {{baseUrl}}/admin/stats
+Authorization: Bearer {{adminToken}}
+
+### 2. List All Platform Users (Paginated & Filterable)
+GET {{baseUrl}}/admin/users?page=1&limit=20&role=recruiter
+Authorization: Bearer {{adminToken}}
+
+### 3. Approve / Moderate Recruiter Account
+PATCH {{baseUrl}}/admin/users/{{targetUserId}}/status
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "approved"
+}
+
+### 4. Delete User Account
+DELETE {{baseUrl}}/admin/users/{{targetUserId}}
+Authorization: Bearer {{adminToken}}
