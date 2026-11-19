@@ -12,22 +12,51 @@ const cosineSimilarity = (vecA, vecB) => {
 
 // Helper function: AI Category Classification
 const classifyCategory = async (description) => {
+  const validCategories = ["Frontend", "Backend", "AI/ML", "DevOps", "Data Engineering", "Other"];
+
+  const classifyByKeywords = (text) => {
+    const lower = (text || '').toLowerCase();
+    if (lower.includes('frontend') || lower.includes('react') || lower.includes('css') || lower.includes('vue') || lower.includes('ui/ux') || lower.includes('angular')) {
+      return 'Frontend';
+    }
+    if (lower.includes('ai') || lower.includes('ml') || lower.includes('machine learning') || lower.includes('llm') || lower.includes('nlp') || lower.includes('pytorch') || lower.includes('transformer') || lower.includes('deep learning')) {
+      return 'AI/ML';
+    }
+    if (lower.includes('devops') || lower.includes('kubernetes') || lower.includes('docker') || lower.includes('sre') || lower.includes('terraform') || lower.includes('cloud') || lower.includes('aws')) {
+      return 'DevOps';
+    }
+    if (lower.includes('data engineer') || lower.includes('spark') || lower.includes('etl') || lower.includes('pipeline') || lower.includes('sql') || lower.includes('warehouse') || lower.includes('hadoop')) {
+      return 'Data Engineering';
+    }
+    if (lower.includes('backend') || lower.includes('api') || lower.includes('node') || lower.includes('express') || lower.includes('database') || lower.includes('microservices') || lower.includes('golang') || lower.includes('java')) {
+      return 'Backend';
+    }
+    return 'Other';
+  };
+
   try {
     const result = await hf.zeroShotClassification({
       model: "facebook/bart-large-mnli",
       inputs: description,
       parameters: {
-        candidate_labels: ["Frontend", "Backend", "AI/ML", "DevOps", "Data Engineering", "Other"]
+        candidate_labels: validCategories
       }
     });
 
+    let predicted = null;
+    if (Array.isArray(result)) {
+      predicted = result[0]?.label || result[0]?.labels?.[0];
+    } else if (result) {
+      predicted = result.labels?.[0] || result.label;
+    }
 
-    const output = Array.isArray(result) ? result[0] : result;
-    return output.label; // not output.labels[0]
+    if (predicted && validCategories.includes(predicted)) {
+      return predicted;
+    }
+    return classifyByKeywords(description);
   } catch (error) {
-    console.error('Classification failed:', error.message);
-    console.error('Full error:', error);
-    return 'Other';
+    console.warn('AI classification failed, falling back to keyword heuristic:', error.message);
+    return classifyByKeywords(description);
   }
 };
 
