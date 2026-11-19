@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
+import CustomDropdown from '../components/CustomDropdown';
 
 function AdminUsersPage() {
     const [users, setUsers] = useState([]);
@@ -84,29 +85,31 @@ function AdminUsersPage() {
                 <div style={styles.filters}>
                     <div style={styles.filterGroup}>
                         <label style={styles.filterLabel}>Role:</label>
-                        <select
+                        <CustomDropdown
+                            options={[
+                                { value: 'all', label: 'All Roles' },
+                                { value: 'jobSeeker', label: 'Job Seekers' },
+                                { value: 'recruiter', label: 'Recruiters' },
+                                { value: 'admin', label: 'Admins' }
+                            ]}
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            style={styles.filterSelect}
-                        >
-                            <option value="all">All Roles</option>
-                            <option value="jobSeeker">Job Seekers</option>
-                            <option value="recruiter">Recruiters</option>
-                            <option value="admin">Admins</option>
-                        </select>
+                            minWidth={150}
+                        />
                     </div>
                     <div style={styles.filterGroup}>
                         <label style={styles.filterLabel}>Status:</label>
-                        <select
+                        <CustomDropdown
+                            options={[
+                                { value: 'all', label: 'All Status' },
+                                { value: 'pending', label: 'Pending' },
+                                { value: 'approved', label: 'Approved' },
+                                { value: 'rejected', label: 'Rejected' }
+                            ]}
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            style={styles.filterSelect}
-                        >
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
+                            minWidth={150}
+                        />
                     </div>
                     <button onClick={fetchUsers} style={styles.refreshBtn}>Refresh</button>
                 </div>

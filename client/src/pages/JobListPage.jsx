@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import JobCard from '../components/JobCard';
 import LoadingSpinner from '../components/LoadingSpinner';
+import CustomDropdown from '../components/CustomDropdown';
 import api from '../services/api';
 
 function JobListPage() {
@@ -81,16 +82,18 @@ function JobListPage() {
             value={filters.location}
             onChange={(e) => handleFilterChange('location', e.target.value)}
           />
-          <select
-            style={styles.filterSelect}
+          <CustomDropdown
+            options={[
+              { value: '', label: 'All Employment Types' },
+              { value: 'full-time', label: 'Full Time' },
+              { value: 'part-time', label: 'Part Time' },
+              { value: 'internship', label: 'Internship' }
+            ]}
             value={filters.type}
             onChange={(e) => handleFilterChange('type', e.target.value)}
-          >
-            <option value="">All Types</option>
-            <option value="full-time">Full Time</option>
-            <option value="part-time">Part Time</option>
-            <option value="internship">Internship</option>
-          </select>
+            placeholder="All Types"
+            minWidth={170}
+          />
           <button type="submit" style={styles.searchBtn}>Search</button>
         </form>
 

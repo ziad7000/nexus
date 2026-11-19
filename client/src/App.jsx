@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 
 // Core Pages
 import HomePage from './pages/HomePage';
+import ProjectInfoPage from './pages/ProjectInfoPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import JobListPage from './pages/JobListPage';
@@ -44,6 +45,7 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
+              <Route path="/project-info" element={<ProjectInfoPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

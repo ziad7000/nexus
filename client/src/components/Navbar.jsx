@@ -23,10 +23,14 @@ const Navbar = () => {
             <div style={styles.logoBadge}>NX</div>
             <span style={styles.brandName}>Nexus</span>
           </Link>
-          <div style={styles.systemStatus}>
+          <Link
+            to="/project-info"
+            style={isActive('/project-info') ? styles.projectInfoBtnActive : styles.projectInfoBtn}
+            title="View Architecture, Diagnostics & Engineering Docs"
+          >
             <span style={styles.pulseDot}></span>
-            <span style={styles.statusText}>Cloud Active</span>
-          </div>
+            <span>Project Info</span>
+          </Link>
         </div>
 
         {/* Navigation Links */}
@@ -163,14 +167,33 @@ const styles = {
     fontSize: '1.15rem',
     letterSpacing: '-0.02em'
   },
-  systemStatus: {
+  projectInfoBtn: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.4rem',
-    padding: '0.2rem 0.6rem',
-    background: 'rgba(16, 185, 129, 0.08)',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-    borderRadius: '9999px'
+    gap: '0.45rem',
+    padding: '0.3rem 0.75rem',
+    background: 'rgba(99, 102, 241, 0.1)',
+    border: '1px solid rgba(99, 102, 241, 0.3)',
+    borderRadius: '9999px',
+    color: '#a5b4fc',
+    fontSize: '0.75rem',
+    fontWeight: '600',
+    textDecoration: 'none',
+    transition: 'all 0.15s ease'
+  },
+  projectInfoBtnActive: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.45rem',
+    padding: '0.3rem 0.75rem',
+    background: 'rgba(99, 102, 241, 0.25)',
+    border: '1px solid #6366f1',
+    borderRadius: '9999px',
+    color: '#ffffff',
+    fontSize: '0.75rem',
+    fontWeight: '600',
+    textDecoration: 'none',
+    boxShadow: '0 0 12px rgba(99, 102, 241, 0.4)'
   },
   pulseDot: {
     width: '5px',

@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
+import CustomDropdown from '../components/CustomDropdown';
 
 function EditJobPage() {
   const { id } = useParams();
@@ -117,11 +118,16 @@ function EditJobPage() {
               </div>
               <div style={styles.field}>
                 <label style={styles.label}>Job Type *</label>
-                <select style={styles.input} name="type" value={formData.type} onChange={handleChange}>
-                  <option value="full-time">Full Time</option>
-                  <option value="part-time">Part Time</option>
-                  <option value="internship">Internship</option>
-                </select>
+                <CustomDropdown
+                  options={[
+                    { value: 'full-time', label: 'Full Time' },
+                    { value: 'part-time', label: 'Part Time' },
+                    { value: 'internship', label: 'Internship' }
+                  ]}
+                  value={formData.type || 'full-time'}
+                  onChange={(e) => handleChange({ target: { name: 'type', value: e.target.value } })}
+                  minWidth={160}
+                />
               </div>
             </div>
             <div style={styles.row}>
@@ -136,10 +142,15 @@ function EditJobPage() {
             </div>
             <div style={styles.field}>
               <label style={styles.label}>Job Status</label>
-              <select style={styles.input} name="status" value={formData.status} onChange={handleChange}>
-                <option value="open">Open</option>
-                <option value="closed">Closed</option>
-              </select>
+              <CustomDropdown
+                options={[
+                  { value: 'open', label: 'Open' },
+                  { value: 'closed', label: 'Closed' }
+                ]}
+                value={formData.status || 'open'}
+                onChange={(e) => handleChange({ target: { name: 'status', value: e.target.value } })}
+                minWidth={160}
+              />
             </div>
             <div style={styles.buttons}>
               <button type="submit" style={styles.submitBtn} disabled={saving}>

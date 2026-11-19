@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
+import CustomDropdown from '../components/CustomDropdown';
 
 function JobApplicantsPage() {
   const { jobId } = useParams();
@@ -87,27 +88,16 @@ function JobApplicantsPage() {
                     </div>
                   </div>
                   <div style={styles.statusSection}>
-                    <select
+                    <CustomDropdown
+                      options={[
+                        { value: 'pending', label: '📋 Pending' },
+                        { value: 'shortlisted', label: '⭐ Shortlisted' },
+                        { value: 'rejected', label: '❌ Rejected' }
+                      ]}
                       value={app.status}
                       onChange={(e) => updateStatus(app._id, e.target.value)}
-                      disabled={updating === app._id}
-                      style={{
-                        ...styles.statusSelect,
-                        backgroundColor:
-                          app.status === 'pending' ? '#13102a' :
-                          app.status === 'shortlisted' ? '#0a2a1a' : '#1a0a0a',
-                        borderColor:
-                          app.status === 'pending' ? '#3d2f7a' :
-                          app.status === 'shortlisted' ? '#1a5c35' : '#3d1515',
-                        color:
-                          app.status === 'pending' ? '#a78bfa' :
-                          app.status === 'shortlisted' ? '#4ade80' : '#f87171'
-                      }}
-                    >
-                      <option value="pending">📋 Pending</option>
-                      <option value="shortlisted">⭐ Shortlisted</option>
-                      <option value="rejected">❌ Rejected</option>
-                    </select>
+                      minWidth={150}
+                    />
                   </div>
                 </div>
                 {app.coverLetter && (

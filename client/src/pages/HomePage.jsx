@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import JobCard from '../components/JobCard';
+import CustomDropdown from '../components/CustomDropdown';
 
 function SkeletonCard() {
   return (
@@ -36,7 +37,21 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const categories = ['All', 'Frontend', 'Backend', 'AI/ML', 'DevOps', 'Data Engineering'];
+  const categories = [
+    { id: 'All', label: 'All Categories', icon: '🌐' },
+    { id: 'Backend', label: 'Backend', icon: '⚙️' },
+    { id: 'Frontend', label: 'Frontend', icon: '🎨' },
+    { id: 'AI/ML', label: 'AI & Machine Learning', icon: '🤖' },
+    { id: 'DevOps', label: 'DevOps & Cloud', icon: '☁️' },
+    { id: 'Data Engineering', label: 'Data Engineering', icon: '📊' }
+  ];
+
+  const typeOptions = [
+    { value: '', label: 'All Employment Types' },
+    { value: 'full-time', label: 'Full-Time' },
+    { value: 'part-time', label: 'Part-Time' },
+    { value: 'internship', label: 'Internship' }
+  ];
 
   const fetchJobs = async () => {
     setLoadingJobs(true);
@@ -95,149 +110,80 @@ export default function HomePage() {
     <div style={styles.pageWrapper}>
       {/* Background Gradients */}
       <div style={styles.bgGlowTop} />
-      <div style={styles.bgGlowBottom} />
 
       <div style={styles.container}>
         {/* HERO SECTION */}
         <section style={styles.heroSection}>
           <div style={styles.heroBadge}>
-            <span style={styles.badgeDot}></span>
-            <span>ACID-Atomic Concurrency Engine • Production Live</span>
+            <span style={styles.badgeSparkle}>✦</span>
+            <span>Discover Verified Tech Positions</span>
           </div>
 
           <h1 style={styles.heroTitle}>
-            Engineering Career Matching <br />
-            <span style={styles.heroGradient}>Built for Cloud Reliability</span>
+            Find Roles Where You Do <br />
+            <span style={styles.heroGradient}>Your Best Engineering Work</span>
           </h1>
 
           <p style={styles.heroSubtitle}>
-            A production-hardened platform featuring atomic condition-based vacancy slot reservations,
-            automated database migrations, and Hugging Face semantic vector inference.
+            Explore curated software, data, and machine learning opportunities.
+            Accurate skill alignment, transparent vacancy tracking, and direct company connections.
           </p>
 
-          <div style={styles.heroActions}>
-            <a href="#jobs-section" style={styles.primaryCta}>
-              Explore Opportunities ↓
-            </a>
-            <a
-              href="https://nexus-api-ullk.onrender.com/api/v1/docs"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.secondaryCta}
-            >
-              Interactive Swagger API ↗
-            </a>
-          </div>
-
-          {/* Architectural Metrics Strip */}
-          <div style={styles.metricsStrip}>
-            <div style={styles.metricItem}>
-              <span style={styles.metricVal}>100%</span>
-              <span style={styles.metricLabel}>Atomic Slot Safety</span>
-            </div>
-            <div style={styles.metricDivider} />
-            <div style={styles.metricItem}>
-              <span style={styles.metricVal}>0</span>
-              <span style={styles.metricLabel}>Race Oversubscription</span>
-            </div>
-            <div style={styles.metricDivider} />
-            <div style={styles.metricItem}>
-              <span style={styles.metricVal}>RFC 7807</span>
-              <span style={styles.metricLabel}>Problem Details Protocol</span>
-            </div>
-            <div style={styles.metricDivider} />
-            <div style={styles.metricItem}>
-              <span style={styles.metricVal}>Node 22</span>
-              <span style={styles.metricLabel}>Alpine Multi-Stage Container</span>
-            </div>
-          </div>
-        </section>
-
-        {/* HIGH-VALUE CONCURRENCY CALLOUT BANNER */}
-        <section style={styles.differentiatorBanner} className="nexus-glass-card">
-          <div style={styles.bannerContent}>
-            <div style={styles.bannerTag}>ENGINEERING DIFFERENTIATOR</div>
-            <h3 style={styles.bannerTitle}>Guaranteed Zero-Oversubscription Concurrency</h3>
-            <p style={styles.bannerText}>
-              When high-demand positions have limited vacancies, concurrent applicant traffic is safely serialized
-              directly inside MongoDB via atomic condition-based execution (<code>findOneAndUpdate</code> with <code>$inc</code> and <code>remainingSlots &gt; 0</code>).
-              Verified through automated 25-thread stress tests with 100% test pass rate.
-            </p>
-          </div>
-          <div style={styles.bannerStats}>
-            <div style={styles.miniStatBox}>
-              <span style={styles.miniStatNumber}>25</span>
-              <span style={styles.miniStatText}>Parallel Test Requests</span>
-            </div>
-            <div style={styles.miniStatBox}>
-              <span style={styles.miniStatNumber}>5</span>
-              <span style={styles.miniStatText}>Allocated Slots</span>
-            </div>
-            <div style={styles.miniStatBox}>
-              <span style={styles.miniStatNumber}>0</span>
-              <span style={styles.miniStatText}>Leaked Openings</span>
-            </div>
-          </div>
-        </section>
-
-        {/* SEARCH & FILTER BAR */}
-        <section id="jobs-section" style={styles.filterSection}>
-          <form onSubmit={handleSearch} style={styles.searchBar}>
+          {/* SEARCH & FILTER BAR */}
+          <form onSubmit={handleSearch} style={styles.searchBar} className="nexus-glass-card">
             <div style={styles.inputWrapper}>
               <span style={styles.inputIcon}>🔍</span>
               <input
                 style={styles.searchInput}
                 type="text"
-                placeholder="Search by title, role, or tech stack..."
+                placeholder="Title, technology, or keywords..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
             </div>
 
-            <div style={styles.inputWrapper}>
+            <div style={styles.inputWrapperLocation}>
               <span style={styles.inputIcon}>📍</span>
               <input
                 style={styles.searchInput}
                 type="text"
-                placeholder="Location (e.g. Remote, Berlin)..."
+                placeholder="Location or 'Remote'..."
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
 
-            <select
-              style={styles.selectInput}
+            <CustomDropdown
+              options={typeOptions}
               value={type}
               onChange={(e) => {
                 setType(e.target.value);
                 setPage(1);
               }}
-            >
-              <option value="">All Employment Types</option>
-              <option value="full-time">Full-Time</option>
-              <option value="part-time">Part-Time</option>
-              <option value="internship">Internship</option>
-            </select>
+              placeholder="Employment Type"
+              minWidth={190}
+            />
 
             <button type="submit" style={styles.searchBtn}>
-              Filter
+              Search Jobs
             </button>
           </form>
 
           {/* Category Chips */}
           <div style={styles.categoryPills}>
             {categories.map((cat) => {
-              const active = (category === cat) || (!category && cat === 'All');
+              const active = (category === cat.id) || (!category && cat.id === 'All');
               return (
                 <button
-                  key={cat}
+                  key={cat.id}
                   onClick={() => {
-                    setCategory(cat === 'All' ? '' : cat);
+                    setCategory(cat.id === 'All' ? '' : cat.id);
                     setPage(1);
                   }}
                   style={active ? styles.categoryPillActive : styles.categoryPill}
                 >
-                  {cat}
+                  <span style={{ marginRight: '6px' }}>{cat.icon}</span>
+                  {cat.label}
                 </button>
               );
             })}
@@ -249,11 +195,11 @@ export default function HomePage() {
           <section style={styles.sectionBlock}>
             <div style={styles.sectionHeader}>
               <div>
-                <h2 style={styles.sectionHeading}>⚡ AI-Matched Opportunities</h2>
-                <p style={styles.sectionSub}>Ranked via cosine similarity of your bio skills against job requirements</p>
+                <h2 style={styles.sectionHeading}>⚡ AI Recommended For You</h2>
+                <p style={styles.sectionSub}>Personalized matches based on skills extracted from your profile</p>
               </div>
               <Link to="/profile" style={styles.syncSkillsBtn}>
-                Update Bio Skills →
+                Edit Profile Skills →
               </Link>
             </div>
 
@@ -268,7 +214,7 @@ export default function HomePage() {
                 <p style={styles.emptyTitle}>No AI recommendations generated yet</p>
                 <p style={styles.emptySub}>Add technical skills to your profile or use AI bio extraction to receive personalized matches.</p>
                 <Link to="/profile" style={styles.primaryCtaSmall}>
-                  Extract Skills from Bio
+                  Update Profile Skills
                 </Link>
               </div>
             ) : (
@@ -281,15 +227,49 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* VALUE PILLARS STRIP */}
+        <section style={styles.valueSection}>
+          <div style={styles.valueCard} className="nexus-glass-card">
+            <span style={styles.valueIcon}>💼</span>
+            <h4 style={styles.valueTitle}>Direct Company Opportunities</h4>
+            <p style={styles.valueDesc}>Verified positions with transparent salary bands and live vacancy capacity.</p>
+          </div>
+
+          <div style={styles.valueCard} className="nexus-glass-card">
+            <span style={styles.valueIcon}>🎯</span>
+            <h4 style={styles.valueTitle}>Skill-Driven Relevance</h4>
+            <p style={styles.valueDesc}>Automated NLP bio extraction and zero-shot taxonomy tagging for exact candidate fits.</p>
+          </div>
+
+          <div style={styles.valueCard} className="nexus-glass-card">
+            <span style={styles.valueIcon}>⚡</span>
+            <h4 style={styles.valueTitle}>Guaranteed Slot Availability</h4>
+            <p style={styles.valueDesc}>ACID atomic slot allocation ensures you never apply to an oversubscribed position.</p>
+          </div>
+        </section>
+
         {/* ALL POSITIONS SECTION */}
         <section style={styles.sectionBlock}>
           <div style={styles.sectionHeader}>
             <div>
-              <h2 style={styles.sectionHeading}>Verified Open Positions</h2>
+              <h2 style={styles.sectionHeading}>Featured Positions</h2>
               <p style={styles.sectionSub}>
-                {loadingJobs ? 'Loading positions...' : `${total} active ${total === 1 ? 'opening' : 'openings'} available`}
+                {loadingJobs ? 'Searching open listings...' : `${total} active positions available`}
               </p>
             </div>
+            {category && (
+              <button
+                onClick={() => {
+                  setCategory('');
+                  setKeyword('');
+                  setLocation('');
+                  setType('');
+                }}
+                style={styles.clearFiltersBtn}
+              >
+                Clear Filters ✕
+              </button>
+            )}
           </div>
 
           {loadingJobs ? (
@@ -300,8 +280,8 @@ export default function HomePage() {
             </div>
           ) : jobs.length === 0 ? (
             <div style={styles.emptyCard} className="nexus-glass-card">
-              <p style={styles.emptyTitle}>No positions match your criteria</p>
-              <p style={styles.emptySub}>Try broadening your search keywords or resetting filters.</p>
+              <p style={styles.emptyTitle}>No positions found matching your criteria</p>
+              <p style={styles.emptySub}>Try adjusting your search keywords or switching category filters.</p>
               <button
                 onClick={() => {
                   setKeyword('');
@@ -312,7 +292,7 @@ export default function HomePage() {
                 }}
                 style={styles.primaryCtaSmall}
               >
-                Reset All Filters
+                Reset Search Filters
               </button>
             </div>
           ) : (
@@ -346,6 +326,23 @@ export default function HomePage() {
             </div>
           )}
         </section>
+
+        {/* RECRUITER CALLOUT BANNER */}
+        <section style={styles.recruiterBanner} className="nexus-glass-card">
+          <div style={styles.recruiterContent}>
+            <span style={styles.recruiterTag}>FOR EMPLOYERS & RECRUITERS</span>
+            <h3 style={styles.recruiterTitle}>Looking for Exceptional Engineering Talent?</h3>
+            <p style={styles.recruiterDesc}>
+              Post openings with automated AI taxonomy tagging, review applications with direct skill matching, and manage candidates with zero friction.
+            </p>
+          </div>
+          <Link
+            to={isAuthenticated && user?.role === 'recruiter' ? '/recruiter/jobs/create' : '/register'}
+            style={styles.recruiterBtn}
+          >
+            Post an Opening →
+          </Link>
+        </section>
       </div>
     </div>
   );
@@ -365,19 +362,9 @@ const styles = {
     top: '-250px',
     left: '50%',
     transform: 'translateX(-50%)',
-    width: '900px',
+    width: '1000px',
     height: '600px',
-    background: 'radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.05), transparent 70%)',
-    pointerEvents: 'none',
-    zIndex: 0
-  },
-  bgGlowBottom: {
-    position: 'absolute',
-    bottom: '0',
-    right: '-150px',
-    width: '600px',
-    height: '600px',
-    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%)',
+    background: 'radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.04), transparent 70%)',
     pointerEvents: 'none',
     zIndex: 0
   },
@@ -390,32 +377,29 @@ const styles = {
   },
   heroSection: {
     textAlign: 'center',
-    padding: '4.5rem 1rem 3rem',
-    maxWidth: '900px',
+    padding: '4.5rem 1rem 3.5rem',
+    maxWidth: '960px',
     margin: '0 auto'
   },
   heroBadge: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.35rem 0.85rem',
+    gap: '0.45rem',
+    padding: '0.35rem 0.95rem',
     background: 'rgba(99, 102, 241, 0.1)',
     border: '1px solid rgba(99, 102, 241, 0.25)',
     borderRadius: '9999px',
     fontSize: '0.8rem',
     color: '#a5b4fc',
-    fontWeight: '500',
+    fontWeight: '600',
     marginBottom: '1.5rem'
   },
-  badgeDot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    background: '#818cf8',
-    boxShadow: '0 0 8px #818cf8'
+  badgeSparkle: {
+    color: '#818cf8',
+    fontSize: '0.9rem'
   },
   heroTitle: {
-    fontSize: '3.25rem',
+    fontSize: '3.4rem',
     fontWeight: '800',
     lineHeight: '1.15',
     letterSpacing: '-0.03em',
@@ -427,144 +411,30 @@ const styles = {
     WebkitTextFillColor: 'transparent'
   },
   heroSubtitle: {
-    fontSize: '1.125rem',
+    fontSize: '1.15rem',
     color: '#94a3b8',
     lineHeight: '1.6',
-    maxWidth: '680px',
-    margin: '0 auto 2.25rem'
-  },
-  heroActions: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '1rem',
-    flexWrap: 'wrap',
-    marginBottom: '3.5rem'
-  },
-  primaryCta: {
-    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-    color: '#ffffff',
-    padding: '0.8rem 1.6rem',
-    borderRadius: '10px',
-    fontWeight: '600',
-    fontSize: '0.925rem',
-    textDecoration: 'none',
-    boxShadow: '0 4px 20px rgba(99, 102, 241, 0.35)',
-    transition: 'transform 0.15s ease'
-  },
-  secondaryCta: {
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
-    color: '#f8fafc',
-    padding: '0.8rem 1.6rem',
-    borderRadius: '10px',
-    fontWeight: '600',
-    fontSize: '0.925rem',
-    textDecoration: 'none',
-    transition: 'all 0.15s ease'
-  },
-  metricsStrip: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    background: 'rgba(15, 23, 42, 0.65)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: '16px',
-    padding: '1.25rem 2rem',
-    backdropFilter: 'blur(16px)',
-    flexWrap: 'wrap',
-    gap: '1.5rem'
-  },
-  metricItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.2rem'
-  },
-  metricVal: {
-    fontSize: '1.15rem',
-    fontWeight: '700',
-    color: '#f8fafc'
-  },
-  metricLabel: {
-    fontSize: '0.75rem',
-    color: '#64748b',
-    fontWeight: '500'
-  },
-  metricDivider: {
-    width: '1px',
-    height: '28px',
-    background: 'rgba(255, 255, 255, 0.1)'
-  },
-  differentiatorBanner: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '2rem 2.5rem',
-    marginBottom: '3rem',
-    gap: '2.5rem',
-    flexWrap: 'wrap'
-  },
-  bannerContent: {
-    maxWidth: '650px'
-  },
-  bannerTag: {
-    fontSize: '0.725rem',
-    fontWeight: '700',
-    letterSpacing: '0.08em',
-    color: '#34d399',
-    marginBottom: '0.5rem'
-  },
-  bannerTitle: {
-    fontSize: '1.4rem',
-    fontWeight: '700',
-    color: '#f8fafc',
-    marginBottom: '0.5rem',
-    letterSpacing: '-0.01em'
-  },
-  bannerText: {
-    color: '#94a3b8',
-    fontSize: '0.9rem',
-    lineHeight: '1.6'
-  },
-  bannerStats: {
-    display: 'flex',
-    gap: '1.25rem',
-    flexWrap: 'wrap'
-  },
-  miniStatBox: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'rgba(255, 255, 255, 0.03)',
-    border: '1px solid rgba(255, 255, 255, 0.07)',
-    borderRadius: '12px',
-    padding: '1rem 1.25rem',
-    minWidth: '95px'
-  },
-  miniStatNumber: {
-    fontSize: '1.5rem',
-    fontWeight: '800',
-    color: '#60a5fa'
-  },
-  miniStatText: {
-    fontSize: '0.7rem',
-    color: '#64748b',
-    textAlign: 'center',
-    marginTop: '0.2rem'
-  },
-  filterSection: {
-    marginBottom: '2.5rem'
+    maxWidth: '650px',
+    margin: '0 auto 2.5rem'
   },
   searchBar: {
     display: 'flex',
     gap: '0.75rem',
+    padding: '0.75rem',
+    borderRadius: '16px',
+    alignItems: 'center',
     flexWrap: 'wrap',
-    marginBottom: '1rem'
+    marginBottom: '1.75rem',
+    boxShadow: '0 16px 36px -10px rgba(0, 0, 0, 0.6)'
   },
   inputWrapper: {
-    flex: '1 1 240px',
+    flex: '2 1 240px',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  inputWrapperLocation: {
+    flex: '1.5 1 180px',
     position: 'relative',
     display: 'flex',
     alignItems: 'center'
@@ -577,8 +447,8 @@ const styles = {
   },
   searchInput: {
     width: '100%',
-    padding: '0.85rem 1rem 0.85rem 2.6rem',
-    background: 'rgba(15, 23, 42, 0.7)',
+    padding: '0.8rem 1rem 0.8rem 2.6rem',
+    background: 'rgba(18, 22, 34, 0.85)',
     border: '1px solid rgba(255, 255, 255, 0.1)',
     borderRadius: '10px',
     color: '#fff',
@@ -586,56 +456,76 @@ const styles = {
     outline: 'none',
     boxSizing: 'border-box'
   },
-  selectInput: {
-    flex: '0 1 200px',
-    padding: '0.85rem 1rem',
-    background: 'rgba(15, 23, 42, 0.7)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '10px',
-    color: '#cbd5e1',
-    fontSize: '0.9rem',
-    outline: 'none',
-    cursor: 'pointer'
-  },
   searchBtn: {
     background: '#6366f1',
     color: '#fff',
     border: 'none',
     borderRadius: '10px',
-    padding: '0.85rem 1.75rem',
-    fontSize: '0.9rem',
+    padding: '0.8rem 1.75rem',
+    fontSize: '0.925rem',
     fontWeight: '600',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    transition: 'background 0.15s ease'
   },
   categoryPills: {
     display: 'flex',
-    gap: '0.5rem',
+    gap: '0.65rem',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     alignItems: 'center'
   },
   categoryPill: {
     background: 'rgba(255, 255, 255, 0.04)',
-    border: '1px solid rgba(255, 255, 255, 0.07)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
     color: '#94a3b8',
-    padding: '0.4rem 0.9rem',
+    padding: '0.45rem 1rem',
     borderRadius: '9999px',
-    fontSize: '0.8rem',
+    fontSize: '0.825rem',
     fontWeight: '500',
     cursor: 'pointer',
     transition: 'all 0.15s ease'
   },
   categoryPillActive: {
     background: 'rgba(99, 102, 241, 0.15)',
-    border: '1px solid rgba(99, 102, 241, 0.5)',
-    color: '#e0e7ff',
-    padding: '0.4rem 0.9rem',
+    border: '1px solid #6366f1',
+    color: '#ffffff',
+    padding: '0.45rem 1rem',
     borderRadius: '9999px',
-    fontSize: '0.8rem',
+    fontSize: '0.825rem',
     fontWeight: '600',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    boxShadow: '0 0 12px rgba(99, 102, 241, 0.3)'
+  },
+  valueSection: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '1.25rem',
+    marginBottom: '4rem',
+    marginTop: '1rem'
+  },
+  valueCard: {
+    padding: '1.75rem 1.5rem',
+    borderRadius: '16px'
+  },
+  valueIcon: {
+    fontSize: '1.75rem',
+    display: 'block',
+    marginBottom: '0.75rem'
+  },
+  valueTitle: {
+    fontSize: '1.05rem',
+    fontWeight: '600',
+    color: '#f8fafc',
+    marginBottom: '0.4rem'
+  },
+  valueDesc: {
+    fontSize: '0.875rem',
+    color: '#94a3b8',
+    lineHeight: '1.5'
   },
   sectionBlock: {
-    marginBottom: '3.5rem'
+    marginBottom: '4rem'
   },
   sectionHeader: {
     display: 'flex',
@@ -646,21 +536,30 @@ const styles = {
     gap: '1rem'
   },
   sectionHeading: {
-    fontSize: '1.4rem',
+    fontSize: '1.5rem',
     fontWeight: '700',
     color: '#f8fafc',
-    letterSpacing: '-0.01em'
+    letterSpacing: '-0.02em'
   },
   sectionSub: {
     color: '#64748b',
-    fontSize: '0.85rem',
+    fontSize: '0.875rem',
     marginTop: '0.2rem'
   },
   syncSkillsBtn: {
     color: '#818cf8',
-    fontSize: '0.85rem',
+    fontSize: '0.875rem',
     fontWeight: '600',
     textDecoration: 'none'
+  },
+  clearFiltersBtn: {
+    background: 'transparent',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    color: '#94a3b8',
+    padding: '0.35rem 0.75rem',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    cursor: 'pointer'
   },
   grid: {
     display: 'grid',
@@ -669,9 +568,7 @@ const styles = {
   },
   skeletonCard: {
     padding: '1.5rem',
-    borderRadius: '16px',
-    background: 'rgba(255, 255, 255, 0.02)',
-    border: '1px solid rgba(255, 255, 255, 0.05)'
+    borderRadius: '16px'
   },
   skeletonAvatar: {
     width: '44px',
@@ -689,7 +586,7 @@ const styles = {
     borderRadius: '16px'
   },
   emptyTitle: {
-    fontSize: '1.1rem',
+    fontSize: '1.15rem',
     fontWeight: '600',
     color: '#f8fafc',
     marginBottom: '0.4rem'
@@ -741,5 +638,49 @@ const styles = {
     color: '#64748b',
     fontSize: '0.825rem',
     fontWeight: '500'
+  },
+  recruiterBanner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '2.5rem',
+    borderRadius: '20px',
+    marginTop: '2rem',
+    gap: '2rem',
+    flexWrap: 'wrap'
+  },
+  recruiterContent: {
+    maxWidth: '650px'
+  },
+  recruiterTag: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    color: '#34d399',
+    letterSpacing: '0.08em',
+    marginBottom: '0.4rem',
+    display: 'block'
+  },
+  recruiterTitle: {
+    fontSize: '1.5rem',
+    fontWeight: '700',
+    color: '#f8fafc',
+    marginBottom: '0.5rem',
+    letterSpacing: '-0.01em'
+  },
+  recruiterDesc: {
+    color: '#94a3b8',
+    fontSize: '0.925rem',
+    lineHeight: '1.6'
+  },
+  recruiterBtn: {
+    background: '#10b981',
+    color: '#ffffff',
+    padding: '0.85rem 1.6rem',
+    borderRadius: '10px',
+    fontWeight: '600',
+    fontSize: '0.925rem',
+    textDecoration: 'none',
+    boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
+    whiteSpace: 'nowrap'
   }
 };

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import ErrorAlert from '../components/ErrorAlert';
+import CustomDropdown from '../components/CustomDropdown';
 
 function CreateJobPage() {
     const navigate = useNavigate();
@@ -102,11 +103,16 @@ function CreateJobPage() {
                             </div>
                             <div style={styles.field}>
                                 <label style={styles.label}>Job Type *</label>
-                                <select style={styles.input} name="type" value={formData.type} onChange={handleChange}>
-                                    <option value="full-time">Full Time</option>
-                                    <option value="part-time">Part Time</option>
-                                    <option value="internship">Internship</option>
-                                </select>
+                                <CustomDropdown
+                                    options={[
+                                        { value: 'full-time', label: 'Full Time' },
+                                        { value: 'part-time', label: 'Part Time' },
+                                        { value: 'internship', label: 'Internship' }
+                                    ]}
+                                    value={formData.type || 'full-time'}
+                                    onChange={(e) => handleChange({ target: { name: 'type', value: e.target.value } })}
+                                    minWidth={160}
+                                />
                             </div>
                         </div>
                         <div style={styles.row}>
