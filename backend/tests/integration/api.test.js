@@ -4,6 +4,7 @@ const { connectDB, disconnectDB } = require('../../config/db');
 
 describe('API Health & RFC 7807 Error Handling', () => {
   beforeAll(async () => {
+    process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_jwt_secret_integration';
     process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/nexus_test';
     await connectDB();
   });
@@ -44,5 +45,64 @@ describe('API Health & RFC 7807 Error Handling', () => {
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(Array.isArray(res.body.invalidParams)).toBe(true);
     expect(res.body.invalidParams.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test('POST /api/v1/profile/extract-skills extracts technical skills from bio', async () => {
+    const email = `candidate_${Date.now()}@example.com`;
+    const regRes = await request(app)
+      .post('/api/v1/auth/register')
+      .send({
+        name: 'Skill Test Candidate',
+        email,
+        password: 'password123',
+        role: 'jobSeeker'
+      });
+    expect(regRes.status).toBe(201);
+    const token = regRes.body.token;
+
+    // Update bio
+    await request(app)
+      .patch('/api/v1/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        bio: 'Senior engineer specializing in React, Node.js, TypeScript, PostgreSQL, and Docker. Strong with AWS and CI/CD.'
+      });
+
+    // Extract skills
+    const extractRes = await request(app)
+      .post('/api/v1/profile/extract-skills')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(extractRes.status).toBe(200);
+    expect(extractRes.body.success).toBe(true);
+    expect(Array.isArray(extractRes.body.skills)).toBe(true);
+    expect(extractRes.body.skills).toContain('React');
+    expect(extractRes.body.skills).toContain('Node.js');
+    expect(extractRes.body.skills).toContain('Docker');
+    expect(extractRes.body.skills).toContain('AWS');
+  });
+
+  test('PATCH /api/v1/profile allows manual skills update', async () => {
+    const email = `manual_skills_${Date.now()}@example.com`;
+    const regRes = await request(app)
+      .post('/api/v1/auth/register')
+      .send({
+        name: 'Manual Candidate',
+        email,
+        password: 'password123',
+        role: 'jobSeeker'
+      });
+    const token = regRes.body.token;
+
+    const patchRes = await request(app)
+      .patch('/api/v1/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        skills: 'Python, Kubernetes, Redis'
+      });
+
+    expect(patchRes.status).toBe(200);
+    expect(patchRes.body.success).toBe(true);
+    expect(patchRes.body.user.skills).toEqual(['Python', 'Kubernetes', 'Redis']);
   });
 });

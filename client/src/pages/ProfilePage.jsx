@@ -37,7 +37,7 @@ function ProfilePage() {
             const response = await api.post('/profile/extract-skills');
             setProfile({ ...profile, skills: response.data.skills });
         } catch (err) {
-            setExtractError(err.response?.data?.message || 'Failed to extract skills');
+            setExtractError(err.response?.data?.detail || err.response?.data?.message || 'Failed to extract skills');
         } finally {
             setExtracting(false);
         }

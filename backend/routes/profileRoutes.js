@@ -17,7 +17,7 @@ router.get('/', getProfile);
 router.patch('/', updateProfile);
 router.patch('/change-password', changePassword);
 
-// New AI Skill Extraction Route (Only for Job Seekers)
-router.post('/extract-skills', authorize('jobSeeker'), extractSkills);
+// Skill Extraction Route (available for authenticated users)
+router.post('/extract-skills', extractSkills);
 
 module.exports = router;

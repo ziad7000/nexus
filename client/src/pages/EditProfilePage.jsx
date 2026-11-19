@@ -10,6 +10,7 @@ function EditProfilePage() {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
+    const [skills, setSkills] = useState('');
     const [profilePicture, setProfilePicture] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -25,9 +26,10 @@ function EditProfilePage() {
             const response = await api.get('/profile');
             setName(response.data.user.name);
             setBio(response.data.user.bio || '');
+            setSkills(Array.isArray(response.data.user.skills) ? response.data.user.skills.join(', ') : '');
             setProfilePicture(response.data.user.profilePicture || '');
         } catch (err) {
-            setError('Failed to load profile');
+            setError(err.response?.data?.detail || 'Failed to load profile');
         } finally {
             setLoading(false);
         }
@@ -39,11 +41,11 @@ function EditProfilePage() {
         setError('');
         setSuccess('');
         try {
-            await api.patch('/profile', { name, bio, profilePicture });
+            await api.patch('/profile', { name, bio, skills, profilePicture });
             setSuccess('Profile updated successfully!');
             setTimeout(() => navigate('/profile'), 1500);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to update profile');
+            setError(err.response?.data?.detail || err.response?.data?.message || 'Failed to update profile');
         } finally {
             setSaving(false);
         }
@@ -72,6 +74,11 @@ function EditProfilePage() {
                             <label style={styles.label}>Bio</label>
                             <textarea style={styles.textarea} rows={5} placeholder="Tell us about your skills and experience..." value={bio} onChange={(e) => setBio(e.target.value)} />
                             <p style={styles.hint}>Add a detailed bio then use "Extract Skills" on your profile page to auto-generate skills.</p>
+                        </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>Skills (Comma-separated)</label>
+                            <input style={styles.input} type="text" placeholder="e.g. React, Node.js, Python, Docker, AWS" value={skills} onChange={(e) => setSkills(e.target.value)} />
+                            <p style={styles.hint}>You can add/edit skills manually here or click "Extract Skills from Bio" on your profile.</p>
                         </div>
                         <div style={styles.field}>
                             <label style={styles.label}>Profile Picture URL</label>

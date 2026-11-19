@@ -257,7 +257,7 @@ paths:
   /profile/extract-skills:
     post:
       tags: [Profile]
-      summary: Extract technical skills from candidate bio using AI NER model
+      summary: Extract technical skills from candidate bio using hybrid AI and heuristic engine
       security:
         - BearerAuth: []
       responses:
