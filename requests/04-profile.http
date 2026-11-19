@@ -1,0 +1,31 @@
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+@candidateToken = YOUR_CANDIDATE_JWT_HERE
+
+### 1. Get Logged-in Profile
+GET {{baseUrl}}/profile
+Authorization: Bearer {{candidateToken}}
+
+### 2. Update Profile
+PATCH {{baseUrl}}/profile
+Content-Type: application/json
+Authorization: Bearer {{candidateToken}}
+
+{
+  "name": "Jane Candidate",
+  "bio": "Full-stack software engineer with deep expertise in Docker, React, Node.js, TypeScript, and MongoDB architectures."
+}
+
+### 3. Extract Technical Skills from Bio (AI NER Model)
+POST {{baseUrl}}/profile/extract-skills
+Authorization: Bearer {{candidateToken}}
+
+### 4. Change Password
+PATCH {{baseUrl}}/profile/change-password
+Content-Type: application/json
+Authorization: Bearer {{candidateToken}}
+
+{
+  "currentPassword": "Password123!",
+  "newPassword": "NewStrongPassword456!"
+}

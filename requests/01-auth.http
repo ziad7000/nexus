@@ -1,0 +1,66 @@
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+
+### 1. Health Check
+GET http://localhost:5000/health
+Accept: application/json
+
+### 2. Register Candidate (Job Seeker)
+# @name registerCandidate
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jane Candidate",
+  "email": "candidate.jane@example.com",
+  "password": "Password123!",
+  "role": "jobSeeker"
+}
+
+### 3. Register Recruiter
+# @name registerRecruiter
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Tech Talent Recruiter",
+  "email": "recruiter.tech@example.com",
+  "password": "Password123!",
+  "role": "recruiter"
+}
+
+### 4. Login Candidate
+# @name loginCandidate
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "candidate.jane@example.com",
+  "password": "Password123!"
+}
+
+### Capture candidate token
+@candidateToken = {{loginCandidate.response.body.token}}
+
+### 5. Login Recruiter
+# @name loginRecruiter
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "recruiter.tech@example.com",
+  "password": "Password123!"
+}
+
+### Capture recruiter token
+@recruiterToken = {{loginRecruiter.response.body.token}}
+
+### 6. Validation Error Demo (RFC 7807 422 Response)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "J",
+  "email": "invalid-email-format",
+  "password": "123"
+}

@@ -1,0 +1,44 @@
+### Variables
+@baseUrl = http://localhost:5000/api/v1
+@recruiterToken = YOUR_RECRUITER_JWT_HERE
+@candidateToken = YOUR_CANDIDATE_JWT_HERE
+
+### 1. List All Jobs (Public, Filterable, Paginated)
+GET {{baseUrl}}/jobs?page=1&limit=10&keyword=Engineer
+Accept: application/json
+
+### 2. Create Job Post (Recruiter only)
+# @name createJob
+POST {{baseUrl}}/jobs
+Content-Type: application/json
+Authorization: Bearer {{recruiterToken}}
+
+{
+  "title": "Senior Cloud Infrastructure Engineer",
+  "company": "Nexus Distributed Systems",
+  "description": "Architecting resilient microservices, Kubernetes clusters, and automated CI pipelines with high availability.",
+  "location": "Berlin, Germany / Remote",
+  "type": "full-time",
+  "salary": 95000,
+  "totalSlots": 3,
+  "requirements": ["Node.js", "Docker", "Kubernetes", "MongoDB", "CI/CD"]
+}
+
+### Capture Created Job ID
+@jobId = {{createJob.response.body.job._id}}
+
+### 3. Get Job by ID
+GET {{baseUrl}}/jobs/{{jobId}}
+Accept: application/json
+
+### 4. Toggle Save/Bookmark Job
+POST {{baseUrl}}/jobs/{{jobId}}/save
+Authorization: Bearer {{candidateToken}}
+
+### 5. Get Saved Jobs
+GET {{baseUrl}}/jobs/saved
+Authorization: Bearer {{candidateToken}}
+
+### 6. Get AI-Powered Recommended Jobs
+GET {{baseUrl}}/jobs/recommended
+Authorization: Bearer {{candidateToken}}
