@@ -16,6 +16,7 @@ function JobListPage() {
     keyword: searchParams.get('keyword') || '',
     location: searchParams.get('location') || '',
     type: searchParams.get('type') || '',
+    category: searchParams.get('category') || '',
   });
 
   useEffect(() => {
@@ -26,9 +27,10 @@ function JobListPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (filters.keyword) params.append('keyword', filters.keyword);
-      if (filters.location) params.append('location', filters.location);
-      if (filters.type) params.append('type', filters.type);
+      if (filters.keyword && filters.keyword.trim()) params.append('keyword', filters.keyword.trim());
+      if (filters.location && filters.location.trim()) params.append('location', filters.location.trim());
+      if (filters.type && filters.type.trim()) params.append('type', filters.type.trim());
+      if (filters.category && filters.category.trim() && filters.category !== 'All') params.append('category', filters.category.trim());
       params.append('page', page);
       params.append('limit', 12);
       
@@ -38,7 +40,13 @@ function JobListPage() {
       setTotal(response.data?.total || jobList.length);
       
       // Update URL
-      setSearchParams({ ...filters, page });
+      const cleanParams = {};
+      if (filters.keyword) cleanParams.keyword = filters.keyword;
+      if (filters.location) cleanParams.location = filters.location;
+      if (filters.type) cleanParams.type = filters.type;
+      if (filters.category && filters.category !== 'All') cleanParams.category = filters.category;
+      if (page > 1) cleanParams.page = page;
+      setSearchParams(cleanParams);
     } catch (error) {
       console.error('Failed to fetch jobs:', error);
     } finally {
@@ -84,6 +92,20 @@ function JobListPage() {
           />
           <CustomDropdown
             options={[
+              { value: '', label: 'All Categories' },
+              { value: 'Backend', label: 'Backend' },
+              { value: 'Frontend', label: 'Frontend' },
+              { value: 'AI/ML', label: 'AI/ML' },
+              { value: 'DevOps', label: 'DevOps' },
+              { value: 'Data Engineering', label: 'Data Engineering' }
+            ]}
+            value={filters.category}
+            onChange={(e) => handleFilterChange('category', e.target.value)}
+            placeholder="All Categories"
+            minWidth={170}
+          />
+          <CustomDropdown
+            options={[
               { value: '', label: 'All Employment Types' },
               { value: 'full-time', label: 'Full Time' },
               { value: 'part-time', label: 'Part Time' },
@@ -107,7 +129,7 @@ function JobListPage() {
           <div style={styles.emptyState}>
             <p>No jobs found matching your criteria</p>
             <button onClick={() => {
-              setFilters({ keyword: '', location: '', type: '' });
+              setFilters({ keyword: '', location: '', type: '', category: '' });
               setPage(1);
             }} style={styles.clearBtn}>Clear Filters</button>
           </div>

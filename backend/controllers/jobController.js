@@ -70,21 +70,27 @@ exports.getJobs = async (req, res) => {
     const skip = (page - 1) * limit;
     
     let filter = {};
-    if (req.query.keyword) {
+    if (req.query.keyword && req.query.keyword.trim()) {
+      const escapedKeyword = req.query.keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       filter.$or = [
-        { title: { $regex: req.query.keyword, $options: 'i' } },
-        { description: { $regex: req.query.keyword, $options: 'i' } },
-        { company: { $regex: req.query.keyword, $options: 'i' } }
+        { title: { $regex: escapedKeyword, $options: 'i' } },
+        { description: { $regex: escapedKeyword, $options: 'i' } },
+        { company: { $regex: escapedKeyword, $options: 'i' } },
+        { requirements: { $regex: escapedKeyword, $options: 'i' } }
       ];
     }
-    if (req.query.location) {
-      filter.location = { $regex: req.query.location, $options: 'i' };
+    if (req.query.location && req.query.location.trim()) {
+      const escapedLocation = req.query.location.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.location = { $regex: escapedLocation, $options: 'i' };
     }
-    if (req.query.type) {
-      filter.type = req.query.type;
+    if (req.query.type && req.query.type.trim()) {
+      filter.type = req.query.type.trim();
     }
-    if (req.query.status) {
-      filter.status = req.query.status;
+    if (req.query.category && req.query.category.trim() && req.query.category !== 'All') {
+      filter.category = req.query.category.trim();
+    }
+    if (req.query.status && req.query.status.trim()) {
+      filter.status = req.query.status.trim();
     }
     
     const jobs = await JobPost.find(filter)
@@ -97,7 +103,9 @@ exports.getJobs = async (req, res) => {
     let savedJobIds = [];
     if (req.user) {
       const user = await User.findById(req.user._id);
-      savedJobIds = user.savedJobs.map(id => id.toString());
+      if (user && user.savedJobs) {
+        savedJobIds = user.savedJobs.map(id => id.toString());
+      }
     }
 
     const jobsWithSaved = jobs.map(job => ({

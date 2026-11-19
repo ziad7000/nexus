@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
@@ -37,6 +37,8 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const jobsSectionRef = useRef(null);
+
   const categories = [
     { id: 'All', label: 'All Categories', icon: '🌐' },
     { id: 'Backend', label: 'Backend', icon: '⚙️' },
@@ -53,18 +55,24 @@ export default function HomePage() {
     { value: 'internship', label: 'Internship' }
   ];
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async (overrides = {}) => {
     setLoadingJobs(true);
     try {
+      const qKeyword = overrides.keyword !== undefined ? overrides.keyword : keyword;
+      const qLocation = overrides.location !== undefined ? overrides.location : location;
+      const qType = overrides.type !== undefined ? overrides.type : type;
+      const qCategory = overrides.category !== undefined ? overrides.category : category;
+      const qPage = overrides.page !== undefined ? overrides.page : page;
+
       const params = new URLSearchParams();
-      if (keyword) params.append('keyword', keyword);
-      if (location) params.append('location', location);
-      if (type) params.append('type', type);
-      if (category && category !== 'All') params.append('category', category);
-      params.append('page', page);
+      if (qKeyword && qKeyword.trim()) params.append('keyword', qKeyword.trim());
+      if (qLocation && qLocation.trim()) params.append('location', qLocation.trim());
+      if (qType && qType.trim()) params.append('type', qType.trim());
+      if (qCategory && qCategory !== 'All' && qCategory.trim()) params.append('category', qCategory.trim());
+      params.append('page', qPage);
       params.append('limit', 9);
 
-      const res = await api.get(`/jobs?${params}`);
+      const res = await api.get(`/jobs?${params.toString()}`);
       const jobList = Array.isArray(res.data?.jobs) ? res.data.jobs : [];
       setJobs(jobList);
       setTotal(res.data?.total || jobList.length);
@@ -75,7 +83,7 @@ export default function HomePage() {
     } finally {
       setLoadingJobs(false);
     }
-  };
+  }, [keyword, location, type, category, page]);
 
   const fetchRecommended = async () => {
     setLoadingRec(true);
@@ -90,9 +98,10 @@ export default function HomePage() {
     }
   };
 
+  // Initial load
   useEffect(() => {
     fetchJobs();
-  }, [page, category, type]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isAuthenticated && user?.role === 'jobSeeker') {
@@ -101,10 +110,71 @@ export default function HomePage() {
   }, [isAuthenticated]);
 
   const handleSearch = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setPage(1);
-    fetchJobs();
+    fetchJobs({ page: 1 });
+    if (jobsSectionRef.current) {
+      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
+
+  const handleCategoryClick = (catId) => {
+    const newCategory = catId === 'All' ? '' : catId;
+    setCategory(newCategory);
+    setPage(1);
+    fetchJobs({ category: newCategory, page: 1 });
+    if (jobsSectionRef.current) {
+      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    setPage(1);
+    fetchJobs({ type: newType, page: 1 });
+    if (jobsSectionRef.current) {
+      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleResetFilters = () => {
+    setKeyword('');
+    setLocation('');
+    setType('');
+    setCategory('');
+    setPage(1);
+    fetchJobs({ keyword: '', location: '', type: '', category: '', page: 1 });
+  };
+
+  const removeFilter = (key) => {
+    if (key === 'keyword') {
+      setKeyword('');
+      setPage(1);
+      fetchJobs({ keyword: '', page: 1 });
+    } else if (key === 'location') {
+      setLocation('');
+      setPage(1);
+      fetchJobs({ location: '', page: 1 });
+    } else if (key === 'type') {
+      setType('');
+      setPage(1);
+      fetchJobs({ type: '', page: 1 });
+    } else if (key === 'category') {
+      setCategory('');
+      setPage(1);
+      fetchJobs({ category: '', page: 1 });
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    fetchJobs({ page: newPage });
+    if (jobsSectionRef.current) {
+      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const hasActiveFilters = Boolean(keyword.trim() || location.trim() || type || (category && category !== 'All'));
 
   return (
     <div style={styles.pageWrapper}>
@@ -140,6 +210,20 @@ export default function HomePage() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
+              {keyword && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setKeyword('');
+                    setPage(1);
+                    fetchJobs({ keyword: '', page: 1 });
+                  }}
+                  style={styles.clearInputIconBtn}
+                  title="Clear keyword"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             <div style={styles.inputWrapperLocation}>
@@ -151,15 +235,26 @@ export default function HomePage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
+              {location && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLocation('');
+                    setPage(1);
+                    fetchJobs({ location: '', page: 1 });
+                  }}
+                  style={styles.clearInputIconBtn}
+                  title="Clear location"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             <CustomDropdown
               options={typeOptions}
               value={type}
-              onChange={(e) => {
-                setType(e.target.value);
-                setPage(1);
-              }}
+              onChange={(e) => handleTypeChange(e.target.value)}
               placeholder="Employment Type"
               minWidth={190}
             />
@@ -176,10 +271,7 @@ export default function HomePage() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    setCategory(cat.id === 'All' ? '' : cat.id);
-                    setPage(1);
-                  }}
+                  onClick={() => handleCategoryClick(cat.id)}
                   style={active ? styles.categoryPillActive : styles.categoryPill}
                 >
                   <span style={{ marginRight: '6px' }}>{cat.icon}</span>
@@ -249,28 +341,60 @@ export default function HomePage() {
         </section>
 
         {/* ALL POSITIONS SECTION */}
-        <section style={styles.sectionBlock}>
+        <section ref={jobsSectionRef} style={styles.sectionBlock}>
           <div style={styles.sectionHeader}>
             <div>
-              <h2 style={styles.sectionHeading}>Featured Positions</h2>
+              <h2 style={styles.sectionHeading}>
+                {hasActiveFilters ? 'Search Results' : 'Featured Positions'}
+              </h2>
               <p style={styles.sectionSub}>
-                {loadingJobs ? 'Searching open listings...' : `${total} active positions available`}
+                {loadingJobs
+                  ? 'Searching open listings...'
+                  : hasActiveFilters
+                  ? `Found ${total} ${total === 1 ? 'position' : 'positions'} matching your search criteria`
+                  : `${total} active positions available`}
               </p>
             </div>
-            {category && (
+            {hasActiveFilters && (
               <button
-                onClick={() => {
-                  setCategory('');
-                  setKeyword('');
-                  setLocation('');
-                  setType('');
-                }}
+                onClick={handleResetFilters}
                 style={styles.clearFiltersBtn}
               >
-                Clear Filters ✕
+                Clear All Filters ✕
               </button>
             )}
           </div>
+
+          {/* Active Filter Chips Bar */}
+          {hasActiveFilters && (
+            <div style={styles.activeFilterChipsRow}>
+              <span style={styles.activeFilterLabel}>Active filters:</span>
+              {keyword.trim() && (
+                <span style={styles.activeFilterChip}>
+                  Keyword: "{keyword.trim()}"
+                  <button onClick={() => removeFilter('keyword')} style={styles.removeChipBtn}>✕</button>
+                </span>
+              )}
+              {location.trim() && (
+                <span style={styles.activeFilterChip}>
+                  Location: "{location.trim()}"
+                  <button onClick={() => removeFilter('location')} style={styles.removeChipBtn}>✕</button>
+                </span>
+              )}
+              {category && category !== 'All' && (
+                <span style={styles.activeFilterChip}>
+                  Category: {category}
+                  <button onClick={() => removeFilter('category')} style={styles.removeChipBtn}>✕</button>
+                </span>
+              )}
+              {type && (
+                <span style={styles.activeFilterChip}>
+                  Type: {typeOptions.find((o) => o.value === type)?.label || type}
+                  <button onClick={() => removeFilter('type')} style={styles.removeChipBtn}>✕</button>
+                </span>
+              )}
+            </div>
+          )}
 
           {loadingJobs ? (
             <div style={styles.grid}>
@@ -281,15 +405,13 @@ export default function HomePage() {
           ) : jobs.length === 0 ? (
             <div style={styles.emptyCard} className="nexus-glass-card">
               <p style={styles.emptyTitle}>No positions found matching your criteria</p>
-              <p style={styles.emptySub}>Try adjusting your search keywords or switching category filters.</p>
+              <p style={styles.emptySub}>
+                {hasActiveFilters
+                  ? 'No active roles match all specified filters. Try relaxing keywords or clearing category filters.'
+                  : 'There are currently no listings posted yet.'}
+              </p>
               <button
-                onClick={() => {
-                  setKeyword('');
-                  setLocation('');
-                  setType('');
-                  setCategory('');
-                  setPage(1);
-                }}
+                onClick={handleResetFilters}
                 style={styles.primaryCtaSmall}
               >
                 Reset Search Filters
@@ -309,7 +431,7 @@ export default function HomePage() {
               <button
                 style={page === 1 ? styles.pageBtnDisabled : styles.pageBtn}
                 disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => handlePageChange(page - 1)}
               >
                 ← Previous
               </button>
@@ -319,7 +441,7 @@ export default function HomePage() {
               <button
                 style={page >= Math.ceil(total / 9) ? styles.pageBtnDisabled : styles.pageBtn}
                 disabled={page >= Math.ceil(total / 9)}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => handlePageChange(page + 1)}
               >
                 Next →
               </button>
@@ -559,7 +681,62 @@ const styles = {
     padding: '0.35rem 0.75rem',
     borderRadius: '6px',
     fontSize: '0.75rem',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: 'all 0.15s ease'
+  },
+  clearInputIconBtn: {
+    position: 'absolute',
+    right: '0.75rem',
+    background: 'transparent',
+    border: 'none',
+    color: '#64748b',
+    fontSize: '0.75rem',
+    cursor: 'pointer',
+    padding: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    lineHeight: 1
+  },
+  activeFilterChipsRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.6rem',
+    flexWrap: 'wrap',
+    marginBottom: '1.25rem',
+    padding: '0.6rem 0.85rem',
+    background: 'rgba(255, 255, 255, 0.02)',
+    border: '1px solid rgba(255, 255, 255, 0.06)',
+    borderRadius: '10px'
+  },
+  activeFilterLabel: {
+    fontSize: '0.775rem',
+    color: '#64748b',
+    fontWeight: '500'
+  },
+  activeFilterChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    background: 'rgba(99, 102, 241, 0.12)',
+    border: '1px solid rgba(99, 102, 241, 0.3)',
+    color: '#c7d2fe',
+    fontSize: '0.775rem',
+    padding: '0.25rem 0.65rem',
+    borderRadius: '9999px',
+    fontWeight: '500'
+  },
+  removeChipBtn: {
+    background: 'transparent',
+    border: 'none',
+    color: '#a5b4fc',
+    cursor: 'pointer',
+    fontSize: '0.7rem',
+    padding: 0,
+    lineHeight: 1,
+    display: 'inline-flex',
+    alignItems: 'center'
   },
   grid: {
     display: 'grid',

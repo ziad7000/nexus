@@ -105,4 +105,61 @@ describe('API Health & RFC 7807 Error Handling', () => {
     expect(patchRes.body.success).toBe(true);
     expect(patchRes.body.user.skills).toEqual(['Python', 'Kubernetes', 'Redis']);
   });
+
+  test('GET /api/v1/jobs filters accurately by category, keyword, and escaped regex characters', async () => {
+    const JobPost = require('../../models/JobPost');
+    const User = require('../../models/User');
+
+    // Create a recruiter user to author jobs
+    const recruiter = await User.create({
+      name: 'Filter Test Recruiter',
+      email: `recruiter_${Date.now()}@example.com`,
+      password: 'password123',
+      role: 'recruiter'
+    });
+
+    // Seed test jobs
+    await JobPost.create([
+      {
+        title: 'Backend C++ Systems Architect',
+        company: 'CoreEngine Ltd',
+        description: 'Design ultra low-latency C++ trading systems with concurrent ring buffers.',
+        requirements: ['C++', 'Multithreading', 'Linux'],
+        location: 'Remote',
+        type: 'full-time',
+        category: 'Backend',
+        createdBy: recruiter._id
+      },
+      {
+        title: 'Senior Frontend React Engineer',
+        company: 'DesignFlow Inc',
+        description: 'Build responsive web apps with React, Vite, and modern CSS.',
+        requirements: ['React', 'TypeScript', 'CSS'],
+        location: 'Berlin, Germany',
+        type: 'full-time',
+        category: 'Frontend',
+        createdBy: recruiter._id
+      }
+    ]);
+
+    // Test 1: Category filter
+    const catRes = await request(app).get('/api/v1/jobs?category=Backend');
+    expect(catRes.status).toBe(200);
+    expect(catRes.body.jobs.every((j) => j.category === 'Backend')).toBe(true);
+
+    // Test 2: Regex special characters (C++)
+    const cppRes = await request(app).get('/api/v1/jobs?keyword=C%2B%2B');
+    expect(cppRes.status).toBe(200);
+    expect(cppRes.body.jobs.some((j) => j.title.includes('C++'))).toBe(true);
+
+    // Test 3: Requirements keyword search
+    const reqRes = await request(app).get('/api/v1/jobs?keyword=Multithreading');
+    expect(reqRes.status).toBe(200);
+    expect(reqRes.body.jobs.some((j) => j.requirements.includes('Multithreading'))).toBe(true);
+
+    // Test 4: Location filter
+    const locRes = await request(app).get('/api/v1/jobs?location=Berlin');
+    expect(locRes.status).toBe(200);
+    expect(locRes.body.jobs.some((j) => j.location.includes('Berlin'))).toBe(true);
+  });
 });
