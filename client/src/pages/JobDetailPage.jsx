@@ -43,9 +43,10 @@ function JobDetailPage() {
   const checkApplicationStatus = async () => {
     try {
       const response = await api.get('/applications/my');
-      const applied = response.data.applications.some(app => app.job._id === id);
+      const apps = Array.isArray(response.data?.applications) ? response.data.applications : [];
+      const applied = apps.some(app => app.job?._id === id);
       setHasApplied(applied);
-      const app = response.data.applications.find(app => app.job._id === id);
+      const app = apps.find(app => app.job?._id === id);
       if (app) setApplicationStatus(app.status);
     } catch (err) {
       console.error('Failed to check application status');

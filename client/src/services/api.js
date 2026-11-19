@@ -1,10 +1,29 @@
 import axios from 'axios';
 
+// Ensure baseURL always resolves with a valid absolute HTTP/HTTPS protocol
+const resolveBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) {
+    if (envUrl.startsWith('http://') || envUrl.startsWith('https://')) {
+      return envUrl;
+    }
+    return `https://${envUrl}`;
+  }
+  // Fallback depending on host environment
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://nexus-api-ullk.onrender.com/api/v1';
+  }
+  return 'http://localhost:5000/api/v1';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'
+  baseURL: resolveBaseUrl(),
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
-// Request interceptor - add token to every request automatically
+// Request interceptor - attach Bearer token if present
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -13,15 +32,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor - handle 401 unauthorized (expired tokens)
+// Response interceptor - handle 401 unauthorized gracefully
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If the error is 401 (Not Authorized), clear local storage and go to login
-    if (error.response?.status === 401 && !error.config.url.includes('/auth/')) {
+    // Only redirect to login if the 401 happened on a protected route (not on public/optional routes)
+    const isPublicUrl =
+      error.config?.url?.includes('/auth/') ||
+      (error.config?.url?.startsWith('/jobs') && error.config?.method === 'get');
+
+    if (error.response?.status === 401 && !isPublicUrl) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

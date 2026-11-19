@@ -21,7 +21,7 @@ function MyApplicationsPage() {
     setLoading(true);
     try {
       const response = await api.get('/applications/my');
-      setApplications(response.data.applications);
+      setApplications(Array.isArray(response.data?.applications) ? response.data.applications : []);
     } catch (err) {
       setError('Failed to load applications');
     } finally {

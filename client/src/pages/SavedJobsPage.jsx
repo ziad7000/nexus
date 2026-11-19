@@ -21,7 +21,7 @@ function SavedJobsPage() {
     setLoading(true);
     try {
       const response = await api.get('/jobs/saved');
-      setJobs(response.data.jobs);
+      setJobs(Array.isArray(response.data?.jobs) ? response.data.jobs : []);
     } catch (err) {
       setError('Failed to load saved jobs');
       console.error(err);

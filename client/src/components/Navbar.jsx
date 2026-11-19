@@ -1,204 +1,302 @@
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  return (
-    <nav style={styles.navbar}>
-      <div style={styles.container}>
-        {/* Logo */}
-        <Link to="/" style={styles.logo}>
-          <span style={styles.logoText}>Nexus</span>
-        </Link>
+  const isActive = (path) => location.pathname === path;
 
-        {/* Desktop Navigation - All in one line */}
-        <div style={styles.navLinks}>
-          <Link to="/jobs" style={styles.navLink}>Jobs</Link>
-          
+  return (
+    <header style={styles.header}>
+      <div style={styles.container}>
+        {/* Brand */}
+        <div style={styles.leftGroup}>
+          <Link to="/" style={styles.brand}>
+            <div style={styles.logoBadge}>NX</div>
+            <span style={styles.brandName}>Nexus</span>
+          </Link>
+          <div style={styles.systemStatus}>
+            <span style={styles.pulseDot}></span>
+            <span style={styles.statusText}>Cloud Active</span>
+          </div>
+        </div>
+
+        {/* Navigation Links */}
+        <nav style={styles.nav}>
+          <Link to="/" style={isActive('/') ? styles.navLinkActive : styles.navLink}>
+            Explore
+          </Link>
+          <Link to="/jobs" style={isActive('/jobs') ? styles.navLinkActive : styles.navLink}>
+            All Jobs
+          </Link>
+
           {isAuthenticated && user?.role === 'jobSeeker' && (
             <>
-              <Link to="/jobs/recommended" style={styles.navLink}>Recommended</Link>
-              <Link to="/jobs/saved" style={styles.navLink}>Saved Jobs</Link>
-              <Link to="/applications/my" style={styles.navLink}>My Applications</Link>
-              <Link to="/profile" style={styles.navLink}>Profile</Link>
+              <Link to="/jobs/recommended" style={isActive('/jobs/recommended') ? styles.navLinkActive : styles.navLink}>
+                AI Matches
+              </Link>
+              <Link to="/jobs/saved" style={isActive('/jobs/saved') ? styles.navLinkActive : styles.navLink}>
+                Saved
+              </Link>
+              <Link to="/applications/my" style={isActive('/applications/my') ? styles.navLinkActive : styles.navLink}>
+                Applications
+              </Link>
             </>
           )}
-          
+
           {isAuthenticated && user?.role === 'recruiter' && (
             <>
-              <Link to="/recruiter/dashboard" style={styles.navLink}>Dashboard</Link>
-              <Link to="/recruiter/jobs/create" style={styles.navLinkPrimary}>Post Job</Link>
-              <Link to="/profile" style={styles.navLink}>Profile</Link>
+              <Link to="/recruiter/dashboard" style={isActive('/recruiter/dashboard') ? styles.navLinkActive : styles.navLink}>
+                Dashboard
+              </Link>
+              <Link to="/recruiter/jobs/create" style={styles.postJobBtn}>
+                + Post Job
+              </Link>
             </>
           )}
 
           {isAuthenticated && user?.role === 'admin' && (
             <>
-              <Link to="/admin/dashboard" style={styles.navLink}>Dashboard</Link>
-              <Link to="/admin/users" style={styles.navLink}>Users</Link>
-              <Link to="/admin/recruiters" style={styles.navLink}>Recruiters</Link>
-              <Link to="/admin/jobs" style={styles.navLink}>Jobs</Link>
+              <Link to="/admin/dashboard" style={isActive('/admin/dashboard') ? styles.navLinkActive : styles.navLink}>
+                Overview
+              </Link>
+              <Link to="/admin/users" style={isActive('/admin/users') ? styles.navLinkActive : styles.navLink}>
+                Users
+              </Link>
+              <Link to="/admin/recruiters" style={isActive('/admin/recruiters') ? styles.navLinkActive : styles.navLink}>
+                Approvals
+              </Link>
             </>
           )}
+        </nav>
 
-          {/* Auth buttons */}
+        {/* Auth Group */}
+        <div style={styles.authGroup}>
           {isAuthenticated ? (
-            <div style={styles.userMenu}>
-              <span style={styles.userName}>{user?.name?.split(' ')[0]}</span>
-              <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+            <div style={styles.userProfile}>
+              <Link to="/profile" style={styles.avatarButton}>
+                <div style={styles.avatar}>
+                  {user?.name ? user.name[0].toUpperCase() : 'U'}
+                </div>
+                <div style={styles.userInfo}>
+                  <span style={styles.userName}>{user?.name?.split(' ')[0]}</span>
+                  <span style={styles.userRole}>{user?.role}</span>
+                </div>
+              </Link>
+              <button onClick={handleLogout} style={styles.logoutBtn} title="Sign Out">
+                Sign out
+              </button>
             </div>
           ) : (
-            <div style={styles.authButtons}>
-              <Link to="/login" style={styles.loginBtn}>Login</Link>
-              <Link to="/register" style={styles.registerBtn}>Register</Link>
+            <div style={styles.guestButtons}>
+              <Link to="/login" style={styles.signInBtn}>
+                Sign in
+              </Link>
+              <Link to="/register" style={styles.signUpBtn}>
+                Get Started
+              </Link>
             </div>
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
 const styles = {
-  navbar: {
+  header: {
     position: 'sticky',
     top: 0,
-    zIndex: 1000,
-    background: 'rgba(13, 13, 13, 0.95)',
-    backdropFilter: 'blur(12px)',
+    zIndex: 999,
+    background: 'rgba(8, 9, 13, 0.85)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
     borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-    padding: '0 2rem',
+    padding: '0.75rem 1.5rem',
+    width: '100%',
+    boxSizing: 'border-box'
   },
   container: {
-    maxWidth: '1400px',
+    maxWidth: '1280px',
     margin: '0 auto',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '0.75rem 0',
+    gap: '1.5rem'
   },
-  logo: {
+  leftGroup: {
     display: 'flex',
     alignItems: 'center',
-    textDecoration: 'none',
-    flexShrink: 0,
+    gap: '1.25rem'
   },
-  logoText: {
-    fontSize: '20px',
-    fontWeight: 700,
-    background: 'linear-gradient(135deg, #fff, #a78bfa)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    letterSpacing: '-0.5px',
-  },
-  navLinks: {
+  brand: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.25rem',
-    flexWrap: 'nowrap',
+    gap: '0.65rem',
+    textDecoration: 'none'
+  },
+  logoBadge: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '9px',
+    background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#ffffff',
+    fontWeight: '800',
+    fontSize: '0.85rem',
+    letterSpacing: '-0.02em',
+    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)'
+  },
+  brandName: {
+    color: '#f8fafc',
+    fontWeight: '700',
+    fontSize: '1.15rem',
+    letterSpacing: '-0.02em'
+  },
+  systemStatus: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    padding: '0.2rem 0.6rem',
+    background: 'rgba(16, 185, 129, 0.08)',
+    border: '1px solid rgba(16, 185, 129, 0.2)',
+    borderRadius: '9999px'
+  },
+  pulseDot: {
+    width: '5px',
+    height: '5px',
+    borderRadius: '50%',
+    background: '#10b981',
+    boxShadow: '0 0 6px #10b981'
+  },
+  statusText: {
+    color: '#34d399',
+    fontSize: '0.7rem',
+    fontWeight: '500',
+    letterSpacing: '0.02em'
+  },
+  nav: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem'
   },
   navLink: {
-    padding: '0.5rem 0.875rem',
-    color: '#9ca3af',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: 500,
+    color: '#94a3b8',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    padding: '0.45rem 0.85rem',
     borderRadius: '8px',
-    transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
+    transition: 'all 0.15s ease',
+    textDecoration: 'none'
   },
-  navLinkPrimary: {
-    padding: '0.5rem 1rem',
-    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: 600,
+  navLinkActive: {
+    color: '#ffffff',
+    background: 'rgba(255, 255, 255, 0.07)',
+    fontSize: '0.875rem',
+    fontWeight: '600',
+    padding: '0.45rem 0.85rem',
     borderRadius: '8px',
-    transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
+    textDecoration: 'none'
   },
-  authButtons: {
+  postJobBtn: {
+    background: 'linear-gradient(135deg, #10b981, #059669)',
+    color: '#ffffff',
+    fontSize: '0.8125rem',
+    fontWeight: '600',
+    padding: '0.45rem 0.95rem',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    boxShadow: '0 2px 10px rgba(16, 185, 129, 0.3)'
+  },
+  authGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.5rem',
-    marginLeft: '0.5rem',
+    gap: '0.75rem'
   },
-  loginBtn: {
-    padding: '0.5rem 1rem',
-    color: '#a78bfa',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: 500,
-    borderRadius: '8px',
-    border: '1px solid rgba(167, 139, 250, 0.3)',
-    transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
-  },
-  registerBtn: {
-    padding: '0.5rem 1rem',
-    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-    color: '#fff',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: 600,
-    borderRadius: '8px',
-    transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
-  },
-  userMenu: {
+  guestButtons: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem',
-    marginLeft: '0.5rem',
-    paddingLeft: '0.5rem',
-    borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+    gap: '0.75rem'
+  },
+  signInBtn: {
+    color: '#e2e8f0',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    padding: '0.45rem 0.9rem',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    transition: 'color 0.15s ease'
+  },
+  signUpBtn: {
+    background: '#f8fafc',
+    color: '#090a0f',
+    fontSize: '0.875rem',
+    fontWeight: '600',
+    padding: '0.45rem 1rem',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    transition: 'opacity 0.15s ease'
+  },
+  userProfile: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.85rem'
+  },
+  avatarButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    textDecoration: 'none',
+    padding: '0.25rem 0.5rem',
+    borderRadius: '8px'
+  },
+  avatar: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: '700',
+    fontSize: '0.85rem'
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    lineHeight: '1.2'
   },
   userName: {
-    color: '#e5e7eb',
-    fontSize: '13px',
-    fontWeight: 500,
+    color: '#f8fafc',
+    fontSize: '0.825rem',
+    fontWeight: '600'
+  },
+  userRole: {
+    color: '#64748b',
+    fontSize: '0.7rem',
+    textTransform: 'capitalize'
   },
   logoutBtn: {
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: 'none',
-    padding: '0.4rem 0.875rem',
+    background: 'transparent',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    color: '#94a3b8',
+    padding: '0.35rem 0.75rem',
     borderRadius: '6px',
-    color: '#f87171',
-    fontSize: '12px',
-    fontWeight: 500,
+    fontSize: '0.75rem',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
-  },
+    transition: 'all 0.15s ease'
+  }
 };
-
-// Add hover effects
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  .nav-link:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-  }
-  .login-btn:hover {
-    background: rgba(167, 139, 250, 0.1);
-    border-color: #a78bfa;
-  }
-  .register-btn:hover, .nav-link-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-  }
-  .logout-btn:hover {
-    background: rgba(248, 113, 113, 0.15);
-  }
-`;
-document.head.appendChild(styleSheet);
 
 export default Navbar;

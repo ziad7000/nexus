@@ -32,8 +32,9 @@ function JobListPage() {
       params.append('limit', 12);
       
       const response = await api.get(`/jobs?${params}`);
-      setJobs(response.data.jobs);
-      setTotal(response.data.total);
+      const jobList = Array.isArray(response.data?.jobs) ? response.data.jobs : [];
+      setJobs(jobList);
+      setTotal(response.data?.total || jobList.length);
       
       // Update URL
       setSearchParams({ ...filters, page });
