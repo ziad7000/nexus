@@ -20,6 +20,12 @@ describe('API Health & RFC 7807 Error Handling', () => {
     expect(res.body.database.status).toBe('connected');
   });
 
+  test('GET /api/v1/docs/ serves interactive Swagger UI documentation', async () => {
+    const res = await request(app).get('/api/v1/docs/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Swagger UI');
+  });
+
   test('Invalid routes return RFC 7807 problem details 404', async () => {
     const res = await request(app).get('/api/v1/non-existent-route');
     expect(res.status).toBe(404);
