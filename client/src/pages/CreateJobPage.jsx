@@ -36,11 +36,14 @@ function CreateJobPage() {
             const response = await api.post('/jobs', {
                 ...formData,
                 requirements: requirementsArray,
-                salary: formData.salary ? parseInt(formData.salary) : undefined
+                salary: formData.salary ? parseInt(formData.salary, 10) : undefined,
+                totalSlots: formData.totalSlots ? parseInt(formData.totalSlots, 10) : 1
             });
             navigate(`/jobs/${response.data.job._id}`);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to create job');
+            const problemDetail = err.response?.data?.detail;
+            const validationErrors = err.response?.data?.invalidParams?.map(p => `${p.name}: ${p.reason}`).join(', ');
+            setError(validationErrors || problemDetail || err.response?.data?.message || 'Failed to create job');
         } finally {
             setLoading(false);
         }

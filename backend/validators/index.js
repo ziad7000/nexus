@@ -18,8 +18,8 @@ const createJobSchema = z.object({
   description: z.string().min(10, 'Detailed description is required'),
   location: z.string().min(2, 'Location is required'),
   type: z.enum(['full-time', 'part-time', 'internship']),
-  salary: z.number().nonnegative().optional(),
-  totalSlots: z.number().int().positive().default(1),
+  salary: z.coerce.number().nonnegative().optional(),
+  totalSlots: z.coerce.number().int().positive().default(1),
   requirements: z.array(z.string()).optional()
 });
 
