@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const JobPost = require('../models/JobPost');
 const User = require('../models/User');
 const hf = require('../services/hfService');      
@@ -132,6 +133,13 @@ exports.getJobs = async (req, res) => {
 // @access  Public
 exports.getJob = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found'
+      });
+    }
+
     const job = await JobPost.findById(req.params.id)
       .populate('createdBy', 'name email');
     
@@ -141,10 +149,21 @@ exports.getJob = async (req, res) => {
         message: 'Job not found'
       });
     }
+
+    let isSaved = false;
+    if (req.user) {
+      const user = await User.findById(req.user._id);
+      if (user && user.savedJobs) {
+        isSaved = user.savedJobs.some(id => id.toString() === job._id.toString());
+      }
+    }
     
     res.json({
       success: true,
-      job
+      job: {
+        ...job.toObject(),
+        isSaved
+      }
     });
   } catch (error) {
     res.status(500).json({

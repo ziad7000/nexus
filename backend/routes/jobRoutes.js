@@ -21,27 +21,24 @@ const { createJobSchema, applyJobSchema } = require('../validators');
 
 const router = express.Router();
 
-// Public routes
+// Public routes (optionally authenticated to resolve saved status)
 router.get('/', optionalProtect, getJobs);
 
-// Protected routes (require valid JWT)
-router.use(protect);
+// Job Seeker authenticated routes
+router.get('/recommended', protect, authorize('jobSeeker'), getRecommendedJobs);
+router.get('/saved', protect, authorize('jobSeeker'), getSavedJobs);
+router.post('/:id/save', protect, authorize('jobSeeker'), toggleSaveJob);
+router.post('/:jobId/apply', protect, authorize('jobSeeker'), validate(applyJobSchema), applyToJob);
+router.post('/:id/cover-letter', protect, authorize('jobSeeker'), generateCoverLetter);
 
-// Job Seeker routes
-router.get('/recommended', authorize('jobSeeker'), getRecommendedJobs);
-router.get('/saved', authorize('jobSeeker'), getSavedJobs);
-router.post('/:id/save', authorize('jobSeeker'), toggleSaveJob);
-router.post('/:jobId/apply', authorize('jobSeeker'), validate(applyJobSchema), applyToJob);
-router.post('/:id/cover-letter', authorize('jobSeeker'), generateCoverLetter);
+// Recruiter authenticated routes
+router.get('/my-jobs', protect, authorize('recruiter'), getMyJobs);
+router.get('/:jobId/applicants', protect, authorize('recruiter'), getJobApplicants);
+router.post('/', protect, authorize('recruiter'), validate(createJobSchema), createJob);
+router.patch('/:id', protect, authorize('recruiter'), updateJob);
+router.delete('/:id', protect, authorize('recruiter', 'admin'), deleteJob);
 
-// Recruiter routes
-router.get('/my-jobs', authorize('recruiter'), getMyJobs);
-router.get('/:jobId/applicants', authorize('recruiter'), getJobApplicants);
-router.post('/', authorize('recruiter'), validate(createJobSchema), createJob);
-router.patch('/:id', authorize('recruiter'), updateJob);
-router.delete('/:id', authorize('recruiter', 'admin'), deleteJob);
-
-// Get single job detail (must be after specific endpoints)
-router.get('/:id', getJob);
+// Public single job detail (mounted after /recommended, /saved, /my-jobs)
+router.get('/:id', optionalProtect, getJob);
 
 module.exports = router;

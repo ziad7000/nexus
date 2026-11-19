@@ -161,5 +161,18 @@ describe('API Health & RFC 7807 Error Handling', () => {
     const locRes = await request(app).get('/api/v1/jobs?location=Berlin');
     expect(locRes.status).toBe(200);
     expect(locRes.body.jobs.some((j) => j.location.includes('Berlin'))).toBe(true);
+
+    // Test 5: GET /api/v1/jobs/:id is publicly accessible without Authorization header
+    const sampleJob = catRes.body.jobs[0];
+    const singleRes = await request(app).get(`/api/v1/jobs/${sampleJob._id}`);
+    expect(singleRes.status).toBe(200);
+    expect(singleRes.body.success).toBe(true);
+    expect(singleRes.body.job._id).toBe(sampleJob._id);
+    expect(singleRes.body.job.title).toBe(sampleJob.title);
+
+    // Test 6: GET /api/v1/jobs/invalid-id returns 404
+    const notFoundRes = await request(app).get('/api/v1/jobs/invalid-object-id-123');
+    expect(notFoundRes.status).toBe(404);
+    expect(notFoundRes.body.message).toBe('Job not found');
   });
 });

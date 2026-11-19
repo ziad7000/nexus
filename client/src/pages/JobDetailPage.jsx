@@ -32,9 +32,9 @@ function JobDetailPage() {
   const fetchJob = async () => {
     try {
       const response = await api.get(`/jobs/${id}`);
-      setJob(response.data.job);
+      setJob(response.data?.job);
     } catch (err) {
-      setError(err.response?.data?.message || 'Job not found');
+      setError(err.response?.data?.detail || err.response?.data?.message || 'Job not found');
     } finally {
       setLoading(false);
     }
