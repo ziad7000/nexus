@@ -4,7 +4,7 @@ const { connectDB, disconnectDB } = require('../../config/db');
 
 describe('API Health & RFC 7807 Error Handling', () => {
   beforeAll(async () => {
-    process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/giu_nexus_test';
+    process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/nexus_test';
     await connectDB();
   });
 
@@ -16,7 +16,7 @@ describe('API Health & RFC 7807 Error Handling', () => {
     const res = await request(app).get('/health');
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('UP');
-    expect(res.body.service).toBe('giu-nexus-api');
+    expect(res.body.service).toBe('nexus-api');
     expect(res.body.database.status).toBe('connected');
   });
 

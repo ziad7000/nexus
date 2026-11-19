@@ -47,7 +47,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    type: 'https://api.giu-nexus.com/errors/rate-limit-exceeded',
+    type: 'https://api.nexus-platform.com/errors/rate-limit-exceeded',
     title: 'Too Many Requests',
     status: 429,
     detail: 'Too many authentication attempts. Please try again after 15 minutes.',
@@ -81,7 +81,7 @@ app.use('/api/v1/applications', applicationRoutes);
 // Root informational endpoint
 app.get('/', (req, res) => {
   res.json({
-    service: 'GIU Nexus API',
+    service: 'Nexus API',
     status: 'online',
     version: '1.0.0',
     documentation: '/api/v1/docs',
@@ -92,7 +92,7 @@ app.get('/', (req, res) => {
 // 404 Catch-All Handler
 app.use((req, res, next) => {
   res.status(404).json({
-    type: 'https://api.giu-nexus.com/errors/not-found',
+    type: 'https://api.nexus-platform.com/errors/not-found',
     title: 'Not Found',
     status: 404,
     detail: `Route ${req.method} ${req.originalUrl} does not exist.`,

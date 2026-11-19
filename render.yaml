@@ -3,7 +3,7 @@ services:
   # Backend Web Service (Node.js / Express API)
   # ==========================================
   - type: web
-    name: giu-nexus-api
+    name: nexus-api
     runtime: node
     plan: free
     region: oregon
@@ -28,14 +28,14 @@ services:
       - key: CLIENT_URL
         fromService:
           type: web
-          name: giu-nexus-web
+          name: nexus-web
           property: host
 
   # ==========================================
   # Frontend Static Site (React 19 / Vite SPA)
   # ==========================================
   - type: web
-    name: giu-nexus-web
+    name: nexus-web
     runtime: static
     plan: free
     region: oregon
@@ -51,6 +51,6 @@ services:
       - key: VITE_API_URL
         fromService:
           type: web
-          name: giu-nexus-api
+          name: nexus-api
           property: host
           path: /api/v1

@@ -1,10 +1,10 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const fullUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/giu_nexus';
+const fullUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/nexus';
 
 // Extract database name if present in URI
-let databaseName = 'giu_nexus';
+let databaseName = 'nexus';
 try {
   const parsed = new URL(fullUri.replace('mongodb+srv://', 'https://').replace('mongodb://', 'http://'));
   const pathname = parsed.pathname.replace('/', '');

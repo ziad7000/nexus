@@ -34,8 +34,8 @@ function LoginPage() {
       <div style={styles.orb2} />
       <div style={styles.card}>
         <div style={styles.logo}>
-          <div style={styles.logoDot}><span style={styles.logoText}>GN</span></div>
-          <span style={styles.logoName}>GIU Nexus</span>
+          <div style={styles.logoDot}><span style={styles.logoText}>NX</span></div>
+          <span style={styles.logoName}>Nexus</span>
         </div>
         <h1 style={styles.title}>Welcome back</h1>
         <p style={styles.subtitle}>Sign in to your account to continue</p>

@@ -19,7 +19,7 @@ const validate = (schema, source = 'body') => {
           status: 422,
           title: 'Unprocessable Entity',
           detail: 'Request payload failed schema validation',
-          type: 'https://api.giu-nexus.com/errors/validation-error',
+          type: 'https://api.nexus-platform.com/errors/validation-error',
           code: 'VALIDATION_FAILED',
           invalidParams
         })

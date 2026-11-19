@@ -15,7 +15,7 @@ const Navbar = () => {
       <div style={styles.container}>
         {/* Logo */}
         <Link to="/" style={styles.logo}>
-          <span style={styles.logoText}>GIU Nexus</span>
+          <span style={styles.logoText}>Nexus</span>
         </Link>
 
         {/* Desktop Navigation - All in one line */}

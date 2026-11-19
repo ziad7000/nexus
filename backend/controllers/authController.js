@@ -164,7 +164,7 @@ exports.forgotPassword = async (req, res) => {
 await transporter.sendMail({
   from: process.env.EMAIL_USER,
   to: user.email,
-  subject: 'Password Reset - GIU Nexus',
+  subject: 'Password Reset - Nexus',
   html: `<p>Click the link below to reset your password. It expires in 10 minutes.</p>
          <a href="${resetUrl}">${resetUrl}</a>`
 });

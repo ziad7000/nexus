@@ -80,8 +80,8 @@ export default function HomePage() {
       {/* NAVBAR */}
       <nav style={styles.nav}>
         <div style={styles.navLogo}>
-          <div style={styles.logoDot}><span style={{ color: '#fff', fontWeight: 800, fontSize: 13 }}>GN</span></div>
-          <span style={styles.logoName}>GIU Nexus</span>
+          <div style={styles.logoDot}><span style={{ color: '#fff', fontWeight: 800, fontSize: 13 }}>NX</span></div>
+          <span style={styles.logoName}>Nexus</span>
         </div>
         <div style={styles.navLinks}>
           {isAuthenticated ? (

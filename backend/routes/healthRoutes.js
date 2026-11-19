@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
     status,
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.floor(process.uptime()),
-    service: 'giu-nexus-api',
+    service: 'nexus-api',
     version: '1.0.0',
     database: {
       status: isDbConnected ? 'connected' : 'disconnected',

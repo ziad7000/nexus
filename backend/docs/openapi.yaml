@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: GIU Nexus API
+  title: Nexus API
   description: |
-    Production-grade RESTful API for GIU Nexus — AI-Powered University Career Platform.
+    Production-grade RESTful API for Nexus — AI-Powered University Career Platform.
     Features atomic concurrency-controlled job applications, automated database migrations,
     Hugging Face semantic embeddings matching, NER skill extraction, and RFC 7807 problem details.
   version: 1.0.0
@@ -16,7 +16,7 @@ info:
 servers:
   - url: http://localhost:5000/api/v1
     description: Local Development Server
-  - url: https://giu-nexus-api.onrender.com/api/v1
+  - url: https://nexus-api.onrender.com/api/v1
     description: Cloud Production Server
 
 tags:
@@ -290,7 +290,7 @@ components:
           example: UP
         service:
           type: string
-          example: giu-nexus-api
+          example: nexus-api
         version:
           type: string
           example: 1.0.0
@@ -416,7 +416,7 @@ components:
         type:
           type: string
           format: uri
-          example: https://api.giu-nexus.com/errors/slot-exhausted
+          example: https://api.nexus-platform.com/errors/slot-exhausted
         title:
           type: string
           example: Conflict

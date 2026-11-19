@@ -18,7 +18,7 @@ describe('Concurrency Control: Job Application Slot Race Proof Test', () => {
 
   beforeAll(async () => {
     process.env.JWT_SECRET = 'test_jwt_secret_concurrency_proof';
-    process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/giu_nexus_test';
+    process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/nexus_test';
     await connectDB();
 
     // Clean up test collections

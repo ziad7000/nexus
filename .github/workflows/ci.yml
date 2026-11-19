@@ -40,15 +40,15 @@ jobs:
       - name: Execute Database Migrations
         working-directory: ./backend
         env:
-          MONGO_URI: mongodb://127.0.0.1:27017/giu_nexus_test
+          MONGO_URI: mongodb://127.0.0.1:27017/nexus_test
         run: npm run migrate:up
 
       - name: Run Unit & Concurrency Proof Tests
         working-directory: ./backend
         env:
           NODE_ENV: test
-          MONGO_URI: mongodb://127.0.0.1:27017/giu_nexus_test
-          JWT_SECRET: ci_secret_key_giu_nexus
+          MONGO_URI: mongodb://127.0.0.1:27017/nexus_test
+          JWT_SECRET: ci_secret_key_nexus
         run: npm test
 
   frontend-build:
@@ -93,11 +93,11 @@ jobs:
         with:
           context: ./backend
           push: false
-          tags: giu-nexus-backend:latest
+          tags: nexus-backend:latest
 
       - name: Build Frontend Image
         uses: docker/build-push-action@v5
         with:
           context: ./client
           push: false
-          tags: giu-nexus-client:latest
+          tags: nexus-client:latest

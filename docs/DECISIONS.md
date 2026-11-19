@@ -1,6 +1,6 @@
-# Architecture Decision Records (ADR) — GIU Nexus
+# Architecture Decision Records (ADR) — Nexus
 
-This document outlines key technical decisions, trade-offs, and design rationales implemented during the engineering overhaul of GIU Nexus.
+This document outlines key technical decisions, trade-offs, and design rationales implemented during the engineering overhaul of Nexus.
 
 ---
 

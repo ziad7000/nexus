@@ -1,7 +1,7 @@
 {
-  "name": "giu-nexus-backend",
+  "name": "nexus-backend",
   "version": "1.0.0",
-  "description": "Production REST API for GIU Nexus - AI-Powered Career Platform",
+  "description": "Production REST API for Nexus - AI-Powered Career Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

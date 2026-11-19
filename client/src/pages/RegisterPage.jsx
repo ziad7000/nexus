@@ -42,8 +42,8 @@ function RegisterPage() {
         <div style={styles.orb2} />
         <div style={styles.card}>
           <div style={styles.logo}>
-            <div style={styles.logoDot}><span style={styles.logoText}>GN</span></div>
-            <span style={styles.logoName}>GIU Nexus</span>
+            <div style={styles.logoDot}><span style={styles.logoText}>NX</span></div>
+            <span style={styles.logoName}>Nexus</span>
           </div>
           <div style={styles.pendingIcon}>⏳</div>
           <h1 style={styles.title}>Pending Approval</h1>
@@ -60,11 +60,11 @@ function RegisterPage() {
       <div style={styles.orb2} />
       <div style={styles.card}>
         <div style={styles.logo}>
-          <div style={styles.logoDot}><span style={styles.logoText}>GN</span></div>
-          <span style={styles.logoName}>GIU Nexus</span>
+          <div style={styles.logoDot}><span style={styles.logoText}>NX</span></div>
+          <span style={styles.logoName}>Nexus</span>
         </div>
         <h1 style={styles.title}>Create account</h1>
-        <p style={styles.subtitle}>Join GIU Nexus and find your next opportunity</p>
+        <p style={styles.subtitle}>Join Nexus and find your next opportunity</p>
         <ErrorAlert message={error} />
         <form onSubmit={handleSubmit}>
           <div style={styles.field}>

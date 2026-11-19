@@ -1,4 +1,4 @@
-# GIU Nexus — Production-Grade AI Career Platform
+# Nexus — Production-Grade AI Career Platform
 
 [![CI Pipeline](https://github.com/ziad7000/giu-nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/ziad7000/giu-nexus/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-22_LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -9,7 +9,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-GIU Nexus is a production-hardened university career and recruitment platform engineered by **Ziad Islam**. It connects students with high-impact job opportunities using AI-powered semantic matching, automated NER skill extraction from candidate bios, and zero-shot category classification.
+Nexus is a production-hardened career and recruitment platform engineered by **Ziad Islam**. It connects candidates with high-impact job opportunities using AI-powered semantic matching, automated NER skill extraction from bios, and zero-shot category classification.
 
 The platform is built to modern cloud-native standards, featuring **atomic concurrency control** for limited job vacancies, **RFC 7807 problem details** error handling, **version-controlled database migrations**, **multi-stage Docker containerization**, **GitHub Actions CI/CD**, and **declarative cloud infrastructure**.
 
@@ -80,7 +80,7 @@ flowchart TD
 All API errors return standardized `application/problem+json` envelopes:
 ```json
 {
-  "type": "https://api.giu-nexus.com/errors/slot-exhausted",
+  "type": "https://api.nexus-platform.com/errors/slot-exhausted",
   "title": "Conflict",
   "status": 409,
   "detail": "All available slots for this position have been filled.",
@@ -173,8 +173,8 @@ The repository includes a battle-tested [`render.yaml`](file:///Users/ziad/Deskt
 1. Connect your GitHub repository to [Render](https://render.com).
 2. Select **Blueprints** -> New Blueprint Instance.
 3. Render automatically provisions:
-   - `giu-nexus-api`: Web service running on Node 22, executing migrations before launch with a continuous `/health` check.
-   - `giu-nexus-web`: High-performance static web server with client-side SPA routing rewrites and automatic backend URL binding.
+   - `nexus-api`: Web service running on Node 22, executing migrations before launch with a continuous `/health` check.
+   - `nexus-web`: High-performance static web server with client-side SPA routing rewrites and automatic backend URL binding.
 
 ---
 

@@ -12,7 +12,7 @@ const startServer = async () => {
   try {
     await connectDB();
     server = app.listen(PORT, () => {
-      console.log(`[Server] GIU Nexus API running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+      console.log(`[Server] Nexus API running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
       console.log(`[Server] Healthcheck: http://localhost:${PORT}/health`);
       console.log(`[Server] API Docs:    http://localhost:${PORT}/api/v1/docs`);
     });

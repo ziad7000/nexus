@@ -1,8 +1,8 @@
 {
-  "name": "giu-nexus-client",
+  "name": "nexus-client",
   "private": true,
   "version": "1.0.0",
-  "description": "Frontend single-page application for GIU Nexus AI-Powered Career Platform",
+  "description": "Frontend single-page application for Nexus AI-Powered Career Platform",
   "author": "Ziad Islam",
   "repository": {
     "type": "git",
