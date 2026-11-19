@@ -1,7 +1,13 @@
 {
-  "name": "client",
+  "name": "giu-nexus-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Frontend single-page application for GIU Nexus AI-Powered Career Platform",
+  "author": "Ziad Islam",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziad7000/giu-nexus.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
