@@ -1,11 +1,13 @@
 # Nexus — Production-Grade AI Career Platform
 
+[![Live Application](https://img.shields.io/badge/Live_App-nexus--web.onrender.com-success?logo=render&logoColor=white)](https://nexus-web-lzfk.onrender.com)
+[![Swagger UI](https://img.shields.io/badge/Swagger_UI-Live_Interactive_Docs-blue?logo=swagger&logoColor=white)](https://nexus-api-ullk.onrender.com/api/v1/docs)
 [![CI Pipeline](https://github.com/ziad7000/nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/ziad7000/nexus/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-22_LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-7.0-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -15,9 +17,10 @@ The platform is built to modern cloud-native standards, featuring **atomic concu
 
 ---
 
-## Quick Links
-- **Interactive Swagger UI:** [`http://localhost:5000/api/v1/docs`](http://localhost:5000/api/v1/docs) *(or cloud instance)*
-- **API Health Check:** [`http://localhost:5000/health`](http://localhost:5000/health)
+## Live Deployments & Quick Links
+- **Live Web Application:** [https://nexus-web-lzfk.onrender.com](https://nexus-web-lzfk.onrender.com)
+- **Interactive Swagger UI (Cloud):** [https://nexus-api-ullk.onrender.com/api/v1/docs](https://nexus-api-ullk.onrender.com/api/v1/docs)
+- **Live Cloud Health Check:** [https://nexus-api-ullk.onrender.com/health](https://nexus-api-ullk.onrender.com/health)
 - **Architecture Decision Records:** [docs/DECISIONS.md](docs/DECISIONS.md)
 - **REST Client Collection:** [requests/](requests/)
 

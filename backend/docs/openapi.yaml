@@ -16,8 +16,8 @@ info:
 servers:
   - url: http://localhost:5000/api/v1
     description: Local Development Server
-  - url: https://nexus-api.onrender.com/api/v1
-    description: Cloud Production Server
+  - url: https://nexus-api-ullk.onrender.com/api/v1
+    description: Live Production Cloud Server (Render)
 
 tags:
   - name: Health

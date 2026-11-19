@@ -25,13 +25,20 @@ app.use(
 );
 
 // Cross-Origin Resource Sharing
-const allowedOrigins = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL, 'http://localhost:3000', 'http://localhost:5173']
-  : '*';
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (
+        origin.endsWith('.onrender.com') ||
+        origin.includes('localhost') ||
+        (process.env.CLIENT_URL && origin.includes(process.env.CLIENT_URL))
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true
   })
 );
