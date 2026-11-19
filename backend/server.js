@@ -1,38 +1,51 @@
-const dns = require('node:dns');
-dns.setDefaultResultOrder('ipv4first');
-require('node:dns/promises').setServers(['1.1.1.1', '8.8.8.8']);
-
-const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors');
-const connectDB = require('./config/db');
-
 dotenv.config();
-connectDB();
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-// ===== ROUTES =====
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const profileRoutes = require('./routes/profileRoutes');
-const jobRoutes = require('./routes/jobRoutes');
-const applicationRoutes = require('./routes/applicationRoutes');
-
-// ===== MOUNT ROUTES =====
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/admin', userRoutes);
-app.use('/api/v1/profile', profileRoutes);
-app.use('/api/v1/jobs', jobRoutes);
-app.use('/api/v1/applications', applicationRoutes);
-
-app.get('/', (req, res) => {
-  res.json({ message: 'GIU Nexus API is running' });
-});
+const app = require('./app');
+const { connectDB } = require('./config/db');
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+
+let server;
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    server = app.listen(PORT, () => {
+      console.log(`[Server] GIU Nexus API running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+      console.log(`[Server] Healthcheck: http://localhost:${PORT}/health`);
+      console.log(`[Server] API Docs:    http://localhost:${PORT}/api/v1/docs`);
+    });
+  } catch (error) {
+    console.error(`[Server Fatal] Initialization failed: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+// Graceful shutdown handling
+const gracefulShutdown = (signal) => {
+  console.log(`\n[Server] Received ${signal}. Commencing graceful shutdown...`);
+  if (server) {
+    server.close(() => {
+      console.log('[Server] HTTP server closed cleanly.');
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+
+  // Force shutdown after 10s if connections refuse to terminate
+  setTimeout(() => {
+    console.error('[Server] Forcing shutdown after timeout.');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Server Error] Unhandled Promise Rejection:', reason);
 });
+
+startServer();
