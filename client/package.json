@@ -6,7 +6,7 @@
   "author": "Ziad Islam",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ziad7000/giu-nexus.git"
+    "url": "git+https://github.com/ziad7000/nexus.git"
   },
   "type": "module",
   "scripts": {

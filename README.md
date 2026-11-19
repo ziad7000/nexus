@@ -1,6 +1,6 @@
 # Nexus — Production-Grade AI Career Platform
 
-[![CI Pipeline](https://github.com/ziad7000/giu-nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/ziad7000/giu-nexus/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/ziad7000/nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/ziad7000/nexus/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-22_LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
@@ -18,8 +18,8 @@ The platform is built to modern cloud-native standards, featuring **atomic concu
 ## Quick Links
 - **Interactive Swagger UI:** [`http://localhost:5000/api/v1/docs`](http://localhost:5000/api/v1/docs) *(or cloud instance)*
 - **API Health Check:** [`http://localhost:5000/health`](http://localhost:5000/health)
-- **Architecture Decision Records:** [docs/DECISIONS.md](file:///Users/ziad/Desktop/giu-nexus/docs/DECISIONS.md)
-- **REST Client Collection:** [requests/](file:///Users/ziad/Desktop/giu-nexus/requests/)
+- **Architecture Decision Records:** [docs/DECISIONS.md](docs/DECISIONS.md)
+- **REST Client Collection:** [requests/](requests/)
 
 ---
 
@@ -71,7 +71,7 @@ flowchart TD
   );
   ```
   If application creation fails downstream, an automated rollback restores the slot.
-- **Proof Test:** Verified via an automated multi-threaded stress test ([applicationSlotRace.test.js](file:///Users/ziad/Desktop/giu-nexus/backend/tests/concurrency/applicationSlotRace.test.js)). When 25 candidates submit parallel applications for 5 slots:
+- **Proof Test:** Verified via an automated multi-threaded stress test ([applicationSlotRace.test.js](backend/tests/concurrency/applicationSlotRace.test.js)). When 25 candidates submit parallel applications for 5 slots:
   - Exactly **5 requests succeed** (`HTTP 201 Created`).
   - Exactly **20 requests are rejected** with RFC 7807 problem details (`HTTP 409 Conflict: SLOT_EXHAUSTED`).
   - Final database `remainingSlots` ends up at exactly `0`.
@@ -107,8 +107,8 @@ Prerequisite: Docker & Docker Compose installed.
 
 ```bash
 # Clone the repository
-git clone https://github.com/ziad7000/giu-nexus.git
-cd giu-nexus
+git clone https://github.com/ziad7000/nexus.git
+cd nexus
 
 # Copy environment template
 cp .env.example .env
@@ -169,7 +169,7 @@ npm run test:concurrency
 
 ## Declarative Cloud Deployment (Render Blueprint)
 
-The repository includes a battle-tested [`render.yaml`](file:///Users/ziad/Desktop/giu-nexus/render.yaml) blueprint:
+The repository includes a battle-tested [`render.yaml`](render.yaml) blueprint:
 1. Connect your GitHub repository to [Render](https://render.com).
 2. Select **Blueprints** -> New Blueprint Instance.
 3. Render automatically provisions:
