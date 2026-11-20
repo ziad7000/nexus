@@ -25,7 +25,7 @@ const styles = {
     width: 24,
     height: 24,
     border: '3px solid #1e1e1e',
-    borderTop: '3px solid #7c3aed', // Purple color
+    borderTop: '3px solid #2563eb',
     borderRadius: '50%',
     animation: 'spin 0.8s linear infinite',
   },

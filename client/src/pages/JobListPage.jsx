@@ -11,6 +11,8 @@ function JobListPage() {
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(parseInt(searchParams.get('page')) || 1);
+  const [searchHovered, setSearchHovered] = useState(false);
+  const [clearHovered, setClearHovered] = useState(false);
   
   const [filters, setFilters] = useState({
     keyword: searchParams.get('keyword') || '',
@@ -116,7 +118,18 @@ function JobListPage() {
             placeholder="All Types"
             minWidth={170}
           />
-          <button type="submit" style={styles.searchBtn}>Search</button>
+          <button
+            type="submit"
+            onMouseEnter={() => setSearchHovered(true)}
+            onMouseLeave={() => setSearchHovered(false)}
+            style={{
+              ...styles.searchBtn,
+              transform: searchHovered ? 'translateY(-1px)' : 'none',
+              boxShadow: searchHovered ? '0 4px 16px rgba(37, 99, 235, 0.4)' : 'none'
+            }}
+          >
+            Search
+          </button>
         </form>
 
         {/* Results count */}
@@ -128,15 +141,26 @@ function JobListPage() {
         ) : jobs.length === 0 ? (
           <div style={styles.emptyState}>
             <p>No jobs found matching your criteria</p>
-            <button onClick={() => {
-              setFilters({ keyword: '', location: '', type: '', category: '' });
-              setPage(1);
-            }} style={styles.clearBtn}>Clear Filters</button>
+            <button
+              onClick={() => {
+                setFilters({ keyword: '', location: '', type: '', category: '' });
+                setPage(1);
+              }}
+              onMouseEnter={() => setClearHovered(true)}
+              onMouseLeave={() => setClearHovered(false)}
+              style={{
+                ...styles.clearBtn,
+                transform: clearHovered ? 'translateY(-1px)' : 'none',
+                boxShadow: clearHovered ? '0 4px 16px rgba(37, 99, 235, 0.3)' : 'none'
+              }}
+            >
+              Clear Filters
+            </button>
           </div>
         ) : (
           <div style={styles.grid}>
-            {jobs.map(job => (
-              <JobCard key={job._id} job={job} />
+            {jobs.map((job, idx) => (
+              <JobCard key={job._id} job={job} index={idx} />
             ))}
           </div>
         )}
@@ -167,19 +191,69 @@ function JobListPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
+  page: {
+    minHeight: '100vh',
+    background: '#08090d',
+    padding: '2rem',
+    position: 'relative',
+    overflow: 'hidden',
+    animation: 'fadeIn 0.3s ease'
+  },
+  orb1: {
+    position: 'fixed',
+    width: 400,
+    height: 400,
+    borderRadius: '50%',
+    background: '#2563eb',
+    filter: 'blur(120px)',
+    opacity: 0.1,
+    top: -100,
+    left: -100,
+    pointerEvents: 'none',
+    animation: 'gentlePulse 6s ease-in-out infinite'
+  },
+  orb2: {
+    position: 'fixed',
+    width: 300,
+    height: 300,
+    borderRadius: '50%',
+    background: '#1d4ed8',
+    filter: 'blur(100px)',
+    opacity: 0.1,
+    bottom: -80,
+    right: -80,
+    pointerEvents: 'none',
+    animation: 'gentlePulse 6s ease-in-out infinite'
+  },
   container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
   title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: '2rem' },
   filters: { display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' },
   filterInput: { flex: 2, background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none' },
   filterSelect: { flex: 1, background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none' },
-  searchBtn: { background: '#7c3aed', border: 'none', borderRadius: 8, padding: '0 24px', color: '#fff', fontSize: 14, fontWeight: 500, cursor: 'pointer' },
+  searchBtn: {
+    background: '#2563eb',
+    border: 'none',
+    borderRadius: 8,
+    padding: '0 24px',
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+  },
   count: { color: '#666', fontSize: 14, marginBottom: '1rem' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' },
   emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
-  clearBtn: { background: '#7c3aed', border: 'none', borderRadius: 8, padding: '10px 20px', color: '#fff', cursor: 'pointer', marginTop: '1rem' },
+  clearBtn: {
+    background: '#2563eb',
+    border: 'none',
+    borderRadius: 8,
+    padding: '10px 20px',
+    color: '#fff',
+    cursor: 'pointer',
+    marginTop: '1rem',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+  },
   pagination: { display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '2rem' },
   pageBtn: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 16px', color: '#fff', cursor: 'pointer' },
   pageInfo: { color: '#666', fontSize: 14 },

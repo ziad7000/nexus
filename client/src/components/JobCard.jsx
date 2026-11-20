@@ -1,24 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategoryBadge from './CategoryBadge';
 import SaveJobButton from './SaveJobButton';
 
-function JobCard({ job }) {
+function JobCard({ job, index = 0 }) {
   const navigate = useNavigate();
+  const [hovered, setHovered] = useState(false);
 
   const remaining = job.remainingSlots !== undefined ? job.remainingSlots : job.totalSlots;
   const isFilled = remaining === 0 || job.status === 'closed';
+  const delay = Math.min(index * 0.05, 0.4);
 
   return (
     <div
       onClick={() => navigate(`/jobs/${job._id}`)}
-      style={styles.card}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...styles.card,
+        animation: 'slideUp 0.4s ease both',
+        animationDelay: `${delay}s`,
+        transform: hovered ? 'translateY(-3px)' : 'none',
+        boxShadow: hovered ? '0 8px 32px rgba(0,0,0,0.3)' : 'none',
+        borderColor: hovered ? 'rgba(37, 99, 235, 0.2)' : 'rgba(255, 255, 255, 0.08)'
+      }}
       className="nexus-glass-card"
     >
       {/* Top Header */}
       <div style={styles.header}>
         <div style={styles.companyGroup}>
-          <div style={styles.companyAvatar}>
+          <div
+            style={{
+              ...styles.companyAvatar,
+              transform: hovered ? 'scale(1.05)' : 'none'
+            }}
+          >
             {job.company?.[0]?.toUpperCase() || 'C'}
           </div>
           <div>
@@ -81,7 +97,9 @@ function JobCard({ job }) {
             <div
               style={{
                 ...styles.aiBar,
-                width: `${Math.min(100, Math.max(0, Math.round(job.score * 100)))}%`
+                width: `${Math.min(100, Math.max(0, Math.round(job.score * 100)))}%`,
+                animation: 'progressFill 0.8s ease both',
+                animationDelay: `${delay}s`
               }}
             />
           </div>
@@ -101,7 +119,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
-    position: 'relative'
+    position: 'relative',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'
   },
   header: {
     display: 'flex',
@@ -118,14 +137,15 @@ const styles = {
     width: '44px',
     height: '44px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.15))',
+    background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(16, 185, 129, 0.15))',
     border: '1px solid rgba(255, 255, 255, 0.12)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#ffffff',
     fontWeight: '700',
-    fontSize: '1.15rem'
+    fontSize: '1.15rem',
+    transition: 'transform 0.2s ease'
   },
   jobTitle: {
     color: '#f8fafc',
@@ -236,7 +256,7 @@ const styles = {
   aiTitle: {
     fontSize: '0.75rem',
     fontWeight: '600',
-    color: '#818cf8',
+    color: '#60a5fa',
     textTransform: 'uppercase',
     letterSpacing: '0.04em'
   },
@@ -253,7 +273,7 @@ const styles = {
   },
   aiBar: {
     height: '100%',
-    background: 'linear-gradient(90deg, #6366f1, #10b981)',
+    background: 'linear-gradient(90deg, #3b82f6, #10b981)',
     borderRadius: '9999px',
     transition: 'width 0.4s ease'
   }

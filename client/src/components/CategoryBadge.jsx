@@ -1,7 +1,7 @@
 const categoryColors = {
   'Frontend':         { bg: '#0a2a1a', border: '#1a5c35', color: '#4ade80' },
   'Backend':          { bg: '#0a1a2a', border: '#1a3d5c', color: '#60a5fa' },
-  'AI/ML':            { bg: '#1a0a2a', border: '#3d1a5c', color: '#c084fc' },
+  'AI/ML':            { bg: '#0c1a2e', border: '#1e3a5f', color: '#60a5fa' },
   'DevOps':           { bg: '#0a2a2a', border: '#1a5c5c', color: '#2dd4bf' },
   'Data Engineering': { bg: '#2a1a0a', border: '#5c3d1a', color: '#fb923c' },
   'Other':            { bg: '#1a1a1a', border: '#3a3a3a', color: '#9ca3af' },
@@ -26,4 +26,4 @@ function CategoryBadge({ category }) {
   )
 }
 
-export default CategoryBadge
+export default CategoryBadge;

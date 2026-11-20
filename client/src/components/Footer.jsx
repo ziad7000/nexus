@@ -1,5 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+const FooterLink = ({ to, href, target, rel, children }) => {
+  const [hovered, setHovered] = useState(false);
+  const style = {
+    ...styles.link,
+    ...(hovered ? { color: '#e2e8f0' } : {})
+  };
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={style}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={to}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={style}
+    >
+      {children}
+    </Link>
+  );
+};
+
+const TechTagItem = ({ children }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...styles.techTag,
+        ...(hovered ? { borderColor: 'rgba(255, 255, 255, 0.15)', color: '#94a3b8' } : {})
+      }}
+    >
+      {children}
+    </span>
+  );
+};
 
 const Footer = () => {
   return (
@@ -12,8 +62,8 @@ const Footer = () => {
               <span style={styles.brandTitle}>Nexus</span>
             </div>
             <p style={styles.brandDesc}>
-              Production-grade career platform engineered with atomic concurrency control,
-              RFC 7807 problem details, and semantic AI talent matching.
+              Full-stack career platform powered by Hugging Face AI models for intelligent
+              talent matching, resume parsing, and personalized job recommendations.
             </p>
             <div style={styles.statusPill}>
               <span style={styles.statusDot}></span>
@@ -24,23 +74,23 @@ const Footer = () => {
           <div style={styles.linksGroup}>
             <div style={styles.col}>
               <h4 style={styles.colTitle}>Platform</h4>
-              <Link to="/jobs" style={styles.link}>Browse Jobs</Link>
-              <Link to="/jobs/recommended" style={styles.link}>AI Matches</Link>
-              <Link to="/login" style={styles.link}>Sign In</Link>
-              <Link to="/register" style={styles.link}>Create Account</Link>
+              <FooterLink to="/jobs">Browse Jobs</FooterLink>
+              <FooterLink to="/jobs/recommended">AI Matches</FooterLink>
+              <FooterLink to="/login">Sign In</FooterLink>
+              <FooterLink to="/register">Create Account</FooterLink>
             </div>
 
             <div style={styles.col}>
               <h4 style={styles.colTitle}>Engineering</h4>
-              <a href="https://nexus-api-ullk.onrender.com/api/v1/docs" target="_blank" rel="noreferrer" style={styles.link}>
+              <FooterLink href="https://nexus-api-ullk.onrender.com/api/v1/docs" target="_blank" rel="noreferrer">
                 Swagger UI (OpenAPI 3) ↗
-              </a>
-              <a href="https://nexus-api-ullk.onrender.com/health" target="_blank" rel="noreferrer" style={styles.link}>
+              </FooterLink>
+              <FooterLink href="https://nexus-api-ullk.onrender.com/health" target="_blank" rel="noreferrer">
                 Live Health Status ↗
-              </a>
-              <a href="https://github.com/ziad7000/nexus" target="_blank" rel="noreferrer" style={styles.link}>
+              </FooterLink>
+              <FooterLink href="https://github.com/ziad7000/nexus" target="_blank" rel="noreferrer">
                 GitHub Repository ↗
-              </a>
+              </FooterLink>
             </div>
           </div>
         </div>
@@ -50,11 +100,11 @@ const Footer = () => {
             © {new Date().getFullYear()} Nexus. Engineered by <span style={styles.author}>Ziad Islam</span>. Released under the MIT License.
           </p>
           <div style={styles.techStack}>
-            <span style={styles.techTag}>React 19</span>
-            <span style={styles.techTag}>Node 22 LTS</span>
-            <span style={styles.techTag}>Express 5</span>
-            <span style={styles.techTag}>Docker</span>
-            <span style={styles.techTag}>MongoDB 7</span>
+            <TechTagItem>React 19</TechTagItem>
+            <TechTagItem>Node 22 LTS</TechTagItem>
+            <TechTagItem>Express 5</TechTagItem>
+            <TechTagItem>Docker</TechTagItem>
+            <TechTagItem>MongoDB 7</TechTagItem>
           </div>
         </div>
       </div>
@@ -99,14 +149,14 @@ const styles = {
     width: '32px',
     height: '32px',
     borderRadius: '8px',
-    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#fff',
     fontWeight: '800',
     fontSize: '0.875rem',
-    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.35)'
+    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
   },
   brandTitle: {
     color: '#fff',
@@ -136,7 +186,8 @@ const styles = {
     height: '6px',
     borderRadius: '50%',
     background: '#10b981',
-    boxShadow: '0 0 8px #10b981'
+    boxShadow: '0 0 8px #10b981',
+    animation: 'gentlePulse 2s ease-in-out infinite'
   },
   linksGroup: {
     display: 'flex',
@@ -188,7 +239,8 @@ const styles = {
     border: '1px solid rgba(255, 255, 255, 0.06)',
     borderRadius: '4px',
     fontSize: '0.75rem',
-    color: '#64748b'
+    color: '#64748b',
+    transition: 'border-color 0.2s ease, color 0.2s ease'
   }
 };
 

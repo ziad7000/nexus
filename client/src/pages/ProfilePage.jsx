@@ -14,6 +14,8 @@ function ProfilePage() {
     const [error, setError] = useState('');
     const [extracting, setExtracting] = useState(false);
     const [extractError, setExtractError] = useState('');
+    const [editBtnHovered, setEditBtnHovered] = useState(false);
+    const [avatarHovered, setAvatarHovered] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -55,19 +57,39 @@ function ProfilePage() {
                 <div style={styles.header}>
                     <h1 style={styles.title}>My Profile</h1>
                     <div style={styles.actions}>
-                        <Link to="/profile/edit" style={styles.editBtn}>Edit Profile</Link>
+                        <Link
+                            to="/profile/edit"
+                            onMouseEnter={() => setEditBtnHovered(true)}
+                            onMouseLeave={() => setEditBtnHovered(false)}
+                            style={{
+                                ...styles.editBtn,
+                                ...(editBtnHovered ? {
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
+                                } : {})
+                            }}
+                        >
+                            Edit Profile
+                        </Link>
                         <Link to="/profile/change-password" style={styles.passwordBtn}>Change Password</Link>
                     </div>
                 </div>
 
                 <div style={styles.card}>
-                    <div style={styles.avatar}>
-    {profile.profilePicture ? (
-        <img src={profile.profilePicture} alt="Profile" style={{ width: 80, height: 80, borderRadius: 40, objectFit: 'cover' }} />
-    ) : (
-        profile.name?.charAt(0).toUpperCase()
-    )}
-</div>
+                    <div
+                        onMouseEnter={() => setAvatarHovered(true)}
+                        onMouseLeave={() => setAvatarHovered(false)}
+                        style={{
+                            ...styles.avatar,
+                            transform: avatarHovered ? 'scale(1.05)' : 'none'
+                        }}
+                    >
+                        {profile.profilePicture ? (
+                            <img src={profile.profilePicture} alt="Profile" style={{ width: 80, height: 80, borderRadius: 40, objectFit: 'cover' }} />
+                        ) : (
+                            profile.name?.charAt(0).toUpperCase()
+                        )}
+                    </div>
                     <div style={styles.info}>
                         <h2 style={styles.name}>{profile.name}</h2>
                         <p style={styles.email}>{profile.email}</p>
@@ -100,7 +122,7 @@ function ProfilePage() {
                     <div style={styles.skillsContainer}>
                         {profile.skills?.length > 0 ? (
                             profile.skills.map((skill, i) => (
-                                <SkillChip key={i} skill={skill} />
+                                <SkillChip key={i} skill={skill} index={i} />
                             ))
                         ) : (
                             <p style={styles.noSkills}>No skills yet. Add a bio and extract skills!</p>
@@ -113,27 +135,27 @@ function ProfilePage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-    container: { maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 1 },
+    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    container: { maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' },
     title: { color: '#fff', fontSize: 32, fontWeight: 800 },
     actions: { display: 'flex', gap: '1rem' },
-    editBtn: { background: '#7c3aed', color: '#fff', padding: '8px 20px', borderRadius: 8, textDecoration: 'none', fontSize: 14, fontWeight: 500 },
+    editBtn: { background: '#2563eb', color: '#fff', padding: '8px 20px', borderRadius: 8, textDecoration: 'none', fontSize: 14, fontWeight: 500, transition: 'transform 0.15s ease, box-shadow 0.15s ease' },
     passwordBtn: { background: 'transparent', border: '0.5px solid #2a2a2a', color: '#999', padding: '8px 20px', borderRadius: 8, textDecoration: 'none', fontSize: 14 },
     card: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', marginBottom: '1.5rem' },
-    avatar: { width: 80, height: 80, background: '#7c3aed', borderRadius: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: '1rem' },
+    avatar: { width: 80, height: 80, background: '#2563eb', borderRadius: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: '1rem', transition: 'transform 0.3s ease' },
     info: { textAlign: 'center' },
     name: { color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 4 },
     email: { color: '#666', fontSize: 14, marginBottom: 8 },
     role: { color: '#888', fontSize: 13 },
-    roleBadge: { background: '#1e1e1e', padding: '4px 12px', borderRadius: 20, fontSize: 12, color: '#a78bfa' },
+    roleBadge: { background: '#1e1e1e', padding: '4px 12px', borderRadius: 20, fontSize: 12, color: '#93c5fd' },
     sectionHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' },
     sectionTitle: { color: '#fff', fontSize: 18, fontWeight: 600 },
-    editLink: { color: '#7c3aed', fontSize: 13, textDecoration: 'none' },
+    editLink: { color: '#3b82f6', fontSize: 13, textDecoration: 'none' },
     bio: { color: '#aaa', fontSize: 14, lineHeight: 1.6 },
-    extractBtn: { background: '#13102a', border: '0.5px solid #3d2f7a', color: '#a78bfa', padding: '8px 16px', borderRadius: 8, fontSize: 12, cursor: 'pointer' },
+    extractBtn: { background: '#0c1a2e', border: '0.5px solid #1e3a5f', color: '#93c5fd', padding: '8px 16px', borderRadius: 8, fontSize: 12, cursor: 'pointer', transition: 'border-color 0.2s ease' },
     skillsContainer: { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1rem' },
     noSkills: { color: '#666', fontSize: 13 },
 };

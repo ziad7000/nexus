@@ -1,5 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+const OptionItem = ({ optLabel, isSelected, onClick }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+      style={{
+        ...styles.option,
+        ...(isSelected ? styles.optionSelected : {}),
+        ...(hovered && !isSelected ? { background: 'rgba(255, 255, 255, 0.05)', color: '#f8fafc' } : {})
+      }}
+      role="option"
+      aria-selected={isSelected}
+    >
+      <span>{optLabel}</span>
+      {isSelected && (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      )}
+    </div>
+  );
+};
+
 export default function CustomDropdown({
   options = [],
   value = '',
@@ -85,23 +110,15 @@ export default function CustomDropdown({
             const isSelected = optVal === value;
 
             return (
-              <div
+              <OptionItem
                 key={index}
-                style={isSelected ? { ...styles.option, ...styles.optionSelected } : styles.option}
+                optLabel={optLabel}
+                isSelected={isSelected}
                 onClick={() => {
                   onChange({ target: { value: optVal } });
                   setIsOpen(false);
                 }}
-                role="option"
-                aria-selected={isSelected}
-              >
-                <span>{optLabel}</span>
-                {isSelected && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-              </div>
+              />
             );
           })}
         </div>
@@ -141,8 +158,8 @@ const styles = {
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
   },
   triggerActive: {
-    borderColor: '#6366f1',
-    boxShadow: '0 0 0 3px rgba(99, 102, 241, 0.2)'
+    borderColor: '#3b82f6',
+    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.2)'
   },
   selectedText: {
     color: '#f8fafc',
@@ -171,7 +188,7 @@ const styles = {
     boxShadow: '0 16px 36px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05)',
     maxHeight: '260px',
     overflowY: 'auto',
-    animation: 'fadeIn 0.15s ease'
+    animation: 'slideDown 0.15s ease both'
   },
   option: {
     display: 'flex',
@@ -182,10 +199,10 @@ const styles = {
     fontSize: '0.875rem',
     color: '#cbd5e1',
     cursor: 'pointer',
-    transition: 'background 0.12s ease, color 0.12s ease'
+    transition: 'background 0.1s ease, color 0.1s ease'
   },
   optionSelected: {
-    background: 'rgba(99, 102, 241, 0.15)',
+    background: 'rgba(37, 99, 235, 0.15)',
     color: '#ffffff',
     fontWeight: '600'
   }

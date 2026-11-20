@@ -65,12 +65,19 @@ function JobApplicantsPage() {
 
         {applications.length === 0 ? (
           <div style={styles.emptyState}>
-            <p>No applicants yet for this position.</p>
+            <p style={{ color: '#94a3b8' }}>No applicants yet for this position.</p>
           </div>
         ) : (
           <div style={styles.applicantsList}>
-            {applications.map(app => (
-              <div key={app._id} style={styles.applicantCard}>
+            {applications.map((app, idx) => (
+              <div
+                key={app._id}
+                style={{
+                  ...styles.applicantCard,
+                  animation: 'slideUp 0.4s ease both',
+                  animationDelay: `${Math.min(idx * 0.05, 0.4)}s`
+                }}
+              >
                 <div style={styles.applicantHeader}>
                   <div style={styles.applicantAvatar}>
                     {app.user?.name?.charAt(0).toUpperCase() || '?'}
@@ -119,23 +126,23 @@ function JobApplicantsPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-  container: { maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 },
+  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  container: { maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
   header: { marginBottom: '2rem' },
   backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
   title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
   subtitle: { color: '#666', fontSize: 14 },
   applicantsList: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  applicantCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem' },
+  applicantCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', transition: 'border-color 0.2s ease' },
   applicantHeader: { display: 'flex', gap: '1rem', flexWrap: 'wrap' },
-  applicantAvatar: { width: 50, height: 50, background: '#7c3aed', borderRadius: 25, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, color: '#fff' },
+  applicantAvatar: { width: 50, height: 50, background: '#2563eb', borderRadius: 25, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, color: '#fff' },
   applicantInfo: { flex: 2 },
   applicantName: { color: '#fff', fontSize: 18, fontWeight: 600, marginBottom: 4 },
   applicantEmail: { color: '#666', fontSize: 13, marginBottom: 8 },
   skillsContainer: { display: 'flex', flexWrap: 'wrap', gap: 6 },
-  skillChip: { background: '#1e1e1e', padding: '4px 10px', borderRadius: 20, fontSize: 11, color: '#a78bfa' },
+  skillChip: { background: '#1e1e1e', padding: '4px 10px', borderRadius: 20, fontSize: 11, color: '#93c5fd' },
   statusSection: { minWidth: 140 },
   statusSelect: { width: '100%', padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer', border: '0.5px solid' },
   coverLetter: { marginTop: '1rem', paddingTop: '1rem', borderTop: '0.5px solid #2a2a2a', color: '#aaa', fontSize: 13 },

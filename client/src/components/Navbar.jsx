@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+
+const NavLinkItem = ({ to, active, children }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <Link
+      to={to}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...(active ? styles.navLinkActive : styles.navLink),
+        ...(hovered && !active ? { color: '#60a5fa', transform: 'translateY(-1px)' } : {})
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [logoHovered, setLogoHovered] = useState(false);
+  const [projHovered, setProjHovered] = useState(false);
+  const [postHovered, setPostHovered] = useState(false);
+  const [signInHovered, setSignInHovered] = useState(false);
+  const [signUpHovered, setSignUpHovered] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -19,13 +41,34 @@ const Navbar = () => {
       <div style={styles.container}>
         {/* Brand */}
         <div style={styles.leftGroup}>
-          <Link to="/" style={styles.brand}>
-            <div style={styles.logoBadge}>NX</div>
+          <Link
+            to="/"
+            style={styles.brand}
+            onMouseEnter={() => setLogoHovered(true)}
+            onMouseLeave={() => setLogoHovered(false)}
+          >
+            <div
+              style={{
+                ...styles.logoBadge,
+                transform: logoHovered ? 'rotate(-5deg) scale(1.08)' : 'none',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              NX
+            </div>
             <span style={styles.brandName}>Nexus</span>
           </Link>
           <Link
             to="/project-info"
-            style={isActive('/project-info') ? styles.projectInfoBtnActive : styles.projectInfoBtn}
+            onMouseEnter={() => setProjHovered(true)}
+            onMouseLeave={() => setProjHovered(false)}
+            style={{
+              ...(isActive('/project-info') ? styles.projectInfoBtnActive : styles.projectInfoBtn),
+              ...(projHovered && !isActive('/project-info') ? {
+                borderColor: 'rgba(37, 99, 235, 0.5)',
+                background: 'rgba(37, 99, 235, 0.18)'
+              } : {})
+            }}
             title="View Architecture, Diagnostics & Engineering Docs"
           >
             <span style={styles.pulseDot}></span>
@@ -35,33 +78,45 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <nav style={styles.nav}>
-          <Link to="/" style={isActive('/') ? styles.navLinkActive : styles.navLink}>
+          <NavLinkItem to="/" active={isActive('/')}>
             Explore
-          </Link>
-          <Link to="/jobs" style={isActive('/jobs') ? styles.navLinkActive : styles.navLink}>
+          </NavLinkItem>
+          <NavLinkItem to="/jobs" active={isActive('/jobs')}>
             All Jobs
-          </Link>
+          </NavLinkItem>
 
           {isAuthenticated && user?.role === 'jobSeeker' && (
             <>
-              <Link to="/jobs/recommended" style={isActive('/jobs/recommended') ? styles.navLinkActive : styles.navLink}>
+              <NavLinkItem to="/jobs/recommended" active={isActive('/jobs/recommended')}>
                 AI Matches
-              </Link>
-              <Link to="/jobs/saved" style={isActive('/jobs/saved') ? styles.navLinkActive : styles.navLink}>
+              </NavLinkItem>
+              <NavLinkItem to="/jobs/saved" active={isActive('/jobs/saved')}>
                 Saved
-              </Link>
-              <Link to="/applications/my" style={isActive('/applications/my') ? styles.navLinkActive : styles.navLink}>
+              </NavLinkItem>
+              <NavLinkItem to="/applications/my" active={isActive('/applications/my')}>
                 Applications
-              </Link>
+              </NavLinkItem>
             </>
           )}
 
           {isAuthenticated && user?.role === 'recruiter' && (
             <>
-              <Link to="/recruiter/dashboard" style={isActive('/recruiter/dashboard') ? styles.navLinkActive : styles.navLink}>
+              <NavLinkItem to="/recruiter/dashboard" active={isActive('/recruiter/dashboard')}>
                 Dashboard
-              </Link>
-              <Link to="/recruiter/jobs/create" style={styles.postJobBtn}>
+              </NavLinkItem>
+              <Link
+                to="/recruiter/jobs/create"
+                onMouseEnter={() => setPostHovered(true)}
+                onMouseLeave={() => setPostHovered(false)}
+                style={{
+                  ...styles.postJobBtn,
+                  transform: postHovered ? 'translateY(-1px)' : 'none',
+                  boxShadow: postHovered
+                    ? '0 4px 16px rgba(16, 185, 129, 0.3)'
+                    : '0 2px 10px rgba(16, 185, 129, 0.3)',
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                }}
+              >
                 + Post Job
               </Link>
             </>
@@ -69,15 +124,15 @@ const Navbar = () => {
 
           {isAuthenticated && user?.role === 'admin' && (
             <>
-              <Link to="/admin/dashboard" style={isActive('/admin/dashboard') ? styles.navLinkActive : styles.navLink}>
+              <NavLinkItem to="/admin/dashboard" active={isActive('/admin/dashboard')}>
                 Overview
-              </Link>
-              <Link to="/admin/users" style={isActive('/admin/users') ? styles.navLinkActive : styles.navLink}>
+              </NavLinkItem>
+              <NavLinkItem to="/admin/users" active={isActive('/admin/users')}>
                 Users
-              </Link>
-              <Link to="/admin/recruiters" style={isActive('/admin/recruiters') ? styles.navLinkActive : styles.navLink}>
+              </NavLinkItem>
+              <NavLinkItem to="/admin/recruiters" active={isActive('/admin/recruiters')}>
                 Approvals
-              </Link>
+              </NavLinkItem>
             </>
           )}
         </nav>
@@ -101,10 +156,26 @@ const Navbar = () => {
             </div>
           ) : (
             <div style={styles.guestButtons}>
-              <Link to="/login" style={styles.signInBtn}>
+              <Link
+                to="/login"
+                onMouseEnter={() => setSignInHovered(true)}
+                onMouseLeave={() => setSignInHovered(false)}
+                style={{
+                  ...styles.signInBtn,
+                  ...(signInHovered ? { color: '#ffffff' } : {})
+                }}
+              >
                 Sign in
               </Link>
-              <Link to="/register" style={styles.signUpBtn}>
+              <Link
+                to="/register"
+                onMouseEnter={() => setSignUpHovered(true)}
+                onMouseLeave={() => setSignUpHovered(false)}
+                style={{
+                  ...styles.signUpBtn,
+                  ...(signUpHovered ? { opacity: 0.9, transform: 'translateY(-1px)' } : {})
+                }}
+              >
                 Get Started
               </Link>
             </div>
@@ -151,7 +222,7 @@ const styles = {
     width: '32px',
     height: '32px',
     borderRadius: '9px',
-    background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
+    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -159,7 +230,7 @@ const styles = {
     fontWeight: '800',
     fontSize: '0.85rem',
     letterSpacing: '-0.02em',
-    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)'
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)'
   },
   brandName: {
     color: '#f8fafc',
@@ -172,28 +243,29 @@ const styles = {
     alignItems: 'center',
     gap: '0.45rem',
     padding: '0.3rem 0.75rem',
-    background: 'rgba(99, 102, 241, 0.1)',
-    border: '1px solid rgba(99, 102, 241, 0.3)',
+    background: 'rgba(37, 99, 235, 0.1)',
+    border: '1px solid rgba(37, 99, 235, 0.3)',
     borderRadius: '9999px',
-    color: '#a5b4fc',
+    color: '#93c5fd',
     fontSize: '0.75rem',
     fontWeight: '600',
     textDecoration: 'none',
-    transition: 'all 0.15s ease'
+    transition: 'border-color 0.2s ease, background 0.2s ease, color 0.2s ease'
   },
   projectInfoBtnActive: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.45rem',
     padding: '0.3rem 0.75rem',
-    background: 'rgba(99, 102, 241, 0.25)',
-    border: '1px solid #6366f1',
+    background: 'rgba(37, 99, 235, 0.25)',
+    border: '1px solid #3b82f6',
     borderRadius: '9999px',
     color: '#ffffff',
     fontSize: '0.75rem',
     fontWeight: '600',
     textDecoration: 'none',
-    boxShadow: '0 0 12px rgba(99, 102, 241, 0.4)'
+    boxShadow: '0 0 12px rgba(37, 99, 235, 0.4)',
+    transition: 'border-color 0.2s ease, background 0.2s ease, color 0.2s ease'
   },
   pulseDot: {
     width: '5px',
@@ -219,7 +291,7 @@ const styles = {
     fontWeight: '500',
     padding: '0.45rem 0.85rem',
     borderRadius: '8px',
-    transition: 'all 0.15s ease',
+    transition: 'color 0.2s ease, transform 0.15s ease',
     textDecoration: 'none'
   },
   navLinkActive: {
@@ -268,7 +340,7 @@ const styles = {
     padding: '0.45rem 1rem',
     borderRadius: '8px',
     textDecoration: 'none',
-    transition: 'opacity 0.15s ease'
+    transition: 'opacity 0.15s ease, transform 0.15s ease'
   },
   userProfile: {
     display: 'flex',
@@ -287,7 +359,7 @@ const styles = {
     width: '32px',
     height: '32px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
+    background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
@@ -297,6 +369,7 @@ const styles = {
   },
   userInfo: {
     display: 'flex',
+    alignItems: 'flex-start',
     flexDirection: 'column',
     lineHeight: '1.2'
   },

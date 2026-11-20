@@ -2,10 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 
+const CodeSnippetBlock = ({ children }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...styles.codeSnippet,
+        ...(hovered ? { borderColor: 'rgba(37, 99, 235, 0.3)' } : {})
+      }}
+    >
+      <code>{children}</code>
+    </div>
+  );
+};
+
 export default function ProjectInfoPage() {
   const [healthData, setHealthData] = useState(null);
   const [latency, setLatency] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
+  const [ctaHovered, setCtaHovered] = useState(false);
 
   const fetchHealth = async () => {
     setLoadingHealth(true);
@@ -32,6 +49,60 @@ export default function ProjectInfoPage() {
   useEffect(() => {
     fetchHealth();
   }, []);
+
+  const features = [
+    {
+      icon: '🤖',
+      title: 'Hugging Face AI & Smart Matching',
+      desc: (
+        <>
+          Integrates Hugging Face's <code>facebook/bart-large-mnli</code> model for zero-shot job classification into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering). Uses NLP entity extraction to parse candidate bios and computes cosine similarity vector overlap for personalized job recommendations.
+        </>
+      ),
+      proof: {
+        badge: 'AI PIPELINE',
+        text: 'Zero-shot classification • Automated bio skill extraction • Cosine similarity scoring • AI cover letter generator'
+      }
+    },
+    {
+      icon: '🌐',
+      title: 'Full-Stack MERN Architecture',
+      desc: (
+        <>
+          Modern React 19 client with custom glassmorphism design system, dark obsidian palette, and integrated dropdowns. Powered by Express 5 REST APIs, Node.js 22 LTS, and MongoDB Atlas with Mongoose 9 ODM and version-controlled automated migrations (<code>migrate-mongo</code>).
+        </>
+      ),
+      snippet: 'MongoDB Atlas • Express 5 • React 19 • Node.js 22 LTS'
+    },
+    {
+      icon: '⚡',
+      title: 'Atomic Concurrency Control',
+      desc: (
+        <>
+          Guarantees zero-oversubscription during high-velocity simultaneous job applications.
+          Uses condition-based atomic decrements directly in the database engine (<code>findOneAndUpdate</code> with <code>$inc</code> and <code>remainingSlots &gt; 0</code>), backed by automatic rollback on downstream failures.
+        </>
+      ),
+      proof: {
+        badge: 'VERIFIED PROOF TEST',
+        text: (
+          <>
+            <code>applicationSlotRace.test.js</code> fired 25 parallel asynchronous HTTP requests for 5 vacancies: exactly 5 succeeded (201) and 20 were safely rejected (409 Conflict) with 0 remaining slots.
+          </>
+        )
+      }
+    },
+    {
+      icon: '🐳',
+      title: 'Multi-Stage Docker & Cloud CI/CD',
+      desc: (
+        <>
+          Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips dev dependencies and drops root privileges to run as unprivileged <code>USER node</code>. Automated GitHub Actions CI runs migrations and test suites against live database containers before deployment to Render.
+        </>
+      ),
+      snippet: 'USER node • Docker Compose 1-command startup • GitHub Actions CI'
+    }
+  ];
 
   return (
     <div style={styles.page}>
@@ -62,7 +133,13 @@ export default function ProjectInfoPage() {
               href="https://nexus-api-ullk.onrender.com/api/v1/docs"
               target="_blank"
               rel="noreferrer"
-              style={styles.ctaPrimary}
+              onMouseEnter={() => setCtaHovered(true)}
+              onMouseLeave={() => setCtaHovered(false)}
+              style={{
+                ...styles.ctaPrimary,
+                transform: ctaHovered ? 'translateY(-1px)' : 'none',
+                boxShadow: ctaHovered ? '0 4px 16px rgba(37, 99, 235, 0.4)' : 'none'
+              }}
             >
               Open Interactive Swagger UI ↗
             </a>
@@ -139,56 +216,30 @@ export default function ProjectInfoPage() {
           <h2 style={styles.sectionHeading}>Core Technical Highlights</h2>
 
           <div style={styles.featureGrid}>
-            <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>🤖</div>
-              <h3 style={styles.featureTitle}>Hugging Face AI & Smart Matching</h3>
-              <p style={styles.featureDesc}>
-                Integrates Hugging Face's <code>facebook/bart-large-mnli</code> model for zero-shot job classification into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering). Uses NLP entity extraction to parse candidate bios and computes cosine similarity vector overlap for personalized job recommendations.
-              </p>
-              <div style={styles.proofBox}>
-                <span style={styles.proofBadge}>AI PIPELINE</span>
-                <p style={styles.proofText}>
-                  Zero-shot classification • Automated bio skill extraction • Cosine similarity scoring • AI cover letter generator
-                </p>
+            {features.map((feat, index) => (
+              <div
+                key={index}
+                style={{
+                  ...styles.featureCard,
+                  animation: 'slideUp 0.4s ease both',
+                  animationDelay: `${index * 0.08}s`
+                }}
+                className="nexus-glass-card"
+              >
+                <div style={styles.featureIconBadge}>{feat.icon}</div>
+                <h3 style={styles.featureTitle}>{feat.title}</h3>
+                <p style={styles.featureDesc}>{feat.desc}</p>
+                {feat.proof && (
+                  <div style={styles.proofBox}>
+                    <span style={styles.proofBadge}>{feat.proof.badge}</span>
+                    <p style={styles.proofText}>{feat.proof.text}</p>
+                  </div>
+                )}
+                {feat.snippet && (
+                  <CodeSnippetBlock>{feat.snippet}</CodeSnippetBlock>
+                )}
               </div>
-            </div>
-
-            <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>🌐</div>
-              <h3 style={styles.featureTitle}>Full-Stack MERN Architecture</h3>
-              <p style={styles.featureDesc}>
-                Modern React 19 client with custom glassmorphism design system, dark obsidian palette, and integrated dropdowns. Powered by Express 5 REST APIs, Node.js 22 LTS, and MongoDB Atlas with Mongoose 9 ODM and version-controlled automated migrations (<code>migrate-mongo</code>).
-              </p>
-              <div style={styles.codeSnippet}>
-                <code>MongoDB Atlas • Express 5 • React 19 • Node.js 22 LTS</code>
-              </div>
-            </div>
-
-            <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>⚡</div>
-              <h3 style={styles.featureTitle}>Atomic Concurrency Control</h3>
-              <p style={styles.featureDesc}>
-                Guarantees zero-oversubscription during high-velocity simultaneous job applications.
-                Uses condition-based atomic decrements directly in the database engine (<code>findOneAndUpdate</code> with <code>$inc</code> and <code>remainingSlots &gt; 0</code>), backed by automatic rollback on downstream failures.
-              </p>
-              <div style={styles.proofBox}>
-                <span style={styles.proofBadge}>VERIFIED PROOF TEST</span>
-                <p style={styles.proofText}>
-                  <code>applicationSlotRace.test.js</code> fired 25 parallel asynchronous HTTP requests for 5 vacancies: exactly 5 succeeded (201) and 20 were safely rejected (409 Conflict) with 0 remaining slots.
-                </p>
-              </div>
-            </div>
-
-            <div style={styles.featureCard} className="nexus-glass-card">
-              <div style={styles.featureIconBadge}>🐳</div>
-              <h3 style={styles.featureTitle}>Multi-Stage Docker & Cloud CI/CD</h3>
-              <p style={styles.featureDesc}>
-                Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips dev dependencies and drops root privileges to run as unprivileged <code>USER node</code>. Automated GitHub Actions CI runs migrations and test suites against live database containers before deployment to Render.
-              </p>
-              <div style={styles.codeSnippet}>
-                <code>USER node • Docker Compose 1-command startup • GitHub Actions CI</code>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -256,7 +307,7 @@ const styles = {
     transform: 'translateX(-50%)',
     width: '1000px',
     height: '500px',
-    background: 'radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.05), transparent 70%)',
+    background: 'radial-gradient(ellipse at center, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.05), transparent 70%)',
     pointerEvents: 'none'
   },
   container: {
@@ -296,12 +347,12 @@ const styles = {
   },
   creatorBadge: {
     display: 'inline-block',
-    background: 'rgba(99, 102, 241, 0.1)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
+    background: 'rgba(37, 99, 235, 0.1)',
+    border: '1px solid rgba(37, 99, 235, 0.25)',
     borderRadius: '9999px',
     padding: '0.35rem 1rem',
     fontSize: '0.8rem',
-    color: '#a5b4fc',
+    color: '#93c5fd',
     marginBottom: '1.25rem'
   },
   title: {
@@ -324,13 +375,14 @@ const styles = {
     flexWrap: 'wrap'
   },
   ctaPrimary: {
-    background: '#6366f1',
+    background: '#2563eb',
     color: '#ffffff',
     padding: '0.75rem 1.5rem',
     borderRadius: '10px',
     fontWeight: '600',
     fontSize: '0.9rem',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
   },
   ctaSecondary: {
     background: 'rgba(255, 255, 255, 0.05)',
@@ -364,7 +416,8 @@ const styles = {
     height: '8px',
     borderRadius: '50%',
     background: '#10b981',
-    boxShadow: '0 0 10px #10b981'
+    boxShadow: '0 0 10px #10b981',
+    animation: 'gentlePulse 2s ease-in-out infinite'
   },
   healthTitle: {
     fontSize: '1.15rem',
@@ -480,8 +533,9 @@ const styles = {
     borderRadius: '8px',
     padding: '0.65rem 0.85rem',
     fontSize: '0.75rem',
-    color: '#a5b4fc',
-    fontFamily: 'ui-monospace, monospace'
+    color: '#93c5fd',
+    fontFamily: 'ui-monospace, monospace',
+    transition: 'border-color 0.2s ease'
   },
   adrsHeader: {
     marginBottom: '1.5rem'
@@ -508,9 +562,9 @@ const styles = {
   adrId: {
     fontSize: '0.75rem',
     fontWeight: '700',
-    background: 'rgba(99, 102, 241, 0.15)',
-    border: '1px solid rgba(99, 102, 241, 0.3)',
-    color: '#818cf8',
+    background: 'rgba(37, 99, 235, 0.15)',
+    border: '1px solid rgba(37, 99, 235, 0.3)',
+    color: '#60a5fa',
     padding: '0.25rem 0.55rem',
     borderRadius: '6px',
     whiteSpace: 'nowrap'

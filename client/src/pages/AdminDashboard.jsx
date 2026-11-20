@@ -30,6 +30,13 @@ function AdminDashboard() {
   if (loading) return <LoadingSpinner />;
   if (error) return <div style={styles.errorBox}>{error}</div>;
 
+  const statCardsData = [
+    { icon: '👥', value: stats?.usersByRole?.jobSeeker || 0, label: 'Job Seekers' },
+    { icon: '💼', value: stats?.usersByRole?.recruiter || 0, label: 'Recruiters' },
+    { icon: '📋', value: stats?.jobsByStatus?.open || 0, label: 'Open Jobs' },
+    { icon: '📝', value: stats?.appsByStatus?.pending || 0, label: 'Pending Apps' }
+  ];
+
   return (
     <div style={styles.page}>
       <div style={styles.orb1} />
@@ -43,34 +50,22 @@ function AdminDashboard() {
 
         {/* Stats Cards */}
         <div style={styles.statsGrid}>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}>👥</div>
-            <div>
-              <div style={styles.statValue}>{stats?.usersByRole?.jobSeeker || 0}</div>
-              <div style={styles.statLabel}>Job Seekers</div>
+          {statCardsData.map((stat, idx) => (
+            <div
+              key={idx}
+              style={{
+                ...styles.statCard,
+                animation: 'slideUp 0.3s ease both',
+                animationDelay: `${idx * 0.05}s`
+              }}
+            >
+              <div style={styles.statIcon}>{stat.icon}</div>
+              <div>
+                <div style={styles.statValue}>{stat.value}</div>
+                <div style={styles.statLabel}>{stat.label}</div>
+              </div>
             </div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}>💼</div>
-            <div>
-              <div style={styles.statValue}>{stats?.usersByRole?.recruiter || 0}</div>
-              <div style={styles.statLabel}>Recruiters</div>
-            </div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}>📋</div>
-            <div>
-              <div style={styles.statValue}>{stats?.jobsByStatus?.open || 0}</div>
-              <div style={styles.statLabel}>Open Jobs</div>
-            </div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statIcon}>📝</div>
-            <div>
-              <div style={styles.statValue}>{stats?.appsByStatus?.pending || 0}</div>
-              <div style={styles.statLabel}>Pending Apps</div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Top Jobs Section */}
@@ -99,12 +94,12 @@ function AdminDashboard() {
             <Link to="/admin/users" style={styles.actionCard}>
               <div style={styles.actionIcon}>👥</div>
               <div>Manage Users</div>
-              <small>Approve recruiters, delete users</small>
+              <small style={{ color: '#94a3b8' }}>Approve recruiters, delete users</small>
             </Link>
             <Link to="/admin/jobs" style={styles.actionCard}>
               <div style={styles.actionIcon}>📋</div>
               <div>Manage Jobs</div>
-              <small>View and manage all job posts</small>
+              <small style={{ color: '#94a3b8' }}>View and manage all job posts</small>
             </Link>
           </div>
         </div>
@@ -114,9 +109,9 @@ function AdminDashboard() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
+  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
   container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
   header: { marginBottom: '2rem' },
   title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: 8 },
@@ -130,13 +125,13 @@ const styles = {
   sectionTitle: { color: '#fff', fontSize: 20, fontWeight: 600, marginBottom: '1rem' },
   topJobsList: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
   topJobCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 12, padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' },
-  topJobRank: { width: 30, height: 30, background: '#7c3aed', borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 },
+  topJobRank: { width: 30, height: 30, background: '#2563eb', borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 },
   topJobInfo: { flex: 1 },
   topJobTitle: { color: '#fff', fontWeight: 600 },
   topJobCompany: { color: '#666', fontSize: 12 },
-  topJobCount: { color: '#a78bfa', fontSize: 13, fontWeight: 500 },
+  topJobCount: { color: '#93c5fd', fontSize: 13, fontWeight: 500 },
   actionsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' },
-  actionCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', textAlign: 'center', textDecoration: 'none', color: '#fff', transition: 'border-color 0.2s' },
+  actionCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', textAlign: 'center', textDecoration: 'none', color: '#fff', transition: 'border-color 0.2s ease, transform 0.15s ease' },
   actionIcon: { fontSize: 32, marginBottom: '0.5rem' },
   errorBox: { background: '#1a0a0a', border: '0.5px solid #3d1515', borderRadius: 8, padding: '1rem', color: '#f87171', textAlign: 'center' },
 };

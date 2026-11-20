@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import JobCard from '../components/JobCard';
 import CustomDropdown from '../components/CustomDropdown';
+import { useInView } from '../hooks/useInView';
 
 function SkeletonCard() {
   return (
@@ -36,7 +37,9 @@ export default function HomePage() {
   const [category, setCategory] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [searchHovered, setSearchHovered] = useState(false);
 
+  const [bannerRef, bannerInView] = useInView({ threshold: 0.1, triggerOnce: true });
   const jobsSectionRef = useRef(null);
 
   const categories = [
@@ -259,7 +262,16 @@ export default function HomePage() {
               minWidth={190}
             />
 
-            <button type="submit" style={styles.searchBtn}>
+            <button
+              type="submit"
+              onMouseEnter={() => setSearchHovered(true)}
+              onMouseLeave={() => setSearchHovered(false)}
+              style={{
+                ...styles.searchBtn,
+                transform: searchHovered ? 'translateY(-1px)' : 'none',
+                boxShadow: searchHovered ? '0 4px 16px rgba(37, 99, 235, 0.4)' : 'none'
+              }}
+            >
               Search Jobs
             </button>
           </form>
@@ -311,8 +323,8 @@ export default function HomePage() {
               </div>
             ) : (
               <div style={styles.grid}>
-                {recommended.slice(0, 3).map((job) => (
-                  <JobCard key={job._id} job={job} />
+                {recommended.slice(0, 3).map((job, idx) => (
+                  <JobCard key={job._id} job={job} index={idx} />
                 ))}
               </div>
             )}
@@ -419,8 +431,8 @@ export default function HomePage() {
             </div>
           ) : (
             <div style={styles.grid}>
-              {jobs.map((job) => (
-                <JobCard key={job._id} job={job} />
+              {jobs.map((job, idx) => (
+                <JobCard key={job._id} job={job} index={idx} />
               ))}
             </div>
           )}
@@ -450,7 +462,16 @@ export default function HomePage() {
         </section>
 
         {/* RECRUITER CALLOUT BANNER */}
-        <section style={styles.recruiterBanner} className="nexus-glass-card">
+        <section
+          ref={bannerRef}
+          style={{
+            ...styles.recruiterBanner,
+            opacity: bannerInView ? 1 : 0,
+            transform: bannerInView ? 'translateY(0)' : 'translateY(24px)',
+            transition: 'opacity 0.5s ease, transform 0.5s ease'
+          }}
+          className="nexus-glass-card"
+        >
           <div style={styles.recruiterContent}>
             <span style={styles.recruiterTag}>FOR EMPLOYERS & RECRUITERS</span>
             <h3 style={styles.recruiterTitle}>Looking for Exceptional Engineering Talent?</h3>
@@ -486,7 +507,8 @@ const styles = {
     transform: 'translateX(-50%)',
     width: '1000px',
     height: '600px',
-    background: 'radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.04), transparent 70%)',
+    background: 'radial-gradient(ellipse at center, rgba(37, 99, 235, 0.12), rgba(6, 182, 212, 0.04), transparent 70%)',
+    animation: 'gentlePulse 6s ease-in-out infinite',
     pointerEvents: 'none',
     zIndex: 0
   },
@@ -508,16 +530,17 @@ const styles = {
     alignItems: 'center',
     gap: '0.45rem',
     padding: '0.35rem 0.95rem',
-    background: 'rgba(99, 102, 241, 0.1)',
-    border: '1px solid rgba(99, 102, 241, 0.25)',
+    background: 'rgba(37, 99, 235, 0.1)',
+    border: '1px solid rgba(37, 99, 235, 0.25)',
     borderRadius: '9999px',
     fontSize: '0.8rem',
-    color: '#a5b4fc',
+    color: '#93c5fd',
     fontWeight: '600',
-    marginBottom: '1.5rem'
+    marginBottom: '1.5rem',
+    animation: 'slideUp 0.6s ease both'
   },
   badgeSparkle: {
-    color: '#818cf8',
+    color: '#60a5fa',
     fontSize: '0.9rem'
   },
   heroTitle: {
@@ -525,10 +548,11 @@ const styles = {
     fontWeight: '800',
     lineHeight: '1.15',
     letterSpacing: '-0.03em',
-    marginBottom: '1.25rem'
+    marginBottom: '1.25rem',
+    animation: 'slideUp 0.6s ease both'
   },
   heroGradient: {
-    background: 'linear-gradient(135deg, #a5b4fc 0%, #38bdf8 50%, #34d399 100%)',
+    background: 'linear-gradient(135deg, #93c5fd 0%, #38bdf8 50%, #34d399 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent'
   },
@@ -537,7 +561,8 @@ const styles = {
     color: '#94a3b8',
     lineHeight: '1.6',
     maxWidth: '650px',
-    margin: '0 auto 2.5rem'
+    margin: '0 auto 2.5rem',
+    animation: 'slideUp 0.6s ease 0.1s both'
   },
   searchBar: {
     display: 'flex',
@@ -547,7 +572,8 @@ const styles = {
     alignItems: 'center',
     flexWrap: 'wrap',
     marginBottom: '1.75rem',
-    boxShadow: '0 16px 36px -10px rgba(0, 0, 0, 0.6)'
+    boxShadow: '0 16px 36px -10px rgba(0, 0, 0, 0.6)',
+    animation: 'slideUp 0.6s ease 0.2s both'
   },
   inputWrapper: {
     flex: '2 1 240px',
@@ -579,7 +605,7 @@ const styles = {
     boxSizing: 'border-box'
   },
   searchBtn: {
-    background: '#6366f1',
+    background: '#3b82f6',
     color: '#fff',
     border: 'none',
     borderRadius: '10px',
@@ -588,14 +614,15 @@ const styles = {
     fontWeight: '600',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    transition: 'background 0.15s ease'
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease'
   },
   categoryPills: {
     display: 'flex',
     gap: '0.65rem',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    animation: 'slideUp 0.6s ease 0.3s both'
   },
   categoryPill: {
     background: 'rgba(255, 255, 255, 0.04)',
@@ -606,18 +633,19 @@ const styles = {
     fontSize: '0.825rem',
     fontWeight: '500',
     cursor: 'pointer',
-    transition: 'all 0.15s ease'
+    transition: 'all 0.2s ease'
   },
   categoryPillActive: {
-    background: 'rgba(99, 102, 241, 0.15)',
-    border: '1px solid #6366f1',
+    background: 'rgba(37, 99, 235, 0.15)',
+    border: '1px solid #3b82f6',
     color: '#ffffff',
     padding: '0.45rem 1rem',
     borderRadius: '9999px',
     fontSize: '0.825rem',
     fontWeight: '600',
     cursor: 'pointer',
-    boxShadow: '0 0 12px rgba(99, 102, 241, 0.3)'
+    boxShadow: '0 0 12px rgba(37, 99, 235, 0.3)',
+    transition: 'all 0.2s ease'
   },
   valueSection: {
     display: 'grid',
@@ -669,7 +697,7 @@ const styles = {
     marginTop: '0.2rem'
   },
   syncSkillsBtn: {
-    color: '#818cf8',
+    color: '#60a5fa',
     fontSize: '0.875rem',
     fontWeight: '600',
     textDecoration: 'none'
@@ -697,7 +725,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '50%',
-    lineHeight: 1
+    lineHeight: 1,
+    transition: 'opacity 0.15s ease'
   },
   activeFilterChipsRow: {
     display: 'flex',
@@ -719,18 +748,19 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.4rem',
-    background: 'rgba(99, 102, 241, 0.12)',
-    border: '1px solid rgba(99, 102, 241, 0.3)',
-    color: '#c7d2fe',
+    background: 'rgba(37, 99, 235, 0.12)',
+    border: '1px solid rgba(37, 99, 235, 0.3)',
+    color: '#bfdbfe',
     fontSize: '0.775rem',
     padding: '0.25rem 0.65rem',
     borderRadius: '9999px',
-    fontWeight: '500'
+    fontWeight: '500',
+    animation: 'scaleIn 0.15s ease both'
   },
   removeChipBtn: {
     background: 'transparent',
     border: 'none',
-    color: '#a5b4fc',
+    color: '#93c5fd',
     cursor: 'pointer',
     fontSize: '0.7rem',
     padding: 0,
@@ -775,7 +805,7 @@ const styles = {
   },
   primaryCtaSmall: {
     display: 'inline-block',
-    background: '#6366f1',
+    background: '#2563eb',
     color: '#fff',
     padding: '0.65rem 1.25rem',
     borderRadius: '8px',
@@ -783,7 +813,8 @@ const styles = {
     fontWeight: '600',
     textDecoration: 'none',
     border: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
   },
   paginationRow: {
     display: 'flex',

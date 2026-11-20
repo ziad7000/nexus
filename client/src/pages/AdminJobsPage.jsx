@@ -112,13 +112,13 @@ function AdminJobsPage() {
                                     <td><CategoryBadge category={job.category} /></td>
                                     <td>{job.location}</td>
                                     <td>
-                      <span style={{
-                          ...styles.statusBadge,
-                          background: job.status === 'open' ? '#0a2a1a' : '#1a1a1a',
-                          color: job.status === 'open' ? '#4ade80' : '#9ca3af'
-                      }}>
-                        {job.status}
-                      </span>
+                                        <span style={{
+                                            ...styles.statusBadge,
+                                            background: job.status === 'open' ? '#0a2a1a' : '#1a1a1a',
+                                            color: job.status === 'open' ? '#4ade80' : '#9ca3af'
+                                        }}>
+                                            {job.status}
+                                        </span>
                                     </td>
                                     <td style={styles.recruiterCell}>
                                         {job.createdBy?.name || 'Unknown'}
@@ -145,21 +145,21 @@ function AdminJobsPage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
+    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
     header: { marginBottom: '2rem' },
     backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
     title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
     subtitle: { color: '#666', fontSize: 14 },
     filters: { display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' },
-    filterBtn: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 16px', color: '#999', cursor: 'pointer', fontSize: 13 },
-    filterActive: { background: '#7c3aed', borderColor: '#7c3aed', color: '#fff' },
-    tableContainer: { overflowX: 'auto' },
+    filterBtn: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 16px', color: '#999', cursor: 'pointer', fontSize: 13, transition: 'all 0.15s ease' },
+    filterActive: { background: '#2563eb', borderColor: '#2563eb', color: '#fff' },
+    tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
     table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
     titleCell: { fontWeight: 600 },
-    jobLink: { color: '#7c3aed', textDecoration: 'none' },
+    jobLink: { color: '#3b82f6', textDecoration: 'none' },
     statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
     recruiterCell: { display: 'flex', flexDirection: 'column', gap: 2 },
     recruiterEmail: { fontSize: 11, color: '#555' },

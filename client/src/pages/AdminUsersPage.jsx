@@ -12,6 +12,7 @@ function AdminUsersPage() {
     const [updating, setUpdating] = useState(null);
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [refreshHovered, setRefreshHovered] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -111,7 +112,17 @@ function AdminUsersPage() {
                             minWidth={150}
                         />
                     </div>
-                    <button onClick={fetchUsers} style={styles.refreshBtn}>Refresh</button>
+                    <button
+                        onClick={fetchUsers}
+                        onMouseEnter={() => setRefreshHovered(true)}
+                        onMouseLeave={() => setRefreshHovered(false)}
+                        style={{
+                            ...styles.refreshBtn,
+                            transform: refreshHovered ? 'rotate(15deg)' : 'none'
+                        }}
+                    >
+                        Refresh
+                    </button>
                 </div>
 
                 {users.length === 0 ? (
@@ -139,24 +150,24 @@ function AdminUsersPage() {
                                     <td style={styles.nameCell}>{user.name}</td>
                                     <td>{user.email}</td>
                                     <td>
-                      <span style={{
-                          ...styles.roleBadge,
-                          background: user.role === 'admin' ? '#1a0a2a' : user.role === 'recruiter' ? '#0a1a2a' : '#0a2a1a',
-                          color: user.role === 'admin' ? '#c084fc' : user.role === 'recruiter' ? '#60a5fa' : '#4ade80'
-                      }}>
-                        {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
-                      </span>
+                                        <span style={{
+                                            ...styles.roleBadge,
+                                            background: user.role === 'admin' ? '#0c1a2e' : user.role === 'recruiter' ? '#0a1a2a' : '#0a2a1a',
+                                            color: user.role === 'admin' ? '#93c5fd' : user.role === 'recruiter' ? '#60a5fa' : '#4ade80'
+                                        }}>
+                                            {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
+                                        </span>
                                     </td>
                                     <td>
-                      <span style={{
-                          ...styles.statusBadge,
-                          background: user.status === 'approved' ? '#0a2a1a' :
-                              user.status === 'pending' ? '#13102a' : '#1a0a0a',
-                          color: user.status === 'approved' ? '#4ade80' :
-                              user.status === 'pending' ? '#a78bfa' : '#f87171'
-                      }}>
-                        {user.status}
-                      </span>
+                                        <span style={{
+                                            ...styles.statusBadge,
+                                            background: user.status === 'approved' ? '#0a2a1a' :
+                                                user.status === 'pending' ? '#0c1a2e' : '#1a0a0a',
+                                            color: user.status === 'approved' ? '#4ade80' :
+                                                user.status === 'pending' ? '#93c5fd' : '#f87171'
+                                        }}>
+                                            {user.status}
+                                        </span>
                                     </td>
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td>
@@ -227,10 +238,10 @@ function AdminUsersPage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
+    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
     header: { marginBottom: '2rem' },
     backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
     title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
@@ -239,8 +250,17 @@ const styles = {
     filterGroup: { display: 'flex', flexDirection: 'column', gap: '4px' },
     filterLabel: { color: '#999', fontSize: 11, textTransform: 'uppercase' },
     filterSelect: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 12px', color: '#fff', fontSize: 13, outline: 'none' },
-    refreshBtn: { background: '#7c3aed', border: 'none', borderRadius: 8, padding: '8px 16px', color: '#fff', cursor: 'pointer', fontSize: 13 },
-    tableContainer: { overflowX: 'auto' },
+    refreshBtn: {
+        background: '#2563eb',
+        border: 'none',
+        borderRadius: 8,
+        padding: '8px 16px',
+        color: '#fff',
+        cursor: 'pointer',
+        fontSize: 13,
+        transition: 'transform 0.15s ease'
+    },
+    tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
     table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
     avatarCell: { width: 50 },
     avatar: { fontSize: 20 },

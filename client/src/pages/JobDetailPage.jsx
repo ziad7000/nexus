@@ -21,6 +21,8 @@ function JobDetailPage() {
   const [hasApplied, setHasApplied] = useState(false);
   const [generatingCoverLetter, setGeneratingCoverLetter] = useState(false);
   const [coverLetterError, setCoverLetterError] = useState('');
+  const [applyBtnHovered, setApplyBtnHovered] = useState(false);
+  const [submitBtnHovered, setSubmitBtnHovered] = useState(false);
 
   useEffect(() => {
     fetchJob();
@@ -70,17 +72,17 @@ function JobDetailPage() {
   };
 
   const handleGenerateCoverLetter = async () => {
-  setGeneratingCoverLetter(true);
-  setCoverLetterError('');
-  try {
-    const response = await api.post(`/jobs/${id}/cover-letter`);
-    setCoverLetter(response.data.coverLetter);
-  } catch (err) {
-    setCoverLetterError('Failed to generate cover letter. Try again.');
-  } finally {
-    setGeneratingCoverLetter(false);
-  }
-};
+    setGeneratingCoverLetter(true);
+    setCoverLetterError('');
+    try {
+      const response = await api.post(`/jobs/${id}/cover-letter`);
+      setCoverLetter(response.data.coverLetter);
+    } catch (err) {
+      setCoverLetterError('Failed to generate cover letter. Try again.');
+    } finally {
+      setGeneratingCoverLetter(false);
+    }
+  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorAlert message={error} />;
@@ -140,7 +142,18 @@ function JobDetailPage() {
                   </div>
                 </div>
               ) : (
-                <button onClick={() => setShowApplyModal(true)} style={styles.applyBtn}>
+                <button
+                  onClick={() => setShowApplyModal(true)}
+                  onMouseEnter={() => setApplyBtnHovered(true)}
+                  onMouseLeave={() => setApplyBtnHovered(false)}
+                  style={{
+                    ...styles.applyBtn,
+                    ...(applyBtnHovered ? {
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
+                    } : {})
+                  }}
+                >
                   Apply Now
                 </button>
               )}
@@ -149,7 +162,7 @@ function JobDetailPage() {
 
           {!isAuthenticated && (
             <div style={styles.loginPrompt}>
-              <p>Please <Link to="/login">login</Link> to apply for this job</p>
+              <p>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>login</Link> to apply for this job</p>
             </div>
           )}
         </div>
@@ -157,45 +170,93 @@ function JobDetailPage() {
 
       {/* Apply Modal */}
       {showApplyModal && (
-  <div style={styles.modalOverlay} onClick={() => setShowApplyModal(false)}>
-    <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <h3 style={styles.modalTitle}>Apply for {job.title}</h3>
-      
-      <button
-        onClick={handleGenerateCoverLetter}
-        disabled={generatingCoverLetter}
-        style={styles.generateBtn}
-      >
-        {generatingCoverLetter ? '✨ Generating...' : '✨ Generate Cover Letter Suggestion'}
-      </button>
-      
-      {coverLetterError && <p style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{coverLetterError}</p>}
-      
-      <textarea
-        style={styles.modalTextarea}
-        rows={6}
-        placeholder="Write a cover letter (optional) or generate one above..."
-        value={coverLetter}
-        onChange={(e) => setCoverLetter(e.target.value)}
-      />
-      <div style={styles.modalButtons}>
-        <button onClick={() => setShowApplyModal(false)} style={styles.modalCancel}>Cancel</button>
-        <button onClick={handleApply} disabled={applying} style={styles.modalSubmit}>
-          {applying ? 'Submitting...' : 'Submit Application'}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        <div style={styles.modalOverlay} onClick={() => setShowApplyModal(false)}>
+          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Apply for {job.title}</h3>
+            
+            <button
+              onClick={handleGenerateCoverLetter}
+              disabled={generatingCoverLetter}
+              style={styles.generateBtn}
+            >
+              {generatingCoverLetter ? '✨ Generating...' : '✨ Generate Cover Letter Suggestion'}
+            </button>
+            
+            {coverLetterError && <p style={{ color: '#f87171', fontSize: 12, marginBottom: 8 }}>{coverLetterError}</p>}
+            
+            <textarea
+              style={styles.modalTextarea}
+              rows={6}
+              placeholder="Write a cover letter (optional) or generate one above..."
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+            />
+            <div style={styles.modalButtons}>
+              <button onClick={() => setShowApplyModal(false)} style={styles.modalCancel}>Cancel</button>
+              <button
+                onClick={handleApply}
+                disabled={applying}
+                onMouseEnter={() => setSubmitBtnHovered(true)}
+                onMouseLeave={() => setSubmitBtnHovered(false)}
+                style={{
+                  ...styles.modalSubmit,
+                  ...(submitBtnHovered && !applying ? {
+                    transform: 'translateY(-1px)',
+                    boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
+                  } : {})
+                }}
+              >
+                {applying ? 'Submitting...' : 'Submit Application'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-  container: { maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 },
+  page: {
+    minHeight: '100vh',
+    background: '#08090d',
+    padding: '2rem',
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  orb1: {
+    position: 'fixed',
+    width: 400,
+    height: 400,
+    borderRadius: '50%',
+    background: '#2563eb',
+    filter: 'blur(120px)',
+    opacity: 0.1,
+    top: -100,
+    left: -100,
+    pointerEvents: 'none',
+    animation: 'gentlePulse 6s ease-in-out infinite'
+  },
+  orb2: {
+    position: 'fixed',
+    width: 300,
+    height: 300,
+    borderRadius: '50%',
+    background: '#1d4ed8',
+    filter: 'blur(100px)',
+    opacity: 0.1,
+    bottom: -80,
+    right: -80,
+    pointerEvents: 'none',
+    animation: 'gentlePulse 6s ease-in-out infinite'
+  },
+  container: {
+    maxWidth: 900,
+    margin: '0 auto',
+    position: 'relative',
+    zIndex: 1,
+    animation: 'slideUp 0.4s ease both'
+  },
   backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
   card: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '2rem' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' },
@@ -207,20 +268,70 @@ const styles = {
   description: { color: '#aaa', fontSize: 14, lineHeight: 1.6 },
   requirements: { color: '#aaa', fontSize: 14, paddingLeft: '1rem', lineHeight: 1.8 },
   applySection: { marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '0.5px solid #2a2a2a' },
-  applyBtn: { background: '#7c3aed', border: 'none', borderRadius: 8, padding: '14px 28px', color: '#fff', fontSize: 16, fontWeight: 600, cursor: 'pointer', width: '100%' },
+  applyBtn: {
+    background: '#2563eb',
+    border: 'none',
+    borderRadius: 8,
+    padding: '14px 28px',
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: 'pointer',
+    width: '100%',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+  },
   loginPrompt: { marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '0.5px solid #2a2a2a', textAlign: 'center', color: '#666' },
   appliedBox: { display: 'flex', alignItems: 'center', gap: '1rem', background: '#0a2a1a', border: '0.5px solid #1a5c35', borderRadius: 12, padding: '1rem' },
   appliedIcon: { fontSize: 32 },
   appliedText: { color: '#4ade80', fontWeight: 500 },
   appliedStatus: { color: '#aaa', fontSize: 13, marginTop: 4 },
-  modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
-  modal: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', width: '90%', maxWidth: 500 },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.8)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    animation: 'fadeIn 0.15s ease'
+  },
+  modal: {
+    background: '#161616',
+    border: '0.5px solid #2a2a2a',
+    borderRadius: 16,
+    padding: '1.5rem',
+    width: '90%',
+    maxWidth: 500,
+    animation: 'scaleIn 0.2s ease both'
+  },
   modalTitle: { color: '#fff', fontSize: 20, fontWeight: 600, marginBottom: '1rem' },
-  modalTextarea: { width: '100%', background: '#1e1e1e', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px', color: '#fff', fontSize: 14, fontFamily: 'inherit', marginBottom: '1rem' },
+  modalTextarea: { width: '100%', background: '#1e1e1e', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px', color: '#fff', fontSize: 14, fontFamily: 'inherit', marginBottom: '1rem', boxSizing: 'border-box' },
   modalButtons: { display: 'flex', gap: '1rem', justifyContent: 'flex-end' },
   modalCancel: { background: 'transparent', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '10px 20px', color: '#999', cursor: 'pointer' },
-  generateBtn: { width: '100%', background: '#13102a', border: '0.5px solid #3d2f7a', color: '#a78bfa', padding: '10px', borderRadius: 8, fontSize: 13, cursor: 'pointer', marginBottom: '1rem' },
-  modalSubmit: { background: '#7c3aed', border: 'none', borderRadius: 8, padding: '10px 20px', color: '#fff', cursor: 'pointer' },
+  generateBtn: {
+    width: '100%',
+    background: '#0c1a2e',
+    border: '0.5px solid #1e3a5f',
+    color: '#93c5fd',
+    padding: '10px',
+    borderRadius: 8,
+    fontSize: 13,
+    cursor: 'pointer',
+    marginBottom: '1rem',
+    transition: 'border-color 0.2s ease'
+  },
+  modalSubmit: {
+    background: '#2563eb',
+    border: 'none',
+    borderRadius: 8,
+    padding: '10px 20px',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+  },
 };
 
 export default JobDetailPage;

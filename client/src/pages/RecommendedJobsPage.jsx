@@ -10,6 +10,7 @@ function RecommendedJobsPage() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [emptyHovered, setEmptyHovered] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) fetchRecommendedJobs();
@@ -34,7 +35,7 @@ function RecommendedJobsPage() {
         <div style={styles.container}>
           <div style={styles.loginPrompt}>
             <h1 style={styles.title}>Recommended Jobs</h1>
-            <p>Please <Link to="/login" style={{color: '#7c3aed'}}>login</Link> to see personalized job recommendations</p>
+            <p style={{ color: '#94a3b8' }}>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>login</Link> to see personalized job recommendations</p>
           </div>
         </div>
       </div>
@@ -59,16 +60,29 @@ function RecommendedJobsPage() {
           <div style={styles.errorBox}>{error}</div>
         ) : jobs.length === 0 ? (
           <div style={styles.emptyState}>
-            <p>No recommendations yet.</p>
+            <p style={{ color: '#94a3b8' }}>No recommendations yet.</p>
             <p style={styles.hint}>Add skills to your profile to get AI-matched job recommendations.</p>
-            <Link to="/profile" style={styles.emptyBtn}>Go to Profile</Link>
+            <Link
+              to="/profile"
+              onMouseEnter={() => setEmptyHovered(true)}
+              onMouseLeave={() => setEmptyHovered(false)}
+              style={{
+                ...styles.emptyBtn,
+                ...(emptyHovered ? {
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
+                } : {})
+              }}
+            >
+              Go to Profile
+            </Link>
           </div>
         ) : (
           <>
             <div style={styles.count}>Showing {jobs.length} jobs ranked by AI match</div>
             <div style={styles.grid}>
-              {jobs.map(job => (
-                <JobCard key={job._id} job={job} />
+              {jobs.map((job, idx) => (
+                <JobCard key={job._id} job={job} index={idx} />
               ))}
             </div>
           </>
@@ -79,10 +93,10 @@ function RecommendedJobsPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-  container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
+  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
   header: { marginBottom: '2rem' },
   backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
   title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: 8 },
@@ -90,8 +104,19 @@ const styles = {
   count: { color: '#666', fontSize: 14, marginBottom: '1.5rem' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' },
   emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
-  emptyBtn: { display: 'inline-block', background: '#7c3aed', color: '#fff', padding: '10px 20px', borderRadius: 8, textDecoration: 'none', marginTop: '1rem' },
-  hint: { fontSize: 13, marginTop: 8 },
+  emptyBtn: {
+    display: 'inline-block',
+    background: '#2563eb',
+    color: '#fff',
+    padding: '10px 20px',
+    borderRadius: 8,
+    textDecoration: 'none',
+    marginTop: '1rem',
+    fontWeight: 600,
+    fontSize: 14,
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+  },
+  hint: { fontSize: 13, marginTop: 8, color: '#888' },
   errorBox: { background: '#1a0a0a', border: '0.5px solid #3d1515', borderRadius: 8, padding: '1rem', color: '#f87171', textAlign: 'center' },
   loginPrompt: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#fff' },
 };

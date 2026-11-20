@@ -89,9 +89,9 @@ function AdminRecruitersPage() {
                       <span style={{
                         ...styles.statusBadge,
                         background: recruiter.status === 'approved' ? '#0a2a1a' :
-                                   recruiter.status === 'pending' ? '#13102a' : '#1a0a0a',
+                                   recruiter.status === 'pending' ? '#0c1a2e' : '#1a0a0a',
                         color: recruiter.status === 'approved' ? '#4ade80' :
-                               recruiter.status === 'pending' ? '#a78bfa' : '#f87171'
+                               recruiter.status === 'pending' ? '#93c5fd' : '#f87171'
                       }}>
                         {recruiter.status}
                       </span>
@@ -155,15 +155,15 @@ function AdminRecruitersPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0d0d0d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#7c3aed', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#4f46e5', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none' },
-  container: { maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 },
+  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
+  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
+  container: { maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
   header: { marginBottom: '2rem' },
   backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
   title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
   subtitle: { color: '#666', fontSize: 14 },
-  tableContainer: { overflowX: 'auto' },
+  tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
   table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
   nameCell: { fontWeight: 600 },
   statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
