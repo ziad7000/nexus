@@ -12,7 +12,6 @@ function AdminUsersPage() {
     const [updating, setUpdating] = useState(null);
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [refreshHovered, setRefreshHovered] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -57,177 +56,128 @@ function AdminUsersPage() {
         }
     };
 
-    const getRoleIcon = (role) => {
-        switch(role) {
-            case 'jobSeeker': return '🎓';
-            case 'recruiter': return '💼';
-            case 'admin': return '👑';
-            default: return '👤';
-        }
-    };
-
     if (loading) return <LoadingSpinner />;
 
     return (
         <div style={styles.page}>
-            <div style={styles.orb1} />
-            <div style={styles.orb2} />
-
             <div style={styles.container}>
                 <div style={styles.header}>
-                    <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Dashboard</Link>
-                    <h1 style={styles.title}>Manage Users</h1>
-                    <p style={styles.subtitle}>View, approve, and manage all platform users</p>
+                    <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Overview</Link>
+                    <span style={styles.preTitle}>DIRECTORY GOVERNANCE</span>
+                    <h1 style={styles.title}>User Management</h1>
+                    <p style={styles.subtitle}>Audit candidate and recruiter profiles, modify system roles, and revoke platform access</p>
                 </div>
 
                 <ErrorAlert message={error} />
 
                 {/* Filters */}
-                <div style={styles.filters}>
+                <div style={styles.filtersCard}>
                     <div style={styles.filterGroup}>
-                        <label style={styles.filterLabel}>Role:</label>
+                        <label style={styles.filterLabel}>Filter by Role</label>
                         <CustomDropdown
                             options={[
                                 { value: 'all', label: 'All Roles' },
-                                { value: 'jobSeeker', label: 'Job Seekers' },
+                                { value: 'jobSeeker', label: 'Candidates' },
                                 { value: 'recruiter', label: 'Recruiters' },
                                 { value: 'admin', label: 'Admins' }
                             ]}
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            minWidth={150}
+                            minWidth={160}
                         />
                     </div>
                     <div style={styles.filterGroup}>
-                        <label style={styles.filterLabel}>Status:</label>
+                        <label style={styles.filterLabel}>Filter by Status</label>
                         <CustomDropdown
                             options={[
-                                { value: 'all', label: 'All Status' },
-                                { value: 'pending', label: 'Pending' },
+                                { value: 'all', label: 'All Statuses' },
                                 { value: 'approved', label: 'Approved' },
+                                { value: 'pending', label: 'Pending' },
                                 { value: 'rejected', label: 'Rejected' }
                             ]}
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            minWidth={150}
+                            minWidth={160}
                         />
                     </div>
-                    <button
-                        onClick={fetchUsers}
-                        onMouseEnter={() => setRefreshHovered(true)}
-                        onMouseLeave={() => setRefreshHovered(false)}
-                        style={{
-                            ...styles.refreshBtn,
-                            transform: refreshHovered ? 'rotate(15deg)' : 'none'
-                        }}
-                    >
-                        Refresh
-                    </button>
                 </div>
 
                 {users.length === 0 ? (
-                    <div style={styles.emptyState}>No users found.</div>
+                    <div style={styles.emptyState}>No users match the selected filters.</div>
                 ) : (
-                    <div style={styles.tableContainer}>
+                    <div style={styles.tableCard} className="table-responsive">
                         <table style={styles.table}>
                             <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Joined</th>
-                                <th>Actions</th>
-                            </tr>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {users.map(user => (
-                                <tr key={user._id}>
-                                    <td style={styles.avatarCell}>
-                                        <span style={styles.avatar}>{getRoleIcon(user.role)}</span>
-                                    </td>
-                                    <td style={styles.nameCell}>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>
-                                        <span style={{
-                                            ...styles.roleBadge,
-                                            background: user.role === 'admin' ? '#0c1a2e' : user.role === 'recruiter' ? '#0a1a2a' : '#0a2a1a',
-                                            color: user.role === 'admin' ? '#93c5fd' : user.role === 'recruiter' ? '#60a5fa' : '#4ade80'
-                                        }}>
-                                            {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span style={{
-                                            ...styles.statusBadge,
-                                            background: user.status === 'approved' ? '#0a2a1a' :
-                                                user.status === 'pending' ? '#0c1a2e' : '#1a0a0a',
-                                            color: user.status === 'approved' ? '#4ade80' :
-                                                user.status === 'pending' ? '#93c5fd' : '#f87171'
-                                        }}>
-                                            {user.status}
-                                        </span>
-                                    </td>
-                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                    <td>
-                                        <div style={styles.actions}>
-                                            {user.role !== 'admin' && (
-                                                <>
-                                                    {user.status === 'pending' && (
-                                                        <>
-                                                            <button
-                                                                onClick={() => updateStatus(user._id, 'approved')}
-                                                                disabled={updating === user._id}
-                                                                style={styles.approveBtn}
-                                                            >
-                                                                Approve
-                                                            </button>
-                                                            <button
-                                                                onClick={() => updateStatus(user._id, 'rejected')}
-                                                                disabled={updating === user._id}
-                                                                style={styles.rejectBtn}
-                                                            >
-                                                                Reject
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                    {user.status === 'approved' && (
-                                                        <button
-                                                            onClick={() => updateStatus(user._id, 'rejected')}
-                                                            disabled={updating === user._id}
-                                                            style={styles.rejectBtn}
-                                                        >
-                                                            Reject
-                                                        </button>
-                                                    )}
-                                                    {user.status === 'rejected' && (
-                                                        <button
-                                                            onClick={() => updateStatus(user._id, 'approved')}
-                                                            disabled={updating === user._id}
-                                                            style={styles.approveBtn}
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                    )}
-                                                </>
-                                            )}
-                                            <button
-                                                onClick={() => deleteUser(user._id)}
-                                                disabled={user.role === 'admin'}
-                                                style={{
-                                                    ...styles.deleteBtn,
-                                                    opacity: user.role === 'admin' ? 0.5 : 1,
-                                                    cursor: user.role === 'admin' ? 'not-allowed' : 'pointer'
-                                                }}
-                                                title={user.role === 'admin' ? 'Cannot delete admin' : 'Delete user'}
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                {users.map(u => (
+                                    <tr key={u._id}>
+                                        <td style={styles.nameCell}>
+                                            <div style={styles.userCellGroup}>
+                                                <div style={styles.tableAvatar}>
+                                                    {u.name?.charAt(0).toUpperCase() || 'U'}
+                                                </div>
+                                                <span style={styles.userNameText}>{u.name}</span>
+                                            </div>
+                                        </td>
+                                        <td style={styles.emailCell}>{u.email}</td>
+                                        <td>
+                                            <span style={styles.roleTag}>{u.role}</span>
+                                        </td>
+                                        <td>
+                                            <span style={{
+                                                ...styles.statusBadge,
+                                                background: u.status === 'approved' ? '#ecfdf5' :
+                                                           u.status === 'pending' ? '#eff6ff' : '#fef2f2',
+                                                border: `1px solid ${
+                                                    u.status === 'approved' ? '#a7f3d0' :
+                                                    u.status === 'pending' ? '#bfdbfe' : '#fecaca'
+                                                }`,
+                                                color: u.status === 'approved' ? '#065f46' :
+                                                       u.status === 'pending' ? '#1d4ed8' : '#991b1b'
+                                            }}>
+                                                {u.status}
+                                            </span>
+                                        </td>
+                                        <td style={styles.dateCell}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                                        <td>
+                                            <div style={styles.actionButtons}>
+                                                {u.role === 'recruiter' && u.status === 'pending' && (
+                                                    <button
+                                                        onClick={() => updateStatus(u._id, 'approved')}
+                                                        style={styles.approveBtn}
+                                                        disabled={updating === u._id}
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                )}
+                                                {u.role === 'recruiter' && u.status === 'approved' && (
+                                                    <button
+                                                        onClick={() => updateStatus(u._id, 'rejected')}
+                                                        style={styles.rejectBtn}
+                                                        disabled={updating === u._id}
+                                                    >
+                                                        Revoke
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => deleteUser(u._id)}
+                                                    style={styles.deleteBtn}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -238,40 +188,177 @@ function AdminUsersPage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-    header: { marginBottom: '2rem' },
-    backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-    title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
-    subtitle: { color: '#666', fontSize: 14 },
-    filters: { display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-end' },
-    filterGroup: { display: 'flex', flexDirection: 'column', gap: '4px' },
-    filterLabel: { color: '#999', fontSize: 11, textTransform: 'uppercase' },
-    filterSelect: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 12px', color: '#fff', fontSize: 13, outline: 'none' },
-    refreshBtn: {
-        background: '#2563eb',
-        border: 'none',
-        borderRadius: 8,
-        padding: '8px 16px',
-        color: '#fff',
-        cursor: 'pointer',
-        fontSize: 13,
-        transition: 'transform 0.15s ease'
+    page: {
+        minHeight: '100vh',
+        background: '#f8fafc',
+        padding: '2.5rem 1.5rem 5rem',
+        position: 'relative'
     },
-    tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
-    table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
-    avatarCell: { width: 50 },
-    avatar: { fontSize: 20 },
-    nameCell: { fontWeight: 600 },
-    roleBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
-    statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
-    actions: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
-    approveBtn: { background: '#0a2a1a', border: '0.5px solid #1a5c35', color: '#4ade80', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11 },
-    rejectBtn: { background: '#1a0a0a', border: '0.5px solid #3d1515', color: '#f87171', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11 },
-    deleteBtn: { background: '#2a0a0a', border: '0.5px solid #5c1a1a', color: '#f87171', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11 },
-    emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+    container: {
+        maxWidth: 1100,
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1
+    },
+    header: {
+        marginBottom: '2rem'
+    },
+    backBtn: {
+        color: '#64748b',
+        textDecoration: 'none',
+        fontSize: '0.85rem',
+        fontWeight: '600',
+        display: 'inline-block',
+        marginBottom: '0.75rem'
+    },
+    preTitle: {
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        color: '#1e40af',
+        letterSpacing: '0.08em',
+        marginBottom: '0.25rem',
+        display: 'block'
+    },
+    title: {
+        color: '#0f172a',
+        fontSize: '2rem',
+        fontWeight: '800',
+        letterSpacing: '-0.02em',
+        margin: 0
+    },
+    subtitle: {
+        color: '#64748b',
+        fontSize: '0.9rem',
+        marginTop: '0.35rem',
+        margin: 0
+    },
+    filtersCard: {
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        padding: '1.25rem',
+        display: 'flex',
+        gap: '1.5rem',
+        marginBottom: '1.5rem',
+        flexWrap: 'wrap',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+    },
+    filterGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px'
+    },
+    filterLabel: {
+        color: '#64748b',
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        textTransform: 'uppercase'
+    },
+    tableCard: {
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        textAlign: 'left',
+        fontSize: '0.85rem'
+    },
+    nameCell: {
+        fontWeight: '600',
+        color: '#0f172a'
+    },
+    userCellGroup: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.65rem'
+    },
+    tableAvatar: {
+        width: 28,
+        height: 28,
+        borderRadius: 6,
+        background: '#f1f5f9',
+        border: '1px solid #e2e8f0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: '700',
+        fontSize: '0.75rem',
+        color: '#0f172a'
+    },
+    userNameText: {
+        color: '#0f172a',
+        fontWeight: '600'
+    },
+    emailCell: {
+        color: '#64748b'
+    },
+    roleTag: {
+        background: '#f1f5f9',
+        border: '1px solid #e2e8f0',
+        padding: '2px 8px',
+        borderRadius: 4,
+        fontSize: '0.75rem',
+        color: '#334155',
+        fontWeight: '600',
+        textTransform: 'capitalize'
+    },
+    statusBadge: {
+        padding: '2px 8px',
+        borderRadius: 4,
+        fontSize: '0.75rem',
+        fontWeight: '600',
+        textTransform: 'capitalize'
+    },
+    dateCell: {
+        color: '#64748b'
+    },
+    actionButtons: {
+        display: 'flex',
+        gap: '0.5rem',
+        alignItems: 'center'
+    },
+    approveBtn: {
+        background: '#ecfdf5',
+        border: '1px solid #a7f3d0',
+        color: '#065f46',
+        padding: '4px 10px',
+        borderRadius: 4,
+        cursor: 'pointer',
+        fontSize: 12,
+        fontWeight: '600'
+    },
+    rejectBtn: {
+        background: '#fef2f2',
+        border: '1px solid #fecaca',
+        color: '#991b1b',
+        padding: '4px 10px',
+        borderRadius: 4,
+        cursor: 'pointer',
+        fontSize: 12,
+        fontWeight: '600'
+    },
+    deleteBtn: {
+        background: 'transparent',
+        border: '1px solid #cbd5e1',
+        color: '#64748b',
+        padding: '4px 10px',
+        borderRadius: 4,
+        cursor: 'pointer',
+        fontSize: 12,
+        fontWeight: '500'
+    },
+    emptyState: {
+        textAlign: 'center',
+        padding: '3rem',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        color: '#64748b'
+    }
 };
 
 export default AdminUsersPage;

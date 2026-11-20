@@ -32,12 +32,21 @@ function MyApplicationsPage() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      pending: { background: '#0c1a2e', color: '#93c5fd', label: 'Pending' },
-      shortlisted: { background: '#0a2a1a', color: '#4ade80', label: 'Shortlisted' },
-      rejected: { background: '#1a0a0a', color: '#f87171', label: 'Rejected' }
+      pending: { background: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8', label: 'Under Review' },
+      shortlisted: { background: '#ecfdf5', border: '#a7f3d0', color: '#065f46', label: 'Shortlisted' },
+      rejected: { background: '#fef2f2', border: '#fecaca', color: '#991b1b', label: 'Archived' }
     };
     const s = statusMap[status] || statusMap.pending;
-    return <span style={{ ...styles.statusBadge, background: s.background, color: s.color }}>{s.label}</span>;
+    return (
+      <span style={{
+        ...styles.statusBadge,
+        background: s.background,
+        border: `1px solid ${s.border}`,
+        color: s.color
+      }}>
+        {s.label}
+      </span>
+    );
   };
 
   if (!isAuthenticated) {
@@ -45,8 +54,10 @@ function MyApplicationsPage() {
       <div style={styles.page}>
         <div style={styles.container}>
           <div style={styles.loginPrompt}>
-            <h1 style={styles.title}>My Applications</h1>
-            <p style={{ color: '#94a3b8' }}>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>login</Link> to view your applications</p>
+            <h1 style={styles.title}>Application Dossier</h1>
+            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>
+              Please <Link to="/login" style={{ color: '#1e40af', textDecoration: 'none', fontWeight: 600 }}>sign in</Link> to view your active submissions.
+            </p>
           </div>
         </div>
       </div>
@@ -55,14 +66,12 @@ function MyApplicationsPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
-
       <div style={styles.container}>
         <div style={styles.header}>
-          <Link to="/" style={styles.backBtn}>← Back to Home</Link>
-          <h1 style={styles.title}>📋 My Applications</h1>
-          <p style={styles.subtitle}>Track the status of your job applications</p>
+          <Link to="/" style={styles.backBtn}>← Return to Explorer</Link>
+          <span style={styles.preTitle}>CANDIDATE PORTAL</span>
+          <h1 style={styles.title}>Active Applications</h1>
+          <p style={styles.subtitle}>Track live application status, employer review progress, and timeline</p>
         </div>
 
         {loading ? (
@@ -71,20 +80,18 @@ function MyApplicationsPage() {
           <div style={styles.errorBox}>{error}</div>
         ) : applications.length === 0 ? (
           <div style={styles.emptyState}>
-            <p style={{ color: '#94a3b8' }}>You haven't applied to any jobs yet.</p>
+            <h3 style={styles.emptyTitle}>No Submissions Recorded</h3>
+            <p style={styles.emptySub}>You have not submitted any job applications yet.</p>
             <Link
               to="/jobs"
               onMouseEnter={() => setEmptyHovered(true)}
               onMouseLeave={() => setEmptyHovered(false)}
               style={{
                 ...styles.emptyBtn,
-                ...(emptyHovered ? {
-                  transform: 'translateY(-1px)',
-                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-                } : {})
+                ...(emptyHovered ? styles.emptyBtnHover : {})
               }}
             >
-              Browse Jobs
+              Browse Openings
             </Link>
           </div>
         ) : (
@@ -94,26 +101,36 @@ function MyApplicationsPage() {
                 key={app._id}
                 style={{
                   ...styles.applicationCard,
-                  animation: 'slideUp 0.4s ease both',
-                  animationDelay: `${Math.min(idx * 0.05, 0.4)}s`
+                  animation: 'slideUp 0.35s ease both',
+                  animationDelay: `${Math.min(idx * 0.04, 0.3)}s`
                 }}
               >
                 <div style={styles.cardHeader}>
-                  <div>
+                  <div style={styles.titleGroup}>
                     <h3 style={styles.jobTitle}>{app.job?.title}</h3>
                     <p style={styles.company}>{app.job?.company}</p>
                   </div>
-                  <CategoryBadge category={app.job?.category} />
+                  <div style={styles.badgeGroup}>
+                    <CategoryBadge category={app.job?.category} />
+                    {getStatusBadge(app.status)}
+                  </div>
                 </div>
-                <div style={styles.jobMeta}>
-                  <span>📍 {app.job?.location}</span>
-                  <span>💼 {app.job?.type}</span>
-                  {getStatusBadge(app.status)}
+
+                <div style={styles.metaRow}>
+                  <span style={styles.metaText}>📍 {app.job?.location}</span>
+                  <span style={styles.metaDivider}>•</span>
+                  <span style={styles.metaText}>💼 {app.job?.type}</span>
+                  <span style={styles.metaDivider}>•</span>
+                  <span style={styles.appliedDate}>
+                    Submitted {new Date(app.appliedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
                 </div>
-                <div style={styles.appliedDate}>
-                  Applied on {new Date(app.appliedAt).toLocaleDateString()}
+
+                <div style={styles.cardFooter}>
+                  <Link to={`/jobs/${app.job?._id}`} style={styles.viewJobLink}>
+                    View Position Overview →
+                  </Link>
                 </div>
-                <Link to={`/jobs/${app.job?._id}`} style={styles.viewJobLink}>View Job Details →</Link>
               </div>
             ))}
           </div>
@@ -124,38 +141,175 @@ function MyApplicationsPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  container: { maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-  header: { marginBottom: '2rem' },
-  backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-  title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', fontSize: 14 },
-  applicationsList: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  applicationCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', transition: 'border-color 0.2s ease' },
-  cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' },
-  jobTitle: { color: '#fff', fontSize: 18, fontWeight: 600, marginBottom: 4 },
-  company: { color: '#888', fontSize: 13 },
-  jobMeta: { display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', color: '#666', fontSize: 13, alignItems: 'center' },
-  statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500 },
-  appliedDate: { color: '#555', fontSize: 12, marginBottom: '1rem' },
-  viewJobLink: { color: '#3b82f6', textDecoration: 'none', fontSize: 13, fontWeight: 500 },
-  emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    padding: '2.5rem 1.5rem 5rem',
+    position: 'relative'
+  },
+  container: {
+    maxWidth: 900,
+    margin: '0 auto',
+    position: 'relative',
+    zIndex: 1
+  },
+  header: {
+    marginBottom: '2rem'
+  },
+  backBtn: {
+    color: '#64748b',
+    textDecoration: 'none',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    display: 'inline-block',
+    marginBottom: '0.75rem'
+  },
+  preTitle: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.25rem',
+    display: 'block'
+  },
+  title: {
+    color: '#0f172a',
+    fontSize: '2rem',
+    fontWeight: '800',
+    letterSpacing: '-0.02em',
+    margin: 0
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.9rem',
+    marginTop: '0.35rem',
+    margin: 0
+  },
+  applicationsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem'
+  },
+  applicationCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    padding: '1.5rem',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+    transition: 'all 0.15s ease'
+  },
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: '0.85rem',
+    flexWrap: 'wrap',
+    gap: '0.75rem'
+  },
+  titleGroup: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  jobTitle: {
+    color: '#0f172a',
+    fontSize: '1.15rem',
+    fontWeight: '700',
+    margin: '0 0 0.25rem 0'
+  },
+  company: {
+    color: '#475569',
+    fontSize: '0.9rem',
+    fontWeight: '500',
+    margin: 0
+  },
+  badgeGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem'
+  },
+  statusBadge: {
+    padding: '3px 10px',
+    borderRadius: 6,
+    fontSize: '0.75rem',
+    fontWeight: '600',
+    letterSpacing: '0.02em'
+  },
+  metaRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    flexWrap: 'wrap',
+    marginBottom: '1rem',
+    fontSize: '0.825rem'
+  },
+  metaText: {
+    color: '#64748b',
+    fontWeight: '500'
+  },
+  metaDivider: {
+    color: '#cbd5e1'
+  },
+  appliedDate: {
+    color: '#64748b'
+  },
+  cardFooter: {
+    paddingTop: '0.85rem',
+    borderTop: '1px solid #f1f5f9'
+  },
+  viewJobLink: {
+    color: '#1e40af',
+    textDecoration: 'none',
+    fontSize: '0.85rem',
+    fontWeight: '600'
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '3.5rem 2rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    color: '#64748b'
+  },
+  emptyTitle: {
+    fontSize: '1.2rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.5rem'
+  },
+  emptySub: {
+    fontSize: '0.9rem',
+    color: '#64748b',
+    marginBottom: '1.5rem'
+  },
   emptyBtn: {
     display: 'inline-block',
-    background: '#2563eb',
-    color: '#fff',
-    padding: '10px 20px',
-    borderRadius: 8,
+    background: '#0f172a',
+    color: '#ffffff',
+    padding: '10px 22px',
+    borderRadius: 6,
     textDecoration: 'none',
-    marginTop: '1rem',
-    fontWeight: 600,
-    fontSize: 14,
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    fontWeight: '600',
+    fontSize: '0.875rem',
+    transition: 'all 0.15s ease'
   },
-  errorBox: { background: '#1a0a0a', border: '0.5px solid #3d1515', borderRadius: 8, padding: '1rem', color: '#f87171', textAlign: 'center' },
-  loginPrompt: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12 },
+  emptyBtnHover: {
+    background: '#1e293b'
+  },
+  errorBox: {
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    borderRadius: 8,
+    padding: '1rem',
+    color: '#991b1b',
+    textAlign: 'center'
+  },
+  loginPrompt: {
+    textAlign: 'center',
+    padding: '3rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12
+  }
 };
 
 export default MyApplicationsPage;

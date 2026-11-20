@@ -5,7 +5,7 @@ const FooterLink = ({ to, href, target, rel, children }) => {
   const [hovered, setHovered] = useState(false);
   const style = {
     ...styles.link,
-    ...(hovered ? { color: '#e2e8f0' } : {})
+    ...(hovered ? { color: '#0f172a' } : {})
   };
 
   if (href) {
@@ -36,16 +36,8 @@ const FooterLink = ({ to, href, target, rel, children }) => {
 };
 
 const TechTagItem = ({ children }) => {
-  const [hovered, setHovered] = useState(false);
   return (
-    <span
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        ...styles.techTag,
-        ...(hovered ? { borderColor: 'rgba(255, 255, 255, 0.15)', color: '#94a3b8' } : {})
-      }}
-    >
+    <span style={styles.techTag}>
       {children}
     </span>
   );
@@ -59,11 +51,11 @@ const Footer = () => {
           <div style={styles.brandCol}>
             <div style={styles.brandLogo}>
               <div style={styles.logoBadge}>NX</div>
-              <span style={styles.brandTitle}>Nexus</span>
+              <span style={styles.brandTitle}>Nexus Careers</span>
             </div>
             <p style={styles.brandDesc}>
-              Full-stack career platform powered by Hugging Face AI models for intelligent
-              talent matching, resume parsing, and personalized job recommendations.
+              Enterprise-grade talent and engineering career network. Powered by Hugging Face AI
+              models for zero-shot domain tagging and semantic skill-candidate alignment.
             </p>
             <div style={styles.statusPill}>
               <span style={styles.statusDot}></span>
@@ -74,8 +66,8 @@ const Footer = () => {
           <div style={styles.linksGroup}>
             <div style={styles.col}>
               <h4 style={styles.colTitle}>Platform</h4>
-              <FooterLink to="/jobs">Browse Jobs</FooterLink>
-              <FooterLink to="/jobs/recommended">AI Matches</FooterLink>
+              <FooterLink to="/jobs">Browse Positions</FooterLink>
+              <FooterLink to="/jobs/recommended">AI Skill Matches</FooterLink>
               <FooterLink to="/login">Sign In</FooterLink>
               <FooterLink to="/register">Create Account</FooterLink>
             </div>
@@ -83,13 +75,13 @@ const Footer = () => {
             <div style={styles.col}>
               <h4 style={styles.colTitle}>Engineering</h4>
               <FooterLink href="https://nexus-api-ullk.onrender.com/api/v1/docs" target="_blank" rel="noreferrer">
-                Swagger UI (OpenAPI 3) ↗
+                API Docs (OpenAPI 3) ↗
               </FooterLink>
               <FooterLink href="https://nexus-api-ullk.onrender.com/health" target="_blank" rel="noreferrer">
-                Live Health Status ↗
+                Health Monitor ↗
               </FooterLink>
               <FooterLink href="https://github.com/ziad7000/nexus" target="_blank" rel="noreferrer">
-                GitHub Repository ↗
+                Source Repository ↗
               </FooterLink>
             </div>
           </div>
@@ -114,10 +106,10 @@ const Footer = () => {
 
 const styles = {
   footer: {
-    background: '#06070a',
-    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-    padding: '3.5rem 1.5rem 2rem',
-    color: '#94a3b8',
+    background: '#ffffff',
+    borderTop: '1px solid #e2e8f0',
+    padding: '3rem 1.5rem 2rem',
+    color: '#64748b',
     fontSize: '0.875rem',
     marginTop: 'auto',
     width: '100%',
@@ -134,7 +126,7 @@ const styles = {
     gap: '3rem',
     flexWrap: 'wrap',
     paddingBottom: '2.5rem',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.06)'
+    borderBottom: '1px solid #f1f5f9'
   },
   brandCol: {
     maxWidth: '380px'
@@ -142,52 +134,50 @@ const styles = {
   brandLogo: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem',
-    marginBottom: '1rem'
+    gap: '0.65rem',
+    marginBottom: '0.75rem'
   },
   logoBadge: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+    width: '28px',
+    height: '28px',
+    borderRadius: '6px',
+    background: '#0f172a',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: '800',
-    fontSize: '0.875rem',
-    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
+    fontSize: '0.8rem'
   },
   brandTitle: {
-    color: '#fff',
-    fontSize: '1.25rem',
+    color: '#0f172a',
+    fontSize: '1.15rem',
     fontWeight: '700',
-    letterSpacing: '-0.02em'
+    letterSpacing: '-0.01em'
   },
   brandDesc: {
-    color: '#64748b',
+    color: '#475569',
     lineHeight: '1.6',
-    marginBottom: '1.25rem'
+    marginBottom: '1rem',
+    fontSize: '0.85rem'
   },
   statusPill: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
-    padding: '0.35rem 0.75rem',
-    background: 'rgba(16, 185, 129, 0.08)',
-    border: '1px solid rgba(16, 185, 129, 0.25)',
-    borderRadius: '9999px',
+    padding: '0.3rem 0.65rem',
+    background: '#ecfdf5',
+    border: '1px solid #a7f3d0',
+    borderRadius: '6px',
     fontSize: '0.75rem',
-    color: '#34d399',
+    color: '#065f46',
     fontWeight: '500'
   },
   statusDot: {
     width: '6px',
     height: '6px',
     borderRadius: '50%',
-    background: '#10b981',
-    boxShadow: '0 0 8px #10b981',
-    animation: 'gentlePulse 2s ease-in-out infinite'
+    background: '#059669'
   },
   linksGroup: {
     display: 'flex',
@@ -197,20 +187,21 @@ const styles = {
   col: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.65rem'
+    gap: '0.6rem'
   },
   colTitle: {
-    color: '#f8fafc',
-    fontSize: '0.85rem',
-    fontWeight: '600',
+    color: '#0f172a',
+    fontSize: '0.8rem',
+    fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    marginBottom: '0.5rem'
+    marginBottom: '0.35rem'
   },
   link: {
-    color: '#94a3b8',
+    color: '#64748b',
     transition: 'color 0.15s ease',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    fontSize: '0.875rem'
   },
   bottomBar: {
     display: 'flex',
@@ -225,22 +216,22 @@ const styles = {
     fontSize: '0.8125rem'
   },
   author: {
-    color: '#e2e8f0',
+    color: '#0f172a',
     fontWeight: '600'
   },
   techStack: {
     display: 'flex',
-    gap: '0.5rem',
+    gap: '0.4rem',
     flexWrap: 'wrap'
   },
   techTag: {
     padding: '0.2rem 0.5rem',
-    background: 'rgba(255, 255, 255, 0.04)',
-    border: '1px solid rgba(255, 255, 255, 0.06)',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
     borderRadius: '4px',
-    fontSize: '0.75rem',
-    color: '#64748b',
-    transition: 'border-color 0.2s ease, color 0.2s ease'
+    fontSize: '0.725rem',
+    color: '#475569',
+    fontWeight: '500'
   }
 };
 

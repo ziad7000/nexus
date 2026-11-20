@@ -30,25 +30,14 @@ function ForgotPasswordPage() {
     return (
       <div style={styles.page}>
         <div style={styles.card}>
-          <div style={styles.successIcon}>📧</div>
-          <h1 style={styles.title}>Check your email</h1>
-          <p style={styles.subtitle}>We've sent a link to <strong>{email}</strong></p>
+          <div style={styles.successIcon}>✓</div>
+          <h1 style={styles.title}>Password Reset Initiated</h1>
+          <p style={styles.subtitle}>Instructions and a secure reset link have been dispatched to <strong>{email}</strong>.</p>
           <Link
             to="/login"
-            onMouseEnter={() => setBtnHovered(true)}
-            onMouseLeave={() => setBtnHovered(false)}
-            style={{
-              ...styles.btn,
-              display: 'block',
-              textAlign: 'center',
-              textDecoration: 'none',
-              ...(btnHovered ? {
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-              } : {})
-            }}
+            style={styles.btn}
           >
-            Back to Login
+            Return to Sign In
           </Link>
         </div>
       </div>
@@ -58,12 +47,12 @@ function ForgotPasswordPage() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>Forgot password?</h1>
-        <p style={styles.subtitle}>Enter your email to receive a reset link</p>
+        <h1 style={styles.title}>Reset Your Password</h1>
+        <p style={styles.subtitle}>Enter your verified email address to receive password recovery instructions.</p>
         <ErrorAlert message={error} />
         <form onSubmit={handleSubmit}>
           <div style={styles.field}>
-            <label style={styles.label}>Email</label>
+            <label style={styles.label}>Email Address</label>
             <input
               style={{
                 ...styles.input,
@@ -85,17 +74,16 @@ function ForgotPasswordPage() {
             onMouseLeave={() => setBtnHovered(false)}
             style={{
               ...styles.btn,
-              ...(btnHovered && !loading ? {
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-              } : {})
+              ...(btnHovered && !loading ? styles.btnHover : {})
             }}
           >
-            {loading ? <LoadingSpinner /> : 'Send Reset Link'}
+            {loading ? 'Dispatching...' : 'Send Reset Link'}
           </button>
         </form>
-        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 500 }}>Back to Login</Link>
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', marginBottom: 0 }}>
+          <Link to="/login" style={{ color: '#1e40af', textDecoration: 'none', fontWeight: 600, fontSize: '0.85rem' }}>
+            Back to Sign In
+          </Link>
         </p>
       </div>
     </div>
@@ -103,40 +91,95 @@ function ForgotPasswordPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', padding: '2rem' },
-  card: { background: '#161616', border: '1px solid #2a2a2a', borderRadius: 16, padding: '2.5rem', width: '100%', maxWidth: 400, animation: 'scaleIn 0.4s ease both' },
-  title: { fontSize: 24, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', marginBottom: '2rem' },
-  field: { marginBottom: '1rem' },
-  label: { display: 'block', color: '#999', fontSize: 12, marginBottom: 6 },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2.5rem 1.5rem'
+  },
+  card: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    padding: '2.5rem',
+    width: '100%',
+    maxWidth: 420,
+    boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05)'
+  },
+  title: {
+    fontSize: '1.45rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.35rem',
+    letterSpacing: '-0.01em'
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.85rem',
+    marginBottom: '1.75rem',
+    lineHeight: '1.5'
+  },
+  field: {
+    marginBottom: '1.25rem'
+  },
+  label: {
+    display: 'block',
+    color: '#475569',
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    marginBottom: '6px',
+    textTransform: 'uppercase'
+  },
   input: {
     width: '100%',
-    background: '#1e1e1e',
-    border: '1px solid #2a2a2a',
-    borderRadius: 8,
-    padding: '12px',
-    color: '#fff',
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: 6,
+    padding: '11px 13px',
+    color: '#0f172a',
     outline: 'none',
     boxSizing: 'border-box',
-    transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+    fontSize: '0.875rem',
+    transition: 'all 0.15s ease'
   },
   inputFocused: {
-    borderColor: '#3b82f6',
-    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.15)'
+    borderColor: '#2563eb',
+    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)'
   },
   btn: {
     width: '100%',
-    background: '#2563eb',
+    background: '#0f172a',
     border: 'none',
-    borderRadius: 8,
-    padding: 12,
-    color: '#fff',
-    fontWeight: 600,
+    borderRadius: 6,
+    padding: '11px',
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: '0.9rem',
     cursor: 'pointer',
     boxSizing: 'border-box',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    display: 'block',
+    textAlign: 'center',
+    textDecoration: 'none',
+    transition: 'all 0.15s ease'
   },
-  successIcon: { fontSize: 48, textAlign: 'center', marginBottom: '1rem' }
+  btnHover: {
+    background: '#1e293b'
+  },
+  successIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: '50%',
+    background: '#ecfdf5',
+    color: '#059669',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: '1rem'
+  }
 };
 
 export default ForgotPasswordPage;

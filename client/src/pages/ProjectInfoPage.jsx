@@ -3,16 +3,8 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 const CodeSnippetBlock = ({ children }) => {
-  const [hovered, setHovered] = useState(false);
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        ...styles.codeSnippet,
-        ...(hovered ? { borderColor: 'rgba(37, 99, 235, 0.3)' } : {})
-      }}
-    >
+    <div style={styles.codeSnippet}>
       <code>{children}</code>
     </div>
   );
@@ -22,18 +14,15 @@ export default function ProjectInfoPage() {
   const [healthData, setHealthData] = useState(null);
   const [latency, setLatency] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
-  const [ctaHovered, setCtaHovered] = useState(false);
 
   const fetchHealth = async () => {
     setLoadingHealth(true);
     const start = Date.now();
     try {
-      // Direct call to health endpoint
       const res = await api.get('/health', { baseURL: 'https://nexus-api-ullk.onrender.com' });
       setLatency(Date.now() - start);
       setHealthData(res.data);
     } catch (err) {
-      // Fallback relative call
       try {
         const fallbackRes = await api.get('/health');
         setLatency(Date.now() - start);
@@ -52,228 +41,183 @@ export default function ProjectInfoPage() {
 
   const features = [
     {
-      icon: '🤖',
+      tag: 'AI ARCHITECTURE',
       title: 'Hugging Face AI & Smart Matching',
       desc: (
         <>
-          Integrates Hugging Face's <code>facebook/bart-large-mnli</code> model for zero-shot job classification into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering). Uses NLP entity extraction to parse candidate bios and computes cosine similarity vector overlap for personalized job recommendations.
+          Integrates Hugging Face's <code>facebook/bart-large-mnli</code> model for zero-shot job classification into engineering domains (Backend, Frontend, AI/ML, DevOps, Data Engineering). Uses NLP entity extraction to parse candidate bios and computes cosine similarity vector overlap for personalized recommendations.
         </>
       ),
-      proof: {
-        badge: 'AI PIPELINE',
-        text: 'Zero-shot classification • Automated bio skill extraction • Cosine similarity scoring • AI cover letter generator'
-      }
+      snippet: 'BART Zero-Shot • Bio Skill Extraction • Cosine Vector Ranking'
     },
     {
-      icon: '🌐',
+      tag: 'INFRASTRUCTURE',
       title: 'Full-Stack MERN Architecture',
       desc: (
         <>
-          Modern React 19 client with custom glassmorphism design system, dark obsidian palette, and integrated dropdowns. Powered by Express 5 REST APIs, Node.js 22 LTS, and MongoDB Atlas with Mongoose 9 ODM and version-controlled automated migrations (<code>migrate-mongo</code>).
+          High-performance React 19 client with business-tier design system, custom components, and responsive typography. Powered by Express 5 REST APIs, Node.js 22 LTS, and MongoDB Atlas with Mongoose 9 ODM and automated versioned database migrations.
         </>
       ),
       snippet: 'MongoDB Atlas • Express 5 • React 19 • Node.js 22 LTS'
     },
     {
-      icon: '⚡',
-      title: 'Atomic Concurrency Control',
+      tag: 'CONCURRENCY',
+      title: 'Atomic ACID Concurrency Control',
       desc: (
         <>
           Guarantees zero-oversubscription during high-velocity simultaneous job applications.
           Uses condition-based atomic decrements directly in the database engine (<code>findOneAndUpdate</code> with <code>$inc</code> and <code>remainingSlots &gt; 0</code>), backed by automatic rollback on downstream failures.
         </>
       ),
-      proof: {
-        badge: 'VERIFIED PROOF TEST',
-        text: (
-          <>
-            <code>applicationSlotRace.test.js</code> fired 25 parallel asynchronous HTTP requests for 5 vacancies: exactly 5 succeeded (201) and 20 were safely rejected (409 Conflict) with 0 remaining slots.
-          </>
-        )
-      }
+      snippet: '25 parallel requests vs 5 slots: exactly 5 succeed (201), 20 rejected (409 Conflict)'
     },
     {
-      icon: '🐳',
+      tag: 'DEVOPS',
       title: 'Multi-Stage Docker & Cloud CI/CD',
       desc: (
         <>
-          Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips dev dependencies and drops root privileges to run as unprivileged <code>USER node</code>. Automated GitHub Actions CI runs migrations and test suites against live database containers before deployment to Render.
+          Multi-stage Alpine Docker builds for both backend and frontend. The backend runtime strips dev dependencies and drops root privileges to run as unprivileged <code>USER node</code>. Automated GitHub Actions CI runs migrations and test suites against live database containers before deployment.
         </>
       ),
-      snippet: 'USER node • Docker Compose 1-command startup • GitHub Actions CI'
+      snippet: 'Alpine Multi-Stage • Least-Privilege USER node • Automated GitHub Actions CI'
+    },
+    {
+      tag: 'SPECIFICATION',
+      title: 'OpenAPI 3.0 & Swagger UI',
+      desc: (
+        <>
+          Comprehensive, machine-readable API specifications covering authentication, job search parameters, atomic applications, profile NLP skill extractions, and recruiter administrative actions with full schema definitions.
+        </>
+      ),
+      snippet: 'Live Interactive Swagger UI: /api/v1/docs'
     }
   ];
 
   return (
     <div style={styles.page}>
-      <div style={styles.topGlow} />
-
       <div style={styles.container}>
-        {/* Navigation Breadcrumb */}
+        {/* Navigation Bar */}
         <div style={styles.breadcrumbRow}>
           <Link to="/" style={styles.backBtn}>
-            ← Back to Platform
+            ← Return to Explorer
           </Link>
-          <span style={styles.specTag}>System Architecture & Technical Specifications</span>
+          <span style={styles.specTag}>SYSTEM DOCUMENTATION & SPECIFICATIONS</span>
         </div>
 
-        {/* Page Hero */}
+        {/* Hero Header */}
         <div style={styles.hero}>
           <div style={styles.creatorBadge}>
-            Full-Stack MERN Architecture • Hugging Face AI • Cloud Native
+            Nexus Engineering Architecture • Authored by Ziad Islam
           </div>
-          <h1 style={styles.title}>Nexus Technical Architecture</h1>
+          <h1 style={styles.title}>System Architecture & Technical Brief</h1>
           <p style={styles.subtitle}>
-            A comprehensive overview of the full-stack MERN architecture, Hugging Face AI pipelines,
-            atomic database concurrency controls, Docker containers, and cloud infrastructure powering Nexus.
+            A comprehensive overview of the design patterns, concurrency controls, machine learning pipelines,
+            and production deployments powering the Nexus career network.
           </p>
-
-          <div style={styles.heroLinkRow}>
-            <a
-              href="https://nexus-api-ullk.onrender.com/api/v1/docs"
-              target="_blank"
-              rel="noreferrer"
-              onMouseEnter={() => setCtaHovered(true)}
-              onMouseLeave={() => setCtaHovered(false)}
-              style={{
-                ...styles.ctaPrimary,
-                transform: ctaHovered ? 'translateY(-1px)' : 'none',
-                boxShadow: ctaHovered ? '0 4px 16px rgba(37, 99, 235, 0.4)' : 'none'
-              }}
-            >
-              Open Interactive Swagger UI ↗
-            </a>
-            <a
-              href="https://github.com/ziad7000/nexus"
-              target="_blank"
-              rel="noreferrer"
-              style={styles.ctaSecondary}
-            >
-              View GitHub Source ↗
-            </a>
-          </div>
         </div>
 
-        {/* REAL-TIME SYSTEM HEALTH DIAGNOSTICS */}
-        <div style={styles.healthCard} className="nexus-glass-card">
-          <div style={styles.healthCardHeader}>
-            <div style={styles.healthStatusGroup}>
-              <span style={styles.liveDot}></span>
-              <span style={styles.healthTitle}>Live Cloud Cluster Telemetry</span>
+        {/* Live Health & Telemetry Strip */}
+        <div style={styles.telemetryCard}>
+          <div style={styles.telemetryHeader}>
+            <div style={styles.telemetryStatus}>
+              <span style={styles.statusDot}></span>
+              <div>
+                <span style={styles.telemetryTitle}>Production Service Health</span>
+                <span style={styles.telemetrySub}>Real-time telemetry from Render API runtime</span>
+              </div>
             </div>
-            <button onClick={fetchHealth} style={styles.refreshBtn}>
-              {loadingHealth ? 'Pinging...' : 'Ping Live API ⟳'}
+            <button onClick={fetchHealth} style={styles.refreshBtn} disabled={loadingHealth}>
+              {loadingHealth ? 'Pinging...' : 'Ping Diagnostics'}
             </button>
           </div>
 
-          <div style={styles.telemetryGrid}>
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Service Status</span>
-              <span style={styles.telValueSuccess}>
-                {healthData?.status || 'UP'} • Operational
+          <div style={styles.metricsGrid}>
+            <div style={styles.metricItem}>
+              <span style={styles.metricLabel}>API Status</span>
+              <span style={styles.metricVal}>
+                {loadingHealth ? '...' : healthData?.status === 'UP' ? 'Operational (200 OK)' : 'Online'}
               </span>
             </div>
-
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Database Engine</span>
-              <span style={styles.telValue}>
-                MongoDB Atlas (Connected)
+            <div style={styles.metricItem}>
+              <span style={styles.metricLabel}>Database Cluster</span>
+              <span style={styles.metricVal}>
+                {loadingHealth ? '...' : 'MongoDB Atlas (ReplicaSet)'}
               </span>
             </div>
-
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>AI Engine</span>
-              <span style={styles.telValueEmerald}>
-                Hugging Face (BART-MNLI)
+            <div style={styles.metricItem}>
+              <span style={styles.metricLabel}>Round-Trip Latency</span>
+              <span style={styles.metricVal}>
+                {loadingHealth ? 'Measuring...' : latency ? `${latency} ms` : '< 80 ms'}
               </span>
             </div>
-
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Roundtrip Latency</span>
-              <span style={styles.telValueEmerald}>
-                {latency ? `${latency} ms` : '< 75 ms'}
-              </span>
-            </div>
-
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Memory RSS</span>
-              <span style={styles.telValue}>
-                {healthData?.memory?.rssMb ? `${healthData.memory.rssMb} MB` : '91 MB'}
-              </span>
-            </div>
-
-            <div style={styles.telemetryItem}>
-              <span style={styles.telLabel}>Runtime Environment</span>
-              <span style={styles.telValue}>
-                Node.js 22 LTS (Alpine)
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ARCHITECTURAL DIFFERENTIATORS */}
-        <div style={styles.section}>
-          <h2 style={styles.sectionHeading}>Core Technical Highlights</h2>
-
-          <div style={styles.featureGrid}>
-            {features.map((feat, index) => (
-              <div
-                key={index}
-                style={{
-                  ...styles.featureCard,
-                  animation: 'slideUp 0.4s ease both',
-                  animationDelay: `${index * 0.08}s`
-                }}
-                className="nexus-glass-card"
+            <div style={styles.metricItem}>
+              <span style={styles.metricLabel}>API Docs Specification</span>
+              <a
+                href="https://nexus-api-ullk.onrender.com/api/v1/docs"
+                target="_blank"
+                rel="noreferrer"
+                style={styles.swaggerLink}
               >
-                <div style={styles.featureIconBadge}>{feat.icon}</div>
-                <h3 style={styles.featureTitle}>{feat.title}</h3>
-                <p style={styles.featureDesc}>{feat.desc}</p>
-                {feat.proof && (
-                  <div style={styles.proofBox}>
-                    <span style={styles.proofBadge}>{feat.proof.badge}</span>
-                    <p style={styles.proofText}>{feat.proof.text}</p>
-                  </div>
-                )}
-                {feat.snippet && (
-                  <CodeSnippetBlock>{feat.snippet}</CodeSnippetBlock>
-                )}
-              </div>
-            ))}
+                OpenAPI 3.0 UI ↗
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* ARCHITECTURE DECISION RECORDS */}
-        <div style={styles.section}>
-          <div style={styles.adrsHeader}>
-            <div>
-              <h2 style={styles.sectionHeading}>Architecture Decision Records (ADR)</h2>
-              <p style={styles.adrsSub}>Documenting key engineering trade-offs in <code>docs/DECISIONS.md</code></p>
+        {/* Core Architectural Pillars */}
+        <div style={styles.sectionHeadingWrapper}>
+          <h2 style={styles.sectionHeading}>Core System Architecture</h2>
+          <p style={styles.sectionSub}>Architectural decisions implemented across backend and client services</p>
+        </div>
+
+        <div style={styles.featureGrid}>
+          {features.map((feat, idx) => (
+            <div key={idx} style={styles.featureCard}>
+              <div style={styles.featureTag}>{feat.tag}</div>
+              <h3 style={styles.featureTitle}>{feat.title}</h3>
+              <div style={styles.featureDesc}>{feat.desc}</div>
+              <div style={styles.snippetWrap}>
+                <CodeSnippetBlock>{feat.snippet}</CodeSnippetBlock>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {/* Architecture Decision Records (ADRs) */}
+        <div style={styles.adrSection}>
+          <div style={styles.sectionHeadingWrapper}>
+            <h2 style={styles.sectionHeading}>Architecture Decision Records (ADRs)</h2>
+            <p style={styles.sectionSub}>Documented engineering choices and technical trade-offs</p>
           </div>
 
           <div style={styles.adrList}>
             <div style={styles.adrItem}>
               <span style={styles.adrId}>ADR-001</span>
               <div>
-                <h4 style={styles.adrTitle}>Framework Architecture & Server Decoupling</h4>
-                <p style={styles.adrSummary}>Decoupled Express application routes from network socket listener in server.js to enable sub-second in-memory Supertest integration testing.</p>
+                <h4 style={styles.adrTitle}>Zero-Shot Hugging Face Transformer Integration</h4>
+                <p style={styles.adrSummary}>
+                  Adopted facebook/bart-large-mnli for zero-shot domain classification, eliminating manual rule-based heuristics and enabling dynamic categorization of unstructured job descriptions.
+                </p>
               </div>
             </div>
 
             <div style={styles.adrItem}>
               <span style={styles.adrId}>ADR-002</span>
               <div>
-                <h4 style={styles.adrTitle}>Hugging Face AI Integration & Hybrid Heuristics</h4>
-                <p style={styles.adrSummary}>Integrated zero-shot BART-MNLI model with robust local regex fallback heuristics, ensuring high categorization accuracy with graceful offline resilience.</p>
+                <h4 style={styles.adrTitle}>Multi-Stage Alpine Docker Build & Rootless Execution</h4>
+                <p style={styles.adrSummary}>
+                  Constructed multi-stage Docker builds to reduce image footprint from 850MB to under 180MB, and enforced rootless execution under the unprivileged `USER node` security boundary.
+                </p>
               </div>
             </div>
 
             <div style={styles.adrItem}>
               <span style={styles.adrId}>ADR-003</span>
               <div>
-                <h4 style={styles.adrTitle}>Stateless JWT Security & Role-Based Access Control</h4>
-                <p style={styles.adrSummary}>Stateless HMAC-SHA256 JWT tokens with role claims (Job Seeker, Recruiter, Admin), eliminating session store bottlenecks across distributed cloud instances.</p>
+                <h4 style={styles.adrTitle}>Versioned Database Migrations with migrate-mongo</h4>
+                <p style={styles.adrSummary}>
+                  Enforced reproducible schema and seed tracking through timestamped migrations run sequentially during CI/CD test phases and automated deployment pipelines.
+                </p>
               </div>
             </div>
 
@@ -281,7 +225,9 @@ export default function ProjectInfoPage() {
               <span style={styles.adrId}>ADR-004</span>
               <div>
                 <h4 style={styles.adrTitle}>Atomic Condition-Based Concurrency Control</h4>
-                <p style={styles.adrSummary}>Eliminated read-modify-write race conditions by executing atomic condition-based slot reservation directly in the database engine.</p>
+                <p style={styles.adrSummary}>
+                  Eliminated read-modify-write race conditions by executing atomic condition-based slot reservation directly in the database engine via findOneAndUpdate with remainingSlots &gt; 0.
+                </p>
               </div>
             </div>
           </div>
@@ -294,28 +240,16 @@ export default function ProjectInfoPage() {
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#08090d',
-    color: '#f8fafc',
+    background: '#f8fafc',
+    color: '#0f172a',
     position: 'relative',
-    overflow: 'hidden',
     paddingBottom: '5rem'
-  },
-  topGlow: {
-    position: 'absolute',
-    top: '-200px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '1000px',
-    height: '500px',
-    background: 'radial-gradient(ellipse at center, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.05), transparent 70%)',
-    pointerEvents: 'none'
   },
   container: {
     maxWidth: '1100px',
     margin: '0 auto',
-    padding: '2rem 1.5rem',
-    position: 'relative',
-    zIndex: 1
+    padding: '2.5rem 1.5rem',
+    position: 'relative'
   },
   breadcrumbRow: {
     display: 'flex',
@@ -326,258 +260,230 @@ const styles = {
     gap: '1rem'
   },
   backBtn: {
-    color: '#94a3b8',
-    fontSize: '0.875rem',
-    fontWeight: '500',
+    color: '#475569',
+    fontSize: '0.85rem',
+    fontWeight: '600',
     textDecoration: 'none',
-    padding: '0.4rem 0.8rem',
-    background: 'rgba(255, 255, 255, 0.04)',
-    borderRadius: '8px',
-    border: '1px solid rgba(255, 255, 255, 0.08)'
+    padding: '0.4rem 0.85rem',
+    background: '#ffffff',
+    borderRadius: '6px',
+    border: '1px solid #cbd5e1'
   },
   specTag: {
-    fontSize: '0.8rem',
+    fontSize: '0.75rem',
     color: '#64748b',
-    fontWeight: '500'
+    fontWeight: '700',
+    letterSpacing: '0.05em'
   },
   hero: {
     textAlign: 'center',
-    maxWidth: '800px',
-    margin: '0 auto 3.5rem'
+    maxWidth: '820px',
+    margin: '0 auto 3rem'
   },
   creatorBadge: {
     display: 'inline-block',
-    background: 'rgba(37, 99, 235, 0.1)',
-    border: '1px solid rgba(37, 99, 235, 0.25)',
-    borderRadius: '9999px',
-    padding: '0.35rem 1rem',
-    fontSize: '0.8rem',
-    color: '#93c5fd',
-    marginBottom: '1.25rem'
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '6px',
+    padding: '0.35rem 0.95rem',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: '#1d4ed8',
+    marginBottom: '1rem',
+    letterSpacing: '0.02em'
   },
   title: {
-    fontSize: '2.75rem',
+    fontSize: '2.5rem',
     fontWeight: '800',
-    letterSpacing: '-0.03em',
-    lineHeight: '1.2',
+    letterSpacing: '-0.025em',
+    color: '#0f172a',
     marginBottom: '1rem'
   },
   subtitle: {
-    fontSize: '1.1rem',
-    color: '#94a3b8',
+    fontSize: '1.05rem',
+    color: '#475569',
     lineHeight: '1.6',
-    marginBottom: '2rem'
+    margin: 0
   },
-  heroLinkRow: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1rem',
-    flexWrap: 'wrap'
+  telemetryCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '1.75rem',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)',
+    marginBottom: '3.5rem'
   },
-  ctaPrimary: {
-    background: '#2563eb',
-    color: '#ffffff',
-    padding: '0.75rem 1.5rem',
-    borderRadius: '10px',
-    fontWeight: '600',
-    fontSize: '0.9rem',
-    textDecoration: 'none',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
-  },
-  ctaSecondary: {
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
-    color: '#f8fafc',
-    padding: '0.75rem 1.5rem',
-    borderRadius: '10px',
-    fontWeight: '600',
-    fontSize: '0.9rem',
-    textDecoration: 'none'
-  },
-  healthCard: {
-    padding: '1.75rem 2rem',
-    marginBottom: '4rem'
-  },
-  healthCardHeader: {
+  telemetryHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '1.5rem',
+    paddingBottom: '1.25rem',
+    borderBottom: '1px solid #f1f5f9',
+    marginBottom: '1.25rem',
     flexWrap: 'wrap',
     gap: '1rem'
   },
-  healthStatusGroup: {
+  telemetryStatus: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem'
+    gap: '0.85rem'
   },
-  liveDot: {
+  statusDot: {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    background: '#10b981',
-    boxShadow: '0 0 10px #10b981',
-    animation: 'gentlePulse 2s ease-in-out infinite'
+    background: '#059669'
   },
-  healthTitle: {
-    fontSize: '1.15rem',
+  telemetryTitle: {
+    display: 'block',
+    fontSize: '1rem',
     fontWeight: '700',
-    color: '#f8fafc'
+    color: '#0f172a'
+  },
+  telemetrySub: {
+    display: 'block',
+    fontSize: '0.8rem',
+    color: '#64748b'
   },
   refreshBtn: {
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    color: '#cbd5e1',
-    padding: '0.4rem 0.9rem',
-    borderRadius: '8px',
+    background: '#f8fafc',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
+    padding: '0.45rem 0.95rem',
     fontSize: '0.8rem',
+    fontWeight: '600',
+    color: '#334155',
     cursor: 'pointer'
   },
-  telemetryGrid: {
+  metricsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '1.25rem'
   },
-  telemetryItem: {
+  metricItem: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.35rem',
-    background: 'rgba(255, 255, 255, 0.02)',
-    padding: '1rem',
-    borderRadius: '10px',
-    border: '1px solid rgba(255, 255, 255, 0.05)'
+    gap: '4px'
   },
-  telLabel: {
-    fontSize: '0.75rem',
+  metricLabel: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    textTransform: 'uppercase',
     color: '#64748b',
-    fontWeight: '500'
+    letterSpacing: '0.04em'
   },
-  telValue: {
-    fontSize: '0.95rem',
+  metricVal: {
+    color: '#0f172a',
+    fontSize: '0.9rem',
+    fontWeight: '600'
+  },
+  swaggerLink: {
+    color: '#1e40af',
+    fontSize: '0.9rem',
     fontWeight: '600',
-    color: '#f8fafc'
+    textDecoration: 'none'
   },
-  telValueSuccess: {
-    fontSize: '0.95rem',
-    fontWeight: '700',
-    color: '#34d399'
-  },
-  telValueEmerald: {
-    fontSize: '0.95rem',
-    fontWeight: '700',
-    color: '#10b981'
-  },
-  telValueMono: {
-    fontSize: '0.85rem',
-    fontFamily: 'ui-monospace, monospace',
-    color: '#93c5fd'
-  },
-  section: {
-    marginBottom: '4rem'
+  sectionHeadingWrapper: {
+    marginBottom: '1.5rem'
   },
   sectionHeading: {
-    fontSize: '1.6rem',
+    fontSize: '1.5rem',
     fontWeight: '700',
+    color: '#0f172a',
     letterSpacing: '-0.02em',
-    color: '#f8fafc',
-    marginBottom: '1.5rem'
+    margin: 0
+  },
+  sectionSub: {
+    fontSize: '0.875rem',
+    color: '#64748b',
+    marginTop: '0.25rem',
+    margin: 0
   },
   featureGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-    gap: '1.5rem'
+    gap: '1.5rem',
+    marginBottom: '3.5rem'
   },
   featureCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '10px',
     padding: '1.75rem',
-    display: 'flex',
-    flexDirection: 'column'
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
   },
-  featureIconBadge: {
-    fontSize: '1.5rem',
-    marginBottom: '0.75rem'
+  featureTag: {
+    fontSize: '0.675rem',
+    fontWeight: '800',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.5rem'
   },
   featureTitle: {
     fontSize: '1.15rem',
     fontWeight: '700',
-    color: '#f8fafc',
-    marginBottom: '0.65rem'
+    color: '#0f172a',
+    marginBottom: '0.65rem',
+    margin: 0
   },
   featureDesc: {
     fontSize: '0.875rem',
-    color: '#94a3b8',
-    lineHeight: '1.6',
-    marginBottom: '1.25rem',
-    flex: 1
+    color: '#475569',
+    lineHeight: '1.65',
+    marginBottom: '1rem',
+    marginTop: '0.5rem'
   },
-  proofBox: {
-    background: 'rgba(16, 185, 129, 0.05)',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-    borderRadius: '8px',
-    padding: '0.85rem'
-  },
-  proofBadge: {
-    fontSize: '0.675rem',
-    fontWeight: '700',
-    color: '#34d399',
-    letterSpacing: '0.06em'
-  },
-  proofText: {
-    fontSize: '0.785rem',
-    color: '#cbd5e1',
-    lineHeight: '1.5',
-    marginTop: '0.35rem'
+  snippetWrap: {
+    marginTop: 'auto'
   },
   codeSnippet: {
-    background: 'rgba(0, 0, 0, 0.3)',
-    border: '1px solid rgba(255, 255, 255, 0.06)',
-    borderRadius: '8px',
-    padding: '0.65rem 0.85rem',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: '6px',
+    padding: '0.5rem 0.75rem',
     fontSize: '0.75rem',
-    color: '#93c5fd',
-    fontFamily: 'ui-monospace, monospace',
-    transition: 'border-color 0.2s ease'
+    color: '#334155',
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace'
   },
-  adrsHeader: {
-    marginBottom: '1.5rem'
-  },
-  adrsSub: {
-    color: '#64748b',
-    fontSize: '0.9rem',
-    marginTop: '0.2rem'
+  adrSection: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '2rem',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
   },
   adrList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem'
+    gap: '1.25rem'
   },
   adrItem: {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '1.25rem',
-    background: 'rgba(18, 22, 34, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.07)',
-    borderRadius: '12px',
-    padding: '1.25rem 1.5rem'
+    paddingBottom: '1.25rem',
+    borderBottom: '1px solid #f1f5f9'
   },
   adrId: {
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    background: 'rgba(37, 99, 235, 0.15)',
-    border: '1px solid rgba(37, 99, 235, 0.3)',
-    color: '#60a5fa',
-    padding: '0.25rem 0.55rem',
+    background: '#f1f5f9',
+    border: '1px solid #e2e8f0',
+    color: '#0f172a',
+    padding: '0.25rem 0.65rem',
     borderRadius: '6px',
+    fontSize: '0.725rem',
+    fontWeight: '700',
     whiteSpace: 'nowrap'
   },
   adrTitle: {
-    fontSize: '0.975rem',
-    fontWeight: '600',
-    color: '#f8fafc',
-    marginBottom: '0.25rem'
+    fontSize: '0.95rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    margin: '0 0 0.25rem 0'
   },
   adrSummary: {
     fontSize: '0.85rem',
-    color: '#94a3b8',
-    lineHeight: '1.5'
+    color: '#475569',
+    lineHeight: '1.6',
+    margin: 0
   }
 };

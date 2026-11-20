@@ -34,8 +34,10 @@ function RecommendedJobsPage() {
       <div style={styles.page}>
         <div style={styles.container}>
           <div style={styles.loginPrompt}>
-            <h1 style={styles.title}>Recommended Jobs</h1>
-            <p style={{ color: '#94a3b8' }}>Please <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>login</Link> to see personalized job recommendations</p>
+            <h1 style={styles.title}>AI Recommendations</h1>
+            <p style={{ color: '#64748b', marginTop: '0.5rem' }}>
+              Please <Link to="/login" style={{ color: '#1e40af', textDecoration: 'none', fontWeight: 600 }}>sign in</Link> to view personalized skill matches.
+            </p>
           </div>
         </div>
       </div>
@@ -44,14 +46,12 @@ function RecommendedJobsPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
-      
       <div style={styles.container}>
         <div style={styles.header}>
-          <Link to="/" style={styles.backBtn}>← Back to Home</Link>
-          <h1 style={styles.title}>✨ AI-Recommended Jobs</h1>
-          <p style={styles.subtitle}>Matched to your skills using AI similarity scoring</p>
+          <Link to="/" style={styles.backBtn}>← Return to Explorer</Link>
+          <span style={styles.preTitle}>INTELLIGENT MATCHING ENGINE</span>
+          <h1 style={styles.title}>AI-Recommended Positions</h1>
+          <p style={styles.subtitle}>Ranked by semantic vector similarity between your profile skills and job embeddings</p>
         </div>
 
         {loading ? (
@@ -60,26 +60,23 @@ function RecommendedJobsPage() {
           <div style={styles.errorBox}>{error}</div>
         ) : jobs.length === 0 ? (
           <div style={styles.emptyState}>
-            <p style={{ color: '#94a3b8' }}>No recommendations yet.</p>
-            <p style={styles.hint}>Add skills to your profile to get AI-matched job recommendations.</p>
+            <h3 style={styles.emptyTitle}>No Recommendations Computed Yet</h3>
+            <p style={styles.emptySub}>Add technical competencies to your profile to generate high-affinity matches.</p>
             <Link
               to="/profile"
               onMouseEnter={() => setEmptyHovered(true)}
               onMouseLeave={() => setEmptyHovered(false)}
               style={{
                 ...styles.emptyBtn,
-                ...(emptyHovered ? {
-                  transform: 'translateY(-1px)',
-                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-                } : {})
+                ...(emptyHovered ? styles.emptyBtnHover : {})
               }}
             >
-              Go to Profile
+              Update Profile Skills
             </Link>
           </div>
         ) : (
           <>
-            <div style={styles.count}>Showing {jobs.length} jobs ranked by AI match</div>
+            <div style={styles.count}>Showing {jobs.length} roles ranked by AI alignment</div>
             <div style={styles.grid}>
               {jobs.map((job, idx) => (
                 <JobCard key={job._id} job={job} index={idx} />
@@ -93,32 +90,109 @@ function RecommendedJobsPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-  header: { marginBottom: '2rem' },
-  backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-  title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', fontSize: 14 },
-  count: { color: '#666', fontSize: 14, marginBottom: '1.5rem' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' },
-  emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    padding: '2.5rem 1.5rem 5rem',
+    position: 'relative'
+  },
+  container: {
+    maxWidth: 1200,
+    margin: '0 auto',
+    position: 'relative',
+    zIndex: 1
+  },
+  header: {
+    marginBottom: '2rem'
+  },
+  backBtn: {
+    color: '#64748b',
+    textDecoration: 'none',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    display: 'inline-block',
+    marginBottom: '0.75rem'
+  },
+  preTitle: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.25rem',
+    display: 'block'
+  },
+  title: {
+    color: '#0f172a',
+    fontSize: '2rem',
+    fontWeight: '800',
+    letterSpacing: '-0.02em',
+    margin: 0
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.9rem',
+    marginTop: '0.35rem',
+    margin: 0
+  },
+  count: {
+    color: '#64748b',
+    fontSize: '0.875rem',
+    marginBottom: '1.25rem',
+    fontWeight: '500'
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+    gap: '1.25rem'
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '3.5rem 2rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    color: '#64748b'
+  },
+  emptyTitle: {
+    fontSize: '1.2rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.5rem'
+  },
+  emptySub: {
+    fontSize: '0.9rem',
+    color: '#64748b',
+    marginBottom: '1.5rem'
+  },
   emptyBtn: {
     display: 'inline-block',
-    background: '#2563eb',
-    color: '#fff',
-    padding: '10px 20px',
-    borderRadius: 8,
+    background: '#0f172a',
+    color: '#ffffff',
+    padding: '10px 22px',
+    borderRadius: 6,
     textDecoration: 'none',
-    marginTop: '1rem',
-    fontWeight: 600,
-    fontSize: 14,
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    fontWeight: '600',
+    fontSize: '0.875rem',
+    transition: 'all 0.15s ease'
   },
-  hint: { fontSize: 13, marginTop: 8, color: '#888' },
-  errorBox: { background: '#1a0a0a', border: '0.5px solid #3d1515', borderRadius: 8, padding: '1rem', color: '#f87171', textAlign: 'center' },
-  loginPrompt: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#fff' },
+  emptyBtnHover: {
+    background: '#1e293b'
+  },
+  errorBox: {
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    borderRadius: 8,
+    padding: '1rem',
+    color: '#991b1b',
+    textAlign: 'center'
+  },
+  loginPrompt: {
+    textAlign: 'center',
+    padding: '3rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12
+  }
 };
 
 export default RecommendedJobsPage;

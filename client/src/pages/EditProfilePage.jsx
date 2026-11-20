@@ -67,12 +67,11 @@ function EditProfilePage() {
 
     return (
         <div style={styles.page}>
-            <div style={styles.orb1} />
-            <div style={styles.orb2} />
             <div style={styles.container}>
                 <div style={styles.header}>
                     <Link to="/profile" style={styles.backBtn}>← Back to Profile</Link>
-                    <h1 style={styles.title}>Edit Profile</h1>
+                    <h1 style={styles.title}>Edit Profile Details</h1>
+                    <p style={styles.subtitle}>Update your professional identity, background summary, and skill inventory</p>
                 </div>
                 <div style={styles.card}>
                     <ErrorAlert message={error} />
@@ -91,37 +90,37 @@ function EditProfilePage() {
                             />
                         </div>
                         <div style={styles.field}>
-                            <label style={styles.label}>Bio</label>
+                            <label style={styles.label}>Professional Bio</label>
                             <textarea
                                 style={getTextareaStyle('bio')}
                                 rows={5}
-                                placeholder="Tell us about your skills and experience..."
+                                placeholder="Detail your technical leadership, architectural accomplishments, and production experience..."
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 onFocus={() => setFocusedField('bio')}
                                 onBlur={() => setFocusedField(null)}
                             />
-                            <p style={styles.hint}>Add a detailed bio then use "Extract Skills" on your profile page to auto-generate skills.</p>
+                            <p style={styles.hint}>Our Hugging Face AI pipeline analyzes this bio to extract domain competencies automatically.</p>
                         </div>
                         <div style={styles.field}>
-                            <label style={styles.label}>Skills (Comma-separated)</label>
+                            <label style={styles.label}>Competencies & Skills (Comma-separated)</label>
                             <input
                                 style={getInputStyle('skills')}
                                 type="text"
-                                placeholder="e.g. React, Node.js, Python, Docker, AWS"
+                                placeholder="e.g. Distributed Systems, Kubernetes, Go, Python, React, PostgreSQL"
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                                 onFocus={() => setFocusedField('skills')}
                                 onBlur={() => setFocusedField(null)}
                             />
-                            <p style={styles.hint}>You can add/edit skills manually here or click "Extract Skills from Bio" on your profile.</p>
+                            <p style={styles.hint}>Skills directly determine your recommendation cosine similarity ranking.</p>
                         </div>
                         <div style={styles.field}>
                             <label style={styles.label}>Profile Picture URL</label>
                             <input
                                 style={getInputStyle('profilePicture')}
                                 type="url"
-                                placeholder="https://example.com/avatar.jpg"
+                                placeholder="https://..."
                                 value={profilePicture}
                                 onChange={(e) => setProfilePicture(e.target.value)}
                                 onFocus={() => setFocusedField('profilePicture')}
@@ -136,13 +135,10 @@ function EditProfilePage() {
                                 onMouseLeave={() => setSaveHovered(false)}
                                 style={{
                                     ...styles.saveBtn,
-                                    ...(saveHovered && !saving ? {
-                                        transform: 'translateY(-1px)',
-                                        boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-                                    } : {})
+                                    ...(saveHovered && !saving ? styles.saveBtnHover : {})
                                 }}
                             >
-                                {saving ? 'Saving...' : 'Save Changes'}
+                                {saving ? 'Saving Changes...' : 'Save Profile Changes'}
                             </button>
                             <Link to="/profile" style={styles.cancelBtn}>Cancel</Link>
                         </div>
@@ -154,60 +150,136 @@ function EditProfilePage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    container: { maxWidth: 700, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'slideUp 0.4s ease both' },
-    header: { marginBottom: '2rem' },
-    backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-    title: { color: '#fff', fontSize: 32, fontWeight: 800 },
-    card: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '2rem' },
-    field: { marginBottom: '1.5rem' },
-    label: { display: 'block', color: '#999', fontSize: 12, fontWeight: 500, marginBottom: 6, letterSpacing: '0.5px', textTransform: 'uppercase' },
+    page: {
+        minHeight: '100vh',
+        background: '#f8fafc',
+        padding: '2.5rem 1.5rem 5rem',
+        position: 'relative'
+    },
+    container: {
+        maxWidth: 720,
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1
+    },
+    header: {
+        marginBottom: '1.75rem'
+    },
+    backBtn: {
+        color: '#64748b',
+        textDecoration: 'none',
+        fontSize: '0.85rem',
+        fontWeight: '600',
+        display: 'inline-block',
+        marginBottom: '0.75rem'
+    },
+    title: {
+        color: '#0f172a',
+        fontSize: '1.85rem',
+        fontWeight: '800',
+        letterSpacing: '-0.02em',
+        margin: 0
+    },
+    subtitle: {
+        color: '#64748b',
+        fontSize: '0.9rem',
+        marginTop: '0.35rem',
+        margin: 0
+    },
+    card: {
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 12,
+        padding: '2rem',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)'
+    },
+    field: {
+        marginBottom: '1.25rem'
+    },
+    label: {
+        display: 'block',
+        color: '#475569',
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        marginBottom: '6px',
+        textTransform: 'uppercase'
+    },
     input: {
         width: '100%',
-        background: '#1e1e1e',
-        border: '0.5px solid #2a2a2a',
-        borderRadius: 8,
-        padding: '12px 14px',
-        color: '#fff',
-        fontSize: 14,
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: 6,
+        padding: '11px 13px',
+        color: '#0f172a',
+        fontSize: '0.875rem',
         outline: 'none',
         boxSizing: 'border-box',
-        transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+        transition: 'all 0.15s ease'
     },
     textarea: {
         width: '100%',
-        background: '#1e1e1e',
-        border: '0.5px solid #2a2a2a',
-        borderRadius: 8,
-        padding: '12px 14px',
-        color: '#fff',
-        fontSize: 14,
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: 6,
+        padding: '11px 13px',
+        color: '#0f172a',
+        fontSize: '0.875rem',
         outline: 'none',
         fontFamily: 'inherit',
         boxSizing: 'border-box',
-        transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+        lineHeight: '1.5',
+        transition: 'all 0.15s ease'
     },
     inputFocused: {
-        borderColor: '#3b82f6',
-        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.15)'
+        borderColor: '#2563eb',
+        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)'
     },
-    hint: { color: '#555', fontSize: 12, marginTop: 6 },
-    buttons: { display: 'flex', gap: '1rem', marginTop: '1.5rem' },
+    hint: {
+        color: '#64748b',
+        fontSize: '0.775rem',
+        marginTop: 4
+    },
+    buttons: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        marginTop: '1.75rem'
+    },
     saveBtn: {
-        background: '#2563eb',
-        color: '#fff',
+        background: '#0f172a',
+        color: '#ffffff',
         border: 'none',
-        borderRadius: 8,
-        padding: '12px 24px',
-        fontSize: 14,
-        fontWeight: 500,
+        borderRadius: 6,
+        padding: '11px 22px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
         cursor: 'pointer',
-        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+        transition: 'all 0.15s ease'
     },
-    cancelBtn: { background: 'transparent', border: '0.5px solid #2a2a2a', color: '#999', borderRadius: 8, padding: '12px 24px', fontSize: 14, textDecoration: 'none', textAlign: 'center' },
-    success: { background: '#0a2a1a', border: '0.5px solid #1a5c35', color: '#4ade80', padding: '12px', borderRadius: 8, marginBottom: '1rem' },
+    saveBtnHover: {
+        background: '#1e293b'
+    },
+    cancelBtn: {
+        background: 'transparent',
+        border: '1px solid #cbd5e1',
+        color: '#475569',
+        borderRadius: 6,
+        padding: '10px 20px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        textDecoration: 'none',
+        textAlign: 'center'
+    },
+    success: {
+        background: '#ecfdf5',
+        border: '1px solid #a7f3d0',
+        color: '#065f46',
+        padding: '10px 14px',
+        borderRadius: 6,
+        marginBottom: '1rem',
+        fontSize: '0.85rem',
+        fontWeight: '500'
+    }
 };
 
 export default EditProfilePage;

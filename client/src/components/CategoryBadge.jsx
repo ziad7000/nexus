@@ -1,29 +1,32 @@
 const categoryColors = {
-  'Frontend':         { bg: '#0a2a1a', border: '#1a5c35', color: '#4ade80' },
-  'Backend':          { bg: '#0a1a2a', border: '#1a3d5c', color: '#60a5fa' },
-  'AI/ML':            { bg: '#0c1a2e', border: '#1e3a5f', color: '#60a5fa' },
-  'DevOps':           { bg: '#0a2a2a', border: '#1a5c5c', color: '#2dd4bf' },
-  'Data Engineering': { bg: '#2a1a0a', border: '#5c3d1a', color: '#fb923c' },
-  'Other':            { bg: '#1a1a1a', border: '#3a3a3a', color: '#9ca3af' },
-}
+  'Frontend':         { bg: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' },
+  'Backend':          { bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d' },
+  'AI/ML':            { bg: '#eef2ff', border: '#c7d2fe', color: '#4338ca' },
+  'DevOps':           { bg: '#ecfdf5', border: '#a7f3d0', color: '#047857' },
+  'Data Engineering': { bg: '#fff7ed', border: '#fed7aa', color: '#c2410c' },
+  'Other':            { bg: '#f1f5f9', border: '#e2e8f0', color: '#475569' },
+};
 
 function CategoryBadge({ category }) {
-  const c = categoryColors[category] || categoryColors['Other']
+  const c = categoryColors[category] || categoryColors['Other'];
   return (
-    <span style={{
-      background: c.bg,
-      border: `0.5px solid ${c.border}`,
-      color: c.color,
-      borderRadius: 20,
-      padding: '3px 12px',
-      fontSize: 10,
-      fontWeight: 700,
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase'
-    }}>
+    <span
+      style={{
+        background: c.bg,
+        border: `1px solid ${c.border}`,
+        color: c.color,
+        borderRadius: 6,
+        padding: '3px 9px',
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: '0.02em',
+        display: 'inline-flex',
+        alignItems: 'center'
+      }}
+    >
       {category}
     </span>
-  )
+  );
 }
 
 export default CategoryBadge;

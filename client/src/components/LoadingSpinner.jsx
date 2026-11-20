@@ -19,15 +19,15 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '1rem',
+    padding: '2rem',
   },
   spinner: {
-    width: 24,
-    height: 24,
-    border: '3px solid #1e1e1e',
-    borderTop: '3px solid #2563eb',
+    width: 26,
+    height: 26,
+    border: '3px solid #e2e8f0',
+    borderTop: '3px solid #1e40af',
     borderRadius: '50%',
-    animation: 'spin 0.8s linear infinite',
+    animation: 'spin 0.75s linear infinite',
   },
 };
 

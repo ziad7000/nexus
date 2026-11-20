@@ -42,7 +42,6 @@ function CreateJobPage() {
         setLoading(true);
         setError('');
 
-        // Convert requirements string to array
         const requirementsArray = formData.requirements.split(',').map(r => r.trim()).filter(r => r);
 
         try {
@@ -67,9 +66,11 @@ function CreateJobPage() {
             <div style={styles.page}>
                 <div style={styles.container}>
                     <div style={styles.pendingBanner}>
-                        <h1 style={{ color: '#f8fafc', fontSize: 28 }}>⏳ Account Pending Approval</h1>
-                        <p style={{ color: '#93c5fd', marginTop: '0.5rem' }}>Wait for admin approval before posting jobs.</p>
-                        <Link to="/recruiter/dashboard" style={{ color: '#3b82f6', textDecoration: 'none', display: 'inline-block', marginTop: '1rem' }}>Back to Dashboard</Link>
+                        <h1 style={{ color: '#0f172a', fontSize: 24, fontWeight: 700 }}>⏳ Account Pending Review</h1>
+                        <p style={{ color: '#64748b', marginTop: '0.5rem' }}>Your recruiter profile must be approved by an administrator before publishing openings.</p>
+                        <Link to="/recruiter/dashboard" style={{ color: '#1e40af', textDecoration: 'none', display: 'inline-block', marginTop: '1rem', fontWeight: 600 }}>
+                            Return to Dashboard
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -78,126 +79,135 @@ function CreateJobPage() {
 
     return (
         <div style={styles.page}>
-            <div style={styles.orb1} />
-            <div style={styles.orb2} />
-
             <div style={styles.container}>
                 <div style={styles.header}>
-                    <Link to="/recruiter/dashboard" style={styles.backBtn}>← Back to Dashboard</Link>
-                    <h1 style={styles.title}>Post a New Job</h1>
-                    <p style={styles.subtitle}>The AI will automatically assign a category based on your description</p>
+                    <Link to="/recruiter/dashboard" style={styles.backBtn}>← Back to Console</Link>
+                    <h1 style={styles.title}>Publish New Opening</h1>
+                    <p style={styles.subtitle}>Our Hugging Face AI pipeline will automatically assign domain taxonomy based on your job description</p>
                 </div>
 
                 <div style={styles.card}>
                     <ErrorAlert message={error} />
                     <form onSubmit={handleSubmit}>
                         <div style={styles.field}>
-                            <label style={styles.label}>Job Title *</label>
+                            <label style={styles.label}>Position Title *</label>
                             <input
                                 style={getInputStyle('title')}
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
+                                placeholder="e.g. Senior Distributed Systems Engineer"
                                 onFocus={() => setFocusedField('title')}
                                 onBlur={() => setFocusedField(null)}
                                 required
                             />
                         </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Company Name *</label>
-                            <input
-                                style={getInputStyle('company')}
-                                name="company"
-                                value={formData.company}
-                                onChange={handleChange}
-                                onFocus={() => setFocusedField('company')}
-                                onBlur={() => setFocusedField(null)}
-                                required
-                            />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Description *</label>
-                            <textarea
-                                style={getTextareaStyle('description')}
-                                name="description"
-                                rows={5}
-                                value={formData.description}
-                                onChange={handleChange}
-                                onFocus={() => setFocusedField('description')}
-                                onBlur={() => setFocusedField(null)}
-                                required
-                            />
-                            <p style={styles.hint}>The AI will analyze this description to assign a category (Frontend, Backend, AI/ML, DevOps, Data Engineering, or Other)</p>
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Requirements * (comma-separated)</label>
-                            <input
-                                style={getInputStyle('requirements')}
-                                name="requirements"
-                                placeholder="React, Node.js, MongoDB"
-                                value={formData.requirements}
-                                onChange={handleChange}
-                                onFocus={() => setFocusedField('requirements')}
-                                onBlur={() => setFocusedField(null)}
-                                required
-                            />
-                        </div>
+
                         <div style={styles.row}>
                             <div style={{ ...styles.field, flex: 1 }}>
-                                <label style={styles.label}>Location *</label>
+                                <label style={styles.label}>Company / Employer *</label>
+                                <input
+                                    style={getInputStyle('company')}
+                                    name="company"
+                                    value={formData.company}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Acme Corp"
+                                    onFocus={() => setFocusedField('company')}
+                                    onBlur={() => setFocusedField(null)}
+                                    required
+                                />
+                            </div>
+
+                            <div style={{ ...styles.field, flex: 1 }}>
+                                <label style={styles.label}>Location / Work Mode *</label>
                                 <input
                                     style={getInputStyle('location')}
                                     name="location"
-                                    placeholder="Cairo or Remote"
                                     value={formData.location}
                                     onChange={handleChange}
+                                    placeholder="e.g. Remote (US/EU) or New York, NY"
                                     onFocus={() => setFocusedField('location')}
                                     onBlur={() => setFocusedField(null)}
                                     required
                                 />
                             </div>
-                            <div style={{ ...styles.field, flex: 1 }}>
-                                <label style={styles.label}>Job Type *</label>
-                                <CustomDropdown
-                                    options={[
-                                        { value: 'full-time', label: 'Full Time' },
-                                        { value: 'part-time', label: 'Part Time' },
-                                        { value: 'internship', label: 'Internship' }
-                                    ]}
-                                    value={formData.type || 'full-time'}
-                                    onChange={(e) => handleChange({ target: { name: 'type', value: e.target.value } })}
-                                    minWidth={160}
-                                />
-                            </div>
                         </div>
+
                         <div style={styles.row}>
                             <div style={{ ...styles.field, flex: 1 }}>
-                                <label style={styles.label}>Salary (optional)</label>
+                                <label style={styles.label}>Employment Type *</label>
+                                <CustomDropdown
+                                    options={[
+                                        { value: 'full-time', label: 'Full-time' },
+                                        { value: 'part-time', label: 'Part-time' },
+                                        { value: 'internship', label: 'Internship' }
+                                    ]}
+                                    value={formData.type}
+                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                />
+                            </div>
+
+                            <div style={{ ...styles.field, flex: 1 }}>
+                                <label style={styles.label}>Annual Compensation ($ USD)</label>
                                 <input
                                     style={getInputStyle('salary')}
-                                    name="salary"
                                     type="number"
-                                    placeholder="Monthly salary"
+                                    name="salary"
                                     value={formData.salary}
                                     onChange={handleChange}
+                                    placeholder="e.g. 165000"
                                     onFocus={() => setFocusedField('salary')}
                                     onBlur={() => setFocusedField(null)}
                                 />
                             </div>
+
                             <div style={{ ...styles.field, flex: 1 }}>
-                                <label style={styles.label}>Open Positions</label>
+                                <label style={styles.label}>Total Capacity Slots *</label>
                                 <input
                                     style={getInputStyle('totalSlots')}
-                                    name="totalSlots"
                                     type="number"
+                                    name="totalSlots"
                                     min="1"
                                     value={formData.totalSlots}
                                     onChange={handleChange}
                                     onFocus={() => setFocusedField('totalSlots')}
                                     onBlur={() => setFocusedField(null)}
+                                    required
                                 />
                             </div>
                         </div>
+
+                        <div style={styles.field}>
+                            <label style={styles.label}>Position Description *</label>
+                            <textarea
+                                style={getTextareaStyle('description')}
+                                name="description"
+                                rows={6}
+                                value={formData.description}
+                                onChange={handleChange}
+                                placeholder="Detail team mission, engineering challenges, architecture stack, and responsibilities..."
+                                onFocus={() => setFocusedField('description')}
+                                onBlur={() => setFocusedField(null)}
+                                required
+                            />
+                            <p style={styles.hint}>BART transformer analyzes this text to auto-categorize the role (Backend, AI/ML, etc.).</p>
+                        </div>
+
+                        <div style={styles.field}>
+                            <label style={styles.label}>Key Competencies & Requirements (Comma-separated) *</label>
+                            <input
+                                style={getInputStyle('requirements')}
+                                name="requirements"
+                                value={formData.requirements}
+                                onChange={handleChange}
+                                placeholder="e.g. Go, Kubernetes, Kafka, Distributed Consensus, High-Throughput APIs"
+                                onFocus={() => setFocusedField('requirements')}
+                                onBlur={() => setFocusedField(null)}
+                                required
+                            />
+                            <p style={styles.hint}>Candidate skill match algorithms evaluate candidates against these technical keywords.</p>
+                        </div>
+
                         <div style={styles.buttons}>
                             <button
                                 type="submit"
@@ -206,13 +216,10 @@ function CreateJobPage() {
                                 onMouseLeave={() => setSubmitHovered(false)}
                                 style={{
                                     ...styles.submitBtn,
-                                    ...(submitHovered && !loading ? {
-                                        transform: 'translateY(-1px)',
-                                        boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-                                    } : {})
+                                    ...(submitHovered && !loading ? styles.submitBtnHover : {})
                                 }}
                             >
-                                {loading ? 'Creating...' : 'Post Job'}
+                                {loading ? 'Publishing...' : 'Publish Opening'}
                             </button>
                             <Link to="/recruiter/dashboard" style={styles.cancelBtn}>Cancel</Link>
                         </div>
@@ -224,62 +231,137 @@ function CreateJobPage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    container: { maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'slideUp 0.4s ease both' },
-    header: { marginBottom: '2rem' },
-    backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-    title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
-    subtitle: { color: '#666', fontSize: 14 },
-    card: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '2rem' },
-    field: { marginBottom: '1.5rem' },
-    row: { display: 'flex', gap: '1rem', flexWrap: 'wrap' },
-    label: { display: 'block', color: '#999', fontSize: 12, fontWeight: 500, marginBottom: 6, textTransform: 'uppercase' },
+    page: {
+        minHeight: '100vh',
+        background: '#f8fafc',
+        padding: '2.5rem 1.5rem 5rem',
+        position: 'relative'
+    },
+    container: {
+        maxWidth: 820,
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1
+    },
+    header: {
+        marginBottom: '1.75rem'
+    },
+    backBtn: {
+        color: '#64748b',
+        textDecoration: 'none',
+        fontSize: '0.85rem',
+        fontWeight: '600',
+        display: 'inline-block',
+        marginBottom: '0.75rem'
+    },
+    title: {
+        color: '#0f172a',
+        fontSize: '1.85rem',
+        fontWeight: '800',
+        letterSpacing: '-0.02em',
+        margin: 0
+    },
+    subtitle: {
+        color: '#64748b',
+        fontSize: '0.9rem',
+        marginTop: '0.35rem',
+        margin: 0
+    },
+    card: {
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 12,
+        padding: '2rem',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)'
+    },
+    field: {
+        marginBottom: '1.25rem'
+    },
+    row: {
+        display: 'flex',
+        gap: '1rem',
+        flexWrap: 'wrap'
+    },
+    label: {
+        display: 'block',
+        color: '#475569',
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        marginBottom: '6px',
+        textTransform: 'uppercase'
+    },
     input: {
         width: '100%',
-        background: '#1e1e1e',
-        border: '0.5px solid #2a2a2a',
-        borderRadius: 8,
-        padding: '12px',
-        color: '#fff',
-        fontSize: 14,
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: 6,
+        padding: '11px 13px',
+        color: '#0f172a',
+        fontSize: '0.875rem',
         outline: 'none',
         boxSizing: 'border-box',
-        transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+        transition: 'all 0.15s ease'
     },
     textarea: {
         width: '100%',
-        background: '#1e1e1e',
-        border: '0.5px solid #2a2a2a',
-        borderRadius: 8,
-        padding: '12px',
-        color: '#fff',
-        fontSize: 14,
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: 6,
+        padding: '11px 13px',
+        color: '#0f172a',
+        fontSize: '0.875rem',
         fontFamily: 'inherit',
         outline: 'none',
         boxSizing: 'border-box',
-        transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+        lineHeight: '1.5',
+        transition: 'all 0.15s ease'
     },
     inputFocused: {
-        borderColor: '#3b82f6',
-        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.15)'
+        borderColor: '#2563eb',
+        boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)'
     },
-    hint: { color: '#555', fontSize: 12, marginTop: 6 },
-    buttons: { display: 'flex', gap: '1rem', marginTop: '1.5rem' },
+    hint: {
+        color: '#64748b',
+        fontSize: '0.775rem',
+        marginTop: 4
+    },
+    buttons: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        marginTop: '1.75rem'
+    },
     submitBtn: {
-        background: '#2563eb',
-        color: '#fff',
+        background: '#0f172a',
+        color: '#ffffff',
         border: 'none',
-        borderRadius: 8,
-        padding: '12px 24px',
-        fontSize: 14,
-        fontWeight: 500,
+        borderRadius: 6,
+        padding: '11px 24px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
         cursor: 'pointer',
-        transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+        transition: 'all 0.15s ease'
     },
-    cancelBtn: { background: 'transparent', border: '0.5px solid #2a2a2a', color: '#999', borderRadius: 8, padding: '12px 24px', textDecoration: 'none' },
-    pendingBanner: { textAlign: 'center', padding: '3rem', background: '#0c1a2e', border: '0.5px solid #1e3a5f', borderRadius: 16, animation: 'slideUp 0.4s ease both' },
+    submitBtnHover: {
+        background: '#1e293b'
+    },
+    cancelBtn: {
+        background: 'transparent',
+        border: '1px solid #cbd5e1',
+        color: '#475569',
+        borderRadius: 6,
+        padding: '10px 20px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        textDecoration: 'none'
+    },
+    pendingBanner: {
+        textAlign: 'center',
+        padding: '3rem',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 12
+    }
 };
 
 export default CreateJobPage;

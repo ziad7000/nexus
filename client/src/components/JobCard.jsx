@@ -9,7 +9,7 @@ function JobCard({ job, index = 0 }) {
 
   const remaining = job.remainingSlots !== undefined ? job.remainingSlots : job.totalSlots;
   const isFilled = remaining === 0 || job.status === 'closed';
-  const delay = Math.min(index * 0.05, 0.4);
+  const delay = Math.min(index * 0.04, 0.3);
 
   return (
     <div
@@ -18,13 +18,14 @@ function JobCard({ job, index = 0 }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         ...styles.card,
-        animation: 'slideUp 0.4s ease both',
+        animation: 'slideUp 0.35s ease both',
         animationDelay: `${delay}s`,
-        transform: hovered ? 'translateY(-3px)' : 'none',
-        boxShadow: hovered ? '0 8px 32px rgba(0,0,0,0.3)' : 'none',
-        borderColor: hovered ? 'rgba(37, 99, 235, 0.2)' : 'rgba(255, 255, 255, 0.08)'
+        transform: hovered ? 'translateY(-2px)' : 'none',
+        boxShadow: hovered
+          ? '0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04)'
+          : '0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05)',
+        borderColor: hovered ? '#cbd5e1' : '#e2e8f0'
       }}
-      className="nexus-glass-card"
     >
       {/* Top Header */}
       <div style={styles.header}>
@@ -32,7 +33,7 @@ function JobCard({ job, index = 0 }) {
           <div
             style={{
               ...styles.companyAvatar,
-              transform: hovered ? 'scale(1.05)' : 'none'
+              transform: hovered ? 'scale(1.04)' : 'none'
             }}
           >
             {job.company?.[0]?.toUpperCase() || 'C'}
@@ -81,7 +82,7 @@ function JobCard({ job, index = 0 }) {
             </span>
           ))}
           {job.requirements.length > 4 && (
-            <span style={styles.tagMore}>+{job.requirements.length - 4}</span>
+            <span style={styles.tagMore}>+{job.requirements.length - 4} more</span>
           )}
         </div>
       )}
@@ -90,16 +91,14 @@ function JobCard({ job, index = 0 }) {
       {job.score !== undefined && (
         <div style={styles.aiMatchBox}>
           <div style={styles.aiHeader}>
-            <span style={styles.aiTitle}>⚡ Semantic AI Alignment</span>
+            <span style={styles.aiTitle}>AI Skill Match</span>
             <span style={styles.aiScore}>{Math.round(job.score * 100)}%</span>
           </div>
           <div style={styles.aiTrack}>
             <div
               style={{
                 ...styles.aiBar,
-                width: `${Math.min(100, Math.max(0, Math.round(job.score * 100)))}%`,
-                animation: 'progressFill 0.8s ease both',
-                animationDelay: `${delay}s`
+                width: `${Math.min(100, Math.max(0, Math.round(job.score * 100)))}%`
               }}
             />
           </div>
@@ -111,22 +110,22 @@ function JobCard({ job, index = 0 }) {
 
 const styles = {
   card: {
-    background: 'rgba(15, 19, 28, 0.7)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: '16px',
-    padding: '1.5rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '10px',
+    padding: '1.35rem',
     cursor: 'pointer',
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem',
+    gap: '0.9rem',
     position: 'relative',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: '1rem'
+    gap: '0.75rem'
   },
   companyGroup: {
     display: 'flex',
@@ -134,30 +133,34 @@ const styles = {
     gap: '0.85rem'
   },
   companyAvatar: {
-    width: '44px',
-    height: '44px',
-    borderRadius: '12px',
-    background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(16, 185, 129, 0.15))',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
+    width: '42px',
+    height: '42px',
+    borderRadius: '8px',
+    background: '#f1f5f9',
+    border: '1px solid #e2e8f0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#ffffff',
     fontWeight: '700',
-    fontSize: '1.15rem',
+    fontSize: '1rem',
+    color: '#0f172a',
+    flexShrink: 0,
     transition: 'transform 0.2s ease'
   },
   jobTitle: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: '1.05rem',
     fontWeight: '600',
     lineHeight: '1.3',
-    letterSpacing: '-0.01em'
+    letterSpacing: '-0.01em',
+    margin: 0
   },
   companyName: {
-    color: '#94a3b8',
+    color: '#475569',
     fontSize: '0.85rem',
-    marginTop: '0.15rem'
+    fontWeight: '500',
+    marginTop: '0.2rem',
+    margin: 0
   },
   actions: {
     display: 'flex',
@@ -167,113 +170,113 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: '0.5rem'
+    gap: '0.45rem'
   },
   pillMeta: {
-    background: 'rgba(255, 255, 255, 0.04)',
-    border: '1px solid rgba(255, 255, 255, 0.07)',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
     borderRadius: '6px',
     padding: '0.25rem 0.55rem',
     fontSize: '0.75rem',
-    color: '#cbd5e1',
+    color: '#475569',
     fontWeight: '500'
   },
   salaryPill: {
-    background: 'rgba(6, 182, 212, 0.08)',
-    border: '1px solid rgba(6, 182, 212, 0.25)',
+    background: '#f0fdf4',
+    border: '1px solid #bbf7d0',
     borderRadius: '6px',
     padding: '0.25rem 0.55rem',
     fontSize: '0.75rem',
-    color: '#38bdf8',
+    color: '#15803d',
     fontWeight: '600'
   },
   slotOpen: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.35rem',
-    background: 'rgba(16, 185, 129, 0.08)',
-    border: '1px solid rgba(16, 185, 129, 0.25)',
+    background: '#ecfdf5',
+    border: '1px solid #a7f3d0',
     borderRadius: '6px',
     padding: '0.25rem 0.55rem',
     fontSize: '0.75rem',
-    color: '#34d399',
+    color: '#065f46',
     fontWeight: '600'
   },
   slotDotOpen: {
-    width: '5px',
-    height: '5px',
+    width: '6px',
+    height: '6px',
     borderRadius: '50%',
-    background: '#10b981'
+    background: '#059669'
   },
   slotFilled: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.35rem',
-    background: 'rgba(239, 68, 68, 0.08)',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
     borderRadius: '6px',
     padding: '0.25rem 0.55rem',
     fontSize: '0.75rem',
-    color: '#f87171',
+    color: '#b91c1c',
     fontWeight: '500'
   },
   slotDotFilled: {
-    width: '5px',
-    height: '5px',
+    width: '6px',
+    height: '6px',
     borderRadius: '50%',
-    background: '#ef4444'
+    background: '#dc2626'
   },
   tagsContainer: {
     display: 'flex',
-    gap: '0.4rem',
-    flexWrap: 'wrap',
-    marginTop: '0.25rem'
+    gap: '0.35rem',
+    flexWrap: 'wrap'
   },
   tag: {
     fontSize: '0.725rem',
-    padding: '0.15rem 0.45rem',
-    background: 'rgba(255, 255, 255, 0.03)',
+    padding: '0.2rem 0.5rem',
+    background: '#f8fafc',
     borderRadius: '4px',
-    color: '#94a3b8',
-    border: '1px solid rgba(255, 255, 255, 0.05)'
+    color: '#475569',
+    border: '1px solid #e2e8f0',
+    fontWeight: '500'
   },
   tagMore: {
-    fontSize: '0.7rem',
-    padding: '0.15rem 0.35rem',
-    color: '#64748b'
+    fontSize: '0.725rem',
+    padding: '0.2rem 0.4rem',
+    color: '#64748b',
+    fontWeight: '500'
   },
   aiMatchBox: {
-    marginTop: '0.5rem',
-    paddingTop: '0.75rem',
-    borderTop: '1px solid rgba(255, 255, 255, 0.06)'
+    marginTop: '0.25rem',
+    paddingTop: '0.65rem',
+    borderTop: '1px solid #f1f5f9'
   },
   aiHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '0.4rem'
+    marginBottom: '0.35rem'
   },
   aiTitle: {
     fontSize: '0.75rem',
     fontWeight: '600',
-    color: '#60a5fa',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em'
+    color: '#1e40af',
+    letterSpacing: '0.01em'
   },
   aiScore: {
-    color: '#f8fafc',
-    fontSize: '0.85rem',
+    color: '#0f172a',
+    fontSize: '0.8rem',
     fontWeight: '700'
   },
   aiTrack: {
-    height: '5px',
-    background: 'rgba(255, 255, 255, 0.07)',
+    height: '4px',
+    background: '#e2e8f0',
     borderRadius: '9999px',
     overflow: 'hidden'
   },
   aiBar: {
     height: '100%',
-    background: 'linear-gradient(90deg, #3b82f6, #10b981)',
+    background: '#1e40af',
     borderRadius: '9999px',
     transition: 'width 0.4s ease'
   }

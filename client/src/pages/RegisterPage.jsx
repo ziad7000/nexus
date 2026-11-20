@@ -31,7 +31,7 @@ function RegisterPage() {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      setError(err.response?.data?.message || 'Something went wrong during registration');
     } finally {
       setLoading(false);
     }
@@ -45,29 +45,22 @@ function RegisterPage() {
   if (pendingMessage) {
     return (
       <div style={styles.page}>
-        <div style={styles.orb1} />
-        <div style={styles.orb2} />
         <div style={styles.card}>
           <div style={styles.logo}>
             <div style={styles.logoDot}><span style={styles.logoText}>NX</span></div>
             <span style={styles.logoName}>Nexus</span>
           </div>
-          <div style={styles.pendingIcon}>⏳</div>
-          <h1 style={styles.title}>Pending Approval</h1>
-          <p style={styles.subtitle}>Your recruiter account has been created and is awaiting admin approval. You'll be able to log in once approved.</p>
+          <div style={styles.pendingBadge}>⏳ SUBMISSION RECEIVED</div>
+          <h1 style={styles.title}>Account Pending Review</h1>
+          <p style={styles.subtitle}>
+            Your recruiter account has been registered and submitted to administration for verification.
+            You will receive access to post vacancies once approved.
+          </p>
           <Link
             to="/login"
-            onMouseEnter={() => setBtnHovered(true)}
-            onMouseLeave={() => setBtnHovered(false)}
-            style={{
-              ...styles.btn,
-              ...(btnHovered ? {
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.3)'
-              } : {})
-            }}
+            style={styles.btn}
           >
-            Go to Login
+            Return to Sign In
           </Link>
         </div>
       </div>
@@ -76,15 +69,13 @@ function RegisterPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
       <div style={styles.card}>
         <div style={styles.logo}>
           <div style={styles.logoDot}><span style={styles.logoText}>NX</span></div>
           <span style={styles.logoName}>Nexus</span>
         </div>
-        <h1 style={styles.title}>Create account</h1>
-        <p style={styles.subtitle}>Join Nexus and find your next opportunity</p>
+        <h1 style={styles.title}>Create your account</h1>
+        <p style={styles.subtitle}>Join the executive technical talent network</p>
         <ErrorAlert message={error} />
         <form onSubmit={handleSubmit}>
           <div style={styles.field}>
@@ -92,7 +83,7 @@ function RegisterPage() {
             <input
               style={getInputStyle('name')}
               type="text"
-              placeholder="John Doe"
+              placeholder="e.g. Alex Morgan"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onFocus={() => setFocusedField('name')}
@@ -101,11 +92,11 @@ function RegisterPage() {
             />
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>Email</label>
+            <label style={styles.label}>Work or Personal Email</label>
             <input
               style={getInputStyle('email')}
               type="email"
-              placeholder="you@example.com"
+              placeholder="alex@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}
@@ -118,7 +109,7 @@ function RegisterPage() {
             <input
               style={getInputStyle('password')}
               type="password"
-              placeholder="••••••••"
+              placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setFocusedField('password')}
@@ -127,27 +118,25 @@ function RegisterPage() {
             />
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>I am a</label>
+            <label style={styles.label}>Account Type</label>
             <div style={styles.roleContainer}>
               <div
                 style={{ ...styles.roleOption, ...(role === 'jobSeeker' ? styles.roleActive : {}) }}
                 onClick={() => setRole('jobSeeker')}
               >
-                <span style={styles.roleIcon}>🎓</span>
-                <span style={styles.roleLabel}>Job Seeker</span>
+                <span style={styles.roleLabel}>Engineering Candidate</span>
               </div>
               <div
                 style={{ ...styles.roleOption, ...(role === 'recruiter' ? styles.roleActive : {}) }}
                 onClick={() => setRole('recruiter')}
               >
-                <span style={styles.roleIcon}>💼</span>
-                <span style={styles.roleLabel}>Recruiter</span>
+                <span style={styles.roleLabel}>Technical Recruiter</span>
               </div>
             </div>
           </div>
           {role === 'recruiter' && (
             <div style={styles.notice}>
-              Recruiter accounts require admin approval before you can post jobs.
+              Technical recruiter accounts undergo brief administrative verification prior to posting openings.
             </div>
           )}
           <button
@@ -157,13 +146,10 @@ function RegisterPage() {
             onMouseLeave={() => setBtnHovered(false)}
             style={{
               ...styles.btn,
-              ...(btnHovered && !loading ? {
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.3)'
-              } : {})
+              ...(btnHovered && !loading ? styles.btnHover : {})
             }}
           >
-            {loading ? 'Creating account...' : 'Create account'}
+            {loading ? 'Creating Account...' : 'Register Account'}
           </button>
         </form>
         <div style={styles.divider}>
@@ -172,7 +158,7 @@ function RegisterPage() {
           <div style={styles.dividerLine} />
         </div>
         <p style={styles.loginLink}>
-          Already have an account? <Link to="/login" style={styles.link}>Sign in</Link>
+          Already registered? <Link to="/login" style={styles.link}>Sign in</Link>
         </p>
       </div>
     </div>
@@ -182,127 +168,179 @@ function RegisterPage() {
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#08090d',
+    background: '#f8fafc',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '2rem',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  orb1: {
-    position: 'fixed',
-    width: 350,
-    height: 350,
-    borderRadius: '50%',
-    background: '#2563eb',
-    filter: 'blur(100px)',
-    opacity: 0.12,
-    top: -100,
-    left: -100,
-    pointerEvents: 'none',
-    animation: 'gentlePulse 6s ease-in-out infinite'
-  },
-  orb2: {
-    position: 'fixed',
-    width: 250,
-    height: 250,
-    borderRadius: '50%',
-    background: '#1d4ed8',
-    filter: 'blur(80px)',
-    opacity: 0.12,
-    bottom: -80,
-    right: -80,
-    pointerEvents: 'none',
-    animation: 'gentlePulse 6s ease-in-out infinite'
+    padding: '2.5rem 1.5rem',
+    position: 'relative'
   },
   card: {
-    background: '#161616',
-    border: '0.5px solid #2a2a2a',
-    borderRadius: 16,
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
     padding: '2.5rem',
     width: '100%',
-    maxWidth: 420,
-    position: 'relative',
-    zIndex: 1,
-    animation: 'scaleIn 0.4s ease both'
+    maxWidth: 440,
+    boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05)'
   },
-  logo: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: '2rem' },
-  logoDot: { width: 32, height: 32, background: '#2563eb', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  logoText: { color: '#fff', fontWeight: 800, fontSize: 14 },
-  logoName: { color: '#fff', fontWeight: 700, fontSize: 18 },
-  title: { color: '#fff', fontSize: 26, fontWeight: 800, marginBottom: 6 },
-  subtitle: { color: '#666', fontSize: 14, marginBottom: '2rem' },
-  notice: {
-    background: '#0c1a2e',
-    border: '0.5px solid #1e3a5f',
-    borderRadius: 8,
-    padding: '10px 14px',
-    color: '#93c5fd',
-    fontSize: 13,
+  logo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: '1.75rem'
+  },
+  logoDot: {
+    width: 32,
+    height: 32,
+    background: '#0f172a',
+    borderRadius: 6,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  logoText: {
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: 13
+  },
+  logoName: {
+    color: '#0f172a',
+    fontWeight: 800,
+    fontSize: 18,
+    letterSpacing: '0.04em'
+  },
+  pendingBadge: {
+    display: 'inline-block',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    color: '#1d4ed8',
+    padding: '0.3rem 0.65rem',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    fontWeight: '700',
     marginBottom: '1rem'
   },
-  field: { marginBottom: '1rem' },
-  label: { display: 'block', color: '#999', fontSize: 12, fontWeight: 500, marginBottom: 6, letterSpacing: '0.5px', textTransform: 'uppercase' },
+  title: {
+    color: '#0f172a',
+    fontSize: '1.45rem',
+    fontWeight: '700',
+    marginBottom: '0.35rem',
+    letterSpacing: '-0.01em'
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.85rem',
+    marginBottom: '1.75rem',
+    lineHeight: '1.5'
+  },
+  field: {
+    marginBottom: '1rem'
+  },
+  label: {
+    display: 'block',
+    color: '#475569',
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    marginBottom: '6px',
+    letterSpacing: '0.03em',
+    textTransform: 'uppercase'
+  },
   input: {
     width: '100%',
-    background: '#1e1e1e',
-    border: '0.5px solid #2a2a2a',
-    borderRadius: 8,
-    padding: '12px 14px',
-    color: '#fff',
-    fontSize: 14,
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: 6,
+    padding: '11px 13px',
+    color: '#0f172a',
+    fontSize: '0.875rem',
     outline: 'none',
-    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    transition: 'all 0.15s ease'
   },
   inputFocused: {
-    borderColor: '#3b82f6',
-    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.15)'
+    borderColor: '#2563eb',
+    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)'
   },
-  roleContainer: { display: 'flex', gap: 10 },
+  roleContainer: {
+    display: 'flex',
+    gap: '0.5rem'
+  },
   roleOption: {
     flex: 1,
-    background: '#1e1e1e',
-    border: '0.5px solid #2a2a2a',
-    borderRadius: 8,
-    padding: '12px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 6,
+    padding: '0.65rem 0.75rem',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
     cursor: 'pointer',
-    transition: 'border-color 0.2s ease, background 0.2s ease'
+    textAlign: 'center',
+    background: '#ffffff',
+    transition: 'all 0.15s ease'
   },
   roleActive: {
-    border: '0.5px solid #2563eb',
-    background: '#0c1a2e'
+    borderColor: '#0f172a',
+    background: '#f1f5f9'
   },
-  roleIcon: { fontSize: 20 },
-  roleLabel: { color: '#fff', fontSize: 13, fontWeight: 500 },
+  roleLabel: {
+    fontSize: '0.825rem',
+    fontWeight: '600',
+    color: '#0f172a'
+  },
+  notice: {
+    padding: '0.65rem 0.85rem',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '6px',
+    color: '#1e40af',
+    fontSize: '0.775rem',
+    marginBottom: '1rem',
+    lineHeight: '1.5'
+  },
   btn: {
     display: 'block',
-    width: '100%',
-    background: '#2563eb',
-    border: 'none',
-    borderRadius: 8,
-    padding: 13,
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 500,
-    cursor: 'pointer',
-    marginTop: '0.5rem',
     textAlign: 'center',
     textDecoration: 'none',
+    width: '100%',
+    background: '#0f172a',
+    border: 'none',
+    borderRadius: 6,
+    padding: '11px',
+    color: '#ffffff',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: '0.5rem',
     boxSizing: 'border-box',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease'
+    transition: 'all 0.15s ease'
   },
-  divider: { display: 'flex', alignItems: 'center', gap: 12, margin: '1.25rem 0' },
-  dividerLine: { flex: 1, height: 0.5, background: '#2a2a2a' },
-  dividerText: { color: '#444', fontSize: 12 },
-  loginLink: { textAlign: 'center', color: '#666', fontSize: 13 },
-  link: { color: '#3b82f6', textDecoration: 'none', fontWeight: 500 },
-  pendingIcon: { fontSize: 40, marginBottom: '1rem', textAlign: 'center' }
+  btnHover: {
+    background: '#1e293b',
+    transform: 'translateY(-1px)'
+  },
+  divider: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    margin: '1.5rem 0'
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    background: '#f1f5f9'
+  },
+  dividerText: {
+    color: '#94a3b8',
+    fontSize: 12
+  },
+  loginLink: {
+    textAlign: 'center',
+    color: '#64748b',
+    fontSize: '0.85rem'
+  },
+  link: {
+    color: '#1e40af',
+    textDecoration: 'none',
+    fontWeight: '600'
+  }
 };
 
 export default RegisterPage;

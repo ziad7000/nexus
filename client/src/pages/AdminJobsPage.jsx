@@ -50,31 +50,29 @@ function AdminJobsPage() {
 
     return (
         <div style={styles.page}>
-            <div style={styles.orb1} />
-            <div style={styles.orb2} />
-
             <div style={styles.container}>
                 <div style={styles.header}>
-                    <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Dashboard</Link>
-                    <h1 style={styles.title}>Manage Jobs</h1>
-                    <p style={styles.subtitle}>View and manage all job postings on the platform</p>
+                    <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Overview</Link>
+                    <span style={styles.preTitle}>JOB DIRECTORY GOVERNANCE</span>
+                    <h1 style={styles.title}>All Platform Openings</h1>
+                    <p style={styles.subtitle}>Audit active job posts, capacity allocation, and listings across employers</p>
                 </div>
 
                 <ErrorAlert message={error} />
 
                 {/* Filters */}
-                <div style={styles.filters}>
+                <div style={styles.filtersBar}>
                     <button
                         onClick={() => setFilter('all')}
                         style={{...styles.filterBtn, ...(filter === 'all' ? styles.filterActive : {})}}
                     >
-                        All Jobs ({jobs.length})
+                        All Positions ({jobs.length})
                     </button>
                     <button
                         onClick={() => setFilter('open')}
                         style={{...styles.filterBtn, ...(filter === 'open' ? styles.filterActive : {})}}
                     >
-                        Open ({jobs.filter(j => j.status === 'open').length})
+                        Active ({jobs.filter(j => j.status === 'open').length})
                     </button>
                     <button
                         onClick={() => setFilter('closed')}
@@ -85,56 +83,61 @@ function AdminJobsPage() {
                 </div>
 
                 {filteredJobs.length === 0 ? (
-                    <div style={styles.emptyState}>No jobs found.</div>
+                    <div style={styles.emptyState}>No jobs match the selected filter.</div>
                 ) : (
-                    <div style={styles.tableContainer}>
+                    <div style={styles.tableCard} className="table-responsive">
                         <table style={styles.table}>
                             <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Company</th>
-                                <th>Category</th>
-                                <th>Location</th>
-                                <th>Status</th>
-                                <th>Posted By</th>
-                                <th>Actions</th>
-                            </tr>
+                                <tr>
+                                    <th>Position Title</th>
+                                    <th>Employer</th>
+                                    <th>Domain</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Capacity</th>
+                                    <th>Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {filteredJobs.map(job => (
-                                <tr key={job._id}>
-                                    <td style={styles.titleCell}>
-                                        <Link to={`/jobs/${job._id}`} style={styles.jobLink}>
-                                            {job.title}
-                                        </Link>
-                                    </td>
-                                    <td>{job.company}</td>
-                                    <td><CategoryBadge category={job.category} /></td>
-                                    <td>{job.location}</td>
-                                    <td>
-                                        <span style={{
-                                            ...styles.statusBadge,
-                                            background: job.status === 'open' ? '#0a2a1a' : '#1a1a1a',
-                                            color: job.status === 'open' ? '#4ade80' : '#9ca3af'
-                                        }}>
-                                            {job.status}
-                                        </span>
-                                    </td>
-                                    <td style={styles.recruiterCell}>
-                                        {job.createdBy?.name || 'Unknown'}
-                                        <span style={styles.recruiterEmail}>{job.createdBy?.email}</span>
-                                    </td>
-                                    <td>
-                                        <button
-                                            onClick={() => deleteJob(job._id)}
-                                            disabled={deleting === job._id}
-                                            style={styles.deleteBtn}
-                                        >
-                                            {deleting === job._id ? '...' : 'Delete'}
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {filteredJobs.map(job => (
+                                    <tr key={job._id}>
+                                        <td style={styles.titleCell}>
+                                            <Link to={`/jobs/${job._id}`} style={styles.jobLink}>
+                                                {job.title}
+                                            </Link>
+                                        </td>
+                                        <td style={styles.companyCell}>{job.company}</td>
+                                        <td>
+                                            <CategoryBadge category={job.category} />
+                                        </td>
+                                        <td style={styles.metaCell}>{job.location}</td>
+                                        <td>
+                                            <span style={{
+                                                ...styles.statusBadge,
+                                                background: job.status === 'open' ? '#ecfdf5' : '#fef2f2',
+                                                border: `1px solid ${job.status === 'open' ? '#a7f3d0' : '#fecaca'}`,
+                                                color: job.status === 'open' ? '#065f46' : '#991b1b'
+                                            }}>
+                                                {job.status === 'open' ? 'Active' : 'Closed'}
+                                            </span>
+                                        </td>
+                                        <td style={styles.metaCell}>
+                                            {job.remainingSlots ?? job.totalSlots} / {job.totalSlots}
+                                        </td>
+                                        <td>
+                                            <div style={styles.actionButtons}>
+                                                <Link to={`/jobs/${job._id}`} style={styles.viewBtn}>View</Link>
+                                                <button
+                                                    onClick={() => deleteJob(job._id)}
+                                                    style={styles.deleteBtn}
+                                                    disabled={deleting === job._id}
+                                                >
+                                                    {deleting === job._id ? 'Deleting...' : 'Delete'}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -145,26 +148,133 @@ function AdminJobsPage() {
 }
 
 const styles = {
-    page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-    orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-    container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-    header: { marginBottom: '2rem' },
-    backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-    title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
-    subtitle: { color: '#666', fontSize: 14 },
-    filters: { display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' },
-    filterBtn: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 16px', color: '#999', cursor: 'pointer', fontSize: 13, transition: 'all 0.15s ease' },
-    filterActive: { background: '#2563eb', borderColor: '#2563eb', color: '#fff' },
-    tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
-    table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
-    titleCell: { fontWeight: 600 },
-    jobLink: { color: '#3b82f6', textDecoration: 'none' },
-    statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
-    recruiterCell: { display: 'flex', flexDirection: 'column', gap: 2 },
-    recruiterEmail: { fontSize: 11, color: '#555' },
-    deleteBtn: { background: '#2a0a0a', border: '0.5px solid #5c1a1a', color: '#f87171', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12 },
-    emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+    page: {
+        minHeight: '100vh',
+        background: '#f8fafc',
+        padding: '2.5rem 1.5rem 5rem',
+        position: 'relative'
+    },
+    container: {
+        maxWidth: 1100,
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1
+    },
+    header: {
+        marginBottom: '2rem'
+    },
+    backBtn: {
+        color: '#64748b',
+        textDecoration: 'none',
+        fontSize: '0.85rem',
+        fontWeight: '600',
+        display: 'inline-block',
+        marginBottom: '0.75rem'
+    },
+    preTitle: {
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        color: '#1e40af',
+        letterSpacing: '0.08em',
+        marginBottom: '0.25rem',
+        display: 'block'
+    },
+    title: {
+        color: '#0f172a',
+        fontSize: '2rem',
+        fontWeight: '800',
+        letterSpacing: '-0.02em',
+        margin: 0
+    },
+    subtitle: {
+        color: '#64748b',
+        fontSize: '0.9rem',
+        marginTop: '0.35rem',
+        margin: 0
+    },
+    filtersBar: {
+        display: 'flex',
+        gap: '0.5rem',
+        marginBottom: '1.5rem'
+    },
+    filterBtn: {
+        background: '#ffffff',
+        border: '1px solid #cbd5e1',
+        borderRadius: 6,
+        padding: '8px 16px',
+        color: '#475569',
+        fontSize: '0.85rem',
+        fontWeight: '600',
+        cursor: 'pointer'
+    },
+    filterActive: {
+        background: '#0f172a',
+        borderColor: '#0f172a',
+        color: '#ffffff'
+    },
+    tableCard: {
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        textAlign: 'left',
+        fontSize: '0.85rem'
+    },
+    titleCell: {
+        fontWeight: '600',
+        color: '#0f172a'
+    },
+    jobLink: {
+        color: '#0f172a',
+        textDecoration: 'none',
+        fontWeight: '600'
+    },
+    companyCell: {
+        color: '#475569',
+        fontWeight: '500'
+    },
+    metaCell: {
+        color: '#64748b'
+    },
+    statusBadge: {
+        padding: '2px 8px',
+        borderRadius: 4,
+        fontSize: '0.75rem',
+        fontWeight: '600'
+    },
+    actionButtons: {
+        display: 'flex',
+        gap: '0.5rem',
+        alignItems: 'center'
+    },
+    viewBtn: {
+        color: '#1e40af',
+        textDecoration: 'none',
+        fontSize: 12,
+        fontWeight: '600'
+    },
+    deleteBtn: {
+        background: 'transparent',
+        border: '1px solid #cbd5e1',
+        color: '#64748b',
+        padding: '3px 8px',
+        borderRadius: 4,
+        cursor: 'pointer',
+        fontSize: 12
+    },
+    emptyState: {
+        textAlign: 'center',
+        padding: '3rem',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        color: '#64748b'
+    }
 };
 
 export default AdminJobsPage;

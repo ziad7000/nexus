@@ -53,19 +53,20 @@ function JobApplicantsPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
-
       <div style={styles.container}>
         <div style={styles.header}>
-          <Link to="/recruiter/dashboard" style={styles.backBtn}>← Back to Dashboard</Link>
+          <Link to="/recruiter/dashboard" style={styles.backBtn}>← Back to Console</Link>
+          <span style={styles.preTitle}>CANDIDATE PIPELINE</span>
           <h1 style={styles.title}>Applicants for {job.title}</h1>
-          <p style={styles.subtitle}>{applications.length} applicant{applications.length !== 1 ? 's' : ''}</p>
+          <p style={styles.subtitle}>
+            {applications.length} candidate {applications.length === 1 ? 'submission' : 'submissions'} on file for {job.company}
+          </p>
         </div>
 
         {applications.length === 0 ? (
           <div style={styles.emptyState}>
-            <p style={{ color: '#94a3b8' }}>No applicants yet for this position.</p>
+            <h3 style={styles.emptyTitle}>No Submissions Received Yet</h3>
+            <p style={styles.emptySubtitle}>Candidate applications submitted for this opening will appear here.</p>
           </div>
         ) : (
           <div style={styles.applicantsList}>
@@ -74,13 +75,13 @@ function JobApplicantsPage() {
                 key={app._id}
                 style={{
                   ...styles.applicantCard,
-                  animation: 'slideUp 0.4s ease both',
-                  animationDelay: `${Math.min(idx * 0.05, 0.4)}s`
+                  animation: 'slideUp 0.35s ease both',
+                  animationDelay: `${Math.min(idx * 0.04, 0.3)}s`
                 }}
               >
                 <div style={styles.applicantHeader}>
-                  <div style={styles.applicantAvatar}>
-                    {app.user?.name?.charAt(0).toUpperCase() || '?'}
+                  <div style={styles.avatar}>
+                    {app.user?.name?.charAt(0).toUpperCase() || 'C'}
                   </div>
                   <div style={styles.applicantInfo}>
                     <h3 style={styles.applicantName}>{app.user?.name}</h3>
@@ -90,31 +91,34 @@ function JobApplicantsPage() {
                         <span key={i} style={styles.skillChip}>{skill}</span>
                       ))}
                       {app.user?.skills?.length > 5 && (
-                        <span style={styles.skillChip}>+{app.user.skills.length - 5}</span>
+                        <span style={styles.skillMore}>+{app.user.skills.length - 5}</span>
                       )}
                     </div>
                   </div>
                   <div style={styles.statusSection}>
                     <CustomDropdown
                       options={[
-                        { value: 'pending', label: '📋 Pending' },
-                        { value: 'shortlisted', label: '⭐ Shortlisted' },
-                        { value: 'rejected', label: '❌ Rejected' }
+                        { value: 'pending', label: 'Under Review' },
+                        { value: 'shortlisted', label: 'Shortlisted' },
+                        { value: 'rejected', label: 'Archived' },
                       ]}
                       value={app.status}
                       onChange={(e) => updateStatus(app._id, e.target.value)}
-                      minWidth={150}
+                      minWidth={160}
                     />
+                    {updating === app._id && <span style={styles.updatingText}>Updating...</span>}
                   </div>
                 </div>
+
                 {app.coverLetter && (
                   <div style={styles.coverLetter}>
-                    <strong>Cover Letter:</strong>
-                    <p>{app.coverLetter}</p>
+                    <h4 style={styles.coverLetterTitle}>Cover Statement / Interest Note</h4>
+                    <p style={styles.coverLetterText}>{app.coverLetter}</p>
                   </div>
                 )}
-                <div style={styles.appliedDate}>
-                  Applied on {new Date(app.appliedAt).toLocaleDateString()}
+
+                <div style={styles.metaFooter}>
+                  <span>Applied on {new Date(app.appliedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                 </div>
               </div>
             ))}
@@ -126,28 +130,174 @@ function JobApplicantsPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  container: { maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-  header: { marginBottom: '2rem' },
-  backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-  title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', fontSize: 14 },
-  applicantsList: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  applicantCard: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 16, padding: '1.5rem', transition: 'border-color 0.2s ease' },
-  applicantHeader: { display: 'flex', gap: '1rem', flexWrap: 'wrap' },
-  applicantAvatar: { width: 50, height: 50, background: '#2563eb', borderRadius: 25, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, color: '#fff' },
-  applicantInfo: { flex: 2 },
-  applicantName: { color: '#fff', fontSize: 18, fontWeight: 600, marginBottom: 4 },
-  applicantEmail: { color: '#666', fontSize: 13, marginBottom: 8 },
-  skillsContainer: { display: 'flex', flexWrap: 'wrap', gap: 6 },
-  skillChip: { background: '#1e1e1e', padding: '4px 10px', borderRadius: 20, fontSize: 11, color: '#93c5fd' },
-  statusSection: { minWidth: 140 },
-  statusSelect: { width: '100%', padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer', border: '0.5px solid' },
-  coverLetter: { marginTop: '1rem', paddingTop: '1rem', borderTop: '0.5px solid #2a2a2a', color: '#aaa', fontSize: 13 },
-  appliedDate: { marginTop: '0.5rem', color: '#555', fontSize: 12 },
-  emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    padding: '2.5rem 1.5rem 5rem',
+    position: 'relative'
+  },
+  container: {
+    maxWidth: 920,
+    margin: '0 auto',
+    position: 'relative',
+    zIndex: 1
+  },
+  header: {
+    marginBottom: '2rem'
+  },
+  backBtn: {
+    color: '#64748b',
+    textDecoration: 'none',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    display: 'inline-block',
+    marginBottom: '0.75rem'
+  },
+  preTitle: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.25rem',
+    display: 'block'
+  },
+  title: {
+    color: '#0f172a',
+    fontSize: '1.85rem',
+    fontWeight: '800',
+    letterSpacing: '-0.02em',
+    margin: 0
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.9rem',
+    marginTop: '0.35rem',
+    margin: 0
+  },
+  applicantsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.25rem'
+  },
+  applicantCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    padding: '1.75rem',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+  },
+  applicantHeader: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '1.25rem',
+    flexWrap: 'wrap'
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    background: '#0f172a',
+    borderRadius: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 20,
+    fontWeight: 700,
+    color: '#ffffff',
+    flexShrink: 0
+  },
+  applicantInfo: {
+    flex: 1,
+    minWidth: '220px'
+  },
+  applicantName: {
+    color: '#0f172a',
+    fontSize: '1.15rem',
+    fontWeight: '700',
+    margin: '0 0 0.2rem 0'
+  },
+  applicantEmail: {
+    color: '#64748b',
+    fontSize: '0.85rem',
+    margin: '0 0 0.65rem 0'
+  },
+  skillsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '4px'
+  },
+  skillChip: {
+    background: '#f1f5f9',
+    border: '1px solid #e2e8f0',
+    color: '#334155',
+    padding: '2px 8px',
+    borderRadius: 4,
+    fontSize: '0.725rem',
+    fontWeight: '500'
+  },
+  skillMore: {
+    color: '#64748b',
+    fontSize: '0.725rem',
+    padding: '2px 4px'
+  },
+  statusSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: '4px'
+  },
+  updatingText: {
+    fontSize: '0.725rem',
+    color: '#1e40af'
+  },
+  coverLetter: {
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: 8,
+    padding: '1rem',
+    marginTop: '1.25rem'
+  },
+  coverLetterTitle: {
+    color: '#0f172a',
+    fontSize: '0.8rem',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    marginBottom: '0.4rem',
+    margin: 0
+  },
+  coverLetterText: {
+    color: '#334155',
+    fontSize: '0.875rem',
+    lineHeight: '1.6',
+    whiteSpace: 'pre-wrap',
+    marginTop: '0.35rem',
+    margin: 0
+  },
+  metaFooter: {
+    marginTop: '1rem',
+    paddingTop: '0.75rem',
+    borderTop: '1px solid #f1f5f9',
+    color: '#64748b',
+    fontSize: '0.8rem'
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '3.5rem 2rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    color: '#64748b'
+  },
+  emptyTitle: {
+    fontSize: '1.2rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.5rem'
+  },
+  emptySubtitle: {
+    fontSize: '0.9rem',
+    color: '#64748b'
+  }
 };
 
 export default JobApplicantsPage;

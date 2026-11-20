@@ -21,6 +21,9 @@ function JobListPage() {
     category: searchParams.get('category') || '',
   });
 
+  const [inputKeywords, setInputKeywords] = useState(searchParams.get('keyword') || '');
+  const [inputLocation, setInputLocation] = useState(searchParams.get('location') || '');
+
   useEffect(() => {
     fetchJobs();
   }, [page, filters]);
@@ -56,111 +59,151 @@ function JobListPage() {
     }
   };
 
-  const handleFilterChange = (key, value) => {
-    setFilters({ ...filters, [key]: value });
+  const handleDropdownChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
     setPage(1);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchJobs();
+    setFilters(prev => ({
+      ...prev,
+      keyword: inputKeywords,
+      location: inputLocation
+    }));
+    setPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setInputKeywords('');
+    setInputLocation('');
+    setFilters({ keyword: '', location: '', type: '', category: '' });
+    setPage(1);
   };
 
   const totalPages = Math.ceil(total / 12);
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
-      
       <div style={styles.container}>
-        <h1 style={styles.title}>Browse Jobs</h1>
+        <div style={styles.header}>
+          <div>
+            <div style={styles.preTitle}>CAREER DIRECTORY</div>
+            <h1 style={styles.title}>Explore Verified Positions</h1>
+            <p style={styles.subtitle}>Direct employer listings with verified salary bands and active capacity tracking</p>
+          </div>
+        </div>
         
-        {/* Filters */}
-        <form onSubmit={handleSearch} style={styles.filters}>
-          <input
-            style={styles.filterInput}
-            type="text"
-            placeholder="Job title, company, or keyword"
-            value={filters.keyword}
-            onChange={(e) => handleFilterChange('keyword', e.target.value)}
-          />
-          <input
-            style={styles.filterInput}
-            type="text"
-            placeholder="Location"
-            value={filters.location}
-            onChange={(e) => handleFilterChange('location', e.target.value)}
-          />
-          <CustomDropdown
-            options={[
-              { value: '', label: 'All Categories' },
-              { value: 'Backend', label: 'Backend' },
-              { value: 'Frontend', label: 'Frontend' },
-              { value: 'AI/ML', label: 'AI/ML' },
-              { value: 'DevOps', label: 'DevOps' },
-              { value: 'Data Engineering', label: 'Data Engineering' }
-            ]}
-            value={filters.category}
-            onChange={(e) => handleFilterChange('category', e.target.value)}
-            placeholder="All Categories"
-            minWidth={170}
-          />
-          <CustomDropdown
-            options={[
-              { value: '', label: 'All Employment Types' },
-              { value: 'full-time', label: 'Full Time' },
-              { value: 'part-time', label: 'Part Time' },
-              { value: 'internship', label: 'Internship' }
-            ]}
-            value={filters.type}
-            onChange={(e) => handleFilterChange('type', e.target.value)}
-            placeholder="All Types"
-            minWidth={170}
-          />
+        {/* Filters Toolbar */}
+        <form onSubmit={handleSearch} style={styles.filtersCard}>
+          <div style={styles.inputGroup}>
+            <span style={styles.inputLabel}>Keywords</span>
+            <input
+              style={styles.filterInput}
+              type="text"
+              placeholder="Title, skill, or company"
+              value={inputKeywords}
+              onChange={(e) => setInputKeywords(e.target.value)}
+            />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <span style={styles.inputLabel}>Location</span>
+            <input
+              style={styles.filterInput}
+              type="text"
+              placeholder="City, State, or Remote"
+              value={inputLocation}
+              onChange={(e) => setInputLocation(e.target.value)}
+            />
+          </div>
+
+          <div style={styles.dropdownGroup}>
+            <span style={styles.inputLabel}>Category</span>
+            <CustomDropdown
+              options={[
+                { value: '', label: 'All Categories' },
+                { value: 'Backend', label: 'Backend' },
+                { value: 'Frontend', label: 'Frontend' },
+                { value: 'AI/ML', label: 'AI/ML' },
+                { value: 'DevOps', label: 'DevOps' },
+                { value: 'Data Engineering', label: 'Data Engineering' },
+                { value: 'Other', label: 'Other' },
+              ]}
+              value={filters.category}
+              onChange={(e) => handleDropdownChange('category', e.target.value)}
+              placeholder="All Categories"
+              minWidth={170}
+            />
+          </div>
+
+          <div style={styles.dropdownGroup}>
+            <span style={styles.inputLabel}>Type</span>
+            <CustomDropdown
+              options={[
+                { value: '', label: 'All Types' },
+                { value: 'full-time', label: 'Full-time' },
+                { value: 'part-time', label: 'Part-time' },
+                { value: 'internship', label: 'Internship' },
+              ]}
+              value={filters.type}
+              onChange={(e) => handleDropdownChange('type', e.target.value)}
+              placeholder="All Types"
+              minWidth={140}
+            />
+          </div>
+
           <button
             type="submit"
             onMouseEnter={() => setSearchHovered(true)}
             onMouseLeave={() => setSearchHovered(false)}
             style={{
               ...styles.searchBtn,
-              transform: searchHovered ? 'translateY(-1px)' : 'none',
-              boxShadow: searchHovered ? '0 4px 16px rgba(37, 99, 235, 0.4)' : 'none'
+              ...(searchHovered ? styles.searchBtnHover : {})
             }}
           >
-            Search
+            Apply Filters
           </button>
         </form>
 
-        {/* Results count */}
-        <div style={styles.count}>{total} jobs found</div>
+        {/* Count & Status */}
+        <div style={styles.countRow}>
+          <span style={styles.countText}>
+            Showing <strong style={{ color: '#0f172a' }}>{jobs.length}</strong> of <strong style={{ color: '#0f172a' }}>{total}</strong> active positions
+          </span>
+          {(filters.keyword || filters.location || filters.category || filters.type) && (
+            <button
+              onClick={handleResetFilters}
+              style={styles.clearFiltersLink}
+            >
+              Reset Filters
+            </button>
+          )}
+        </div>
 
-        {/* Job grid */}
+        {/* Job Grid */}
         {loading ? (
           <LoadingSpinner />
         ) : jobs.length === 0 ? (
           <div style={styles.emptyState}>
-            <p>No jobs found matching your criteria</p>
+            <h3 style={styles.emptyTitle}>No matching positions found</h3>
+            <p style={styles.emptySubtitle}>Try adjusting or resetting your search filters to see all available roles.</p>
             <button
-              onClick={() => {
-                setFilters({ keyword: '', location: '', type: '', category: '' });
-                setPage(1);
-              }}
+              onClick={handleResetFilters}
               onMouseEnter={() => setClearHovered(true)}
               onMouseLeave={() => setClearHovered(false)}
               style={{
                 ...styles.clearBtn,
-                transform: clearHovered ? 'translateY(-1px)' : 'none',
-                boxShadow: clearHovered ? '0 4px 16px rgba(37, 99, 235, 0.3)' : 'none'
+                ...(clearHovered ? styles.clearBtnHover : {})
               }}
             >
-              Clear Filters
+              Reset Filters
             </button>
           </div>
         ) : (
           <div style={styles.grid}>
-            {jobs.map((job, idx) => (
-              <JobCard key={job._id} job={job} index={idx} />
+            {jobs.map((job, index) => (
+              <JobCard key={job._id} job={job} index={index} />
             ))}
           </div>
         )}
@@ -171,17 +214,25 @@ function JobListPage() {
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              style={{...styles.pageBtn, opacity: page === 1 ? 0.5 : 1}}
+              style={{
+                ...styles.pageBtn,
+                ...(page === 1 ? styles.pageBtnDisabled : {})
+              }}
             >
-              Previous
+              ← Previous
             </button>
-            <span style={styles.pageInfo}>Page {page} of {totalPages}</span>
+            <span style={styles.pageInfo}>
+              Page {page} of {totalPages}
+            </span>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              style={{...styles.pageBtn, opacity: page === totalPages ? 0.5 : 1}}
+              style={{
+                ...styles.pageBtn,
+                ...(page === totalPages ? styles.pageBtnDisabled : {})
+              }}
             >
-              Next
+              Next →
             </button>
           </div>
         )}
@@ -193,70 +244,182 @@ function JobListPage() {
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#08090d',
-    padding: '2rem',
+    background: '#f8fafc',
+    padding: '2.5rem 1.5rem 5rem',
+    position: 'relative'
+  },
+  container: {
+    maxWidth: 1200,
+    margin: '0 auto',
     position: 'relative',
-    overflow: 'hidden',
-    animation: 'fadeIn 0.3s ease'
+    zIndex: 1
   },
-  orb1: {
-    position: 'fixed',
-    width: 400,
-    height: 400,
-    borderRadius: '50%',
-    background: '#2563eb',
-    filter: 'blur(120px)',
-    opacity: 0.1,
-    top: -100,
-    left: -100,
-    pointerEvents: 'none',
-    animation: 'gentlePulse 6s ease-in-out infinite'
+  header: {
+    marginBottom: '2rem'
   },
-  orb2: {
-    position: 'fixed',
-    width: 300,
-    height: 300,
-    borderRadius: '50%',
-    background: '#1d4ed8',
-    filter: 'blur(100px)',
-    opacity: 0.1,
-    bottom: -80,
-    right: -80,
-    pointerEvents: 'none',
-    animation: 'gentlePulse 6s ease-in-out infinite'
+  preTitle: {
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.35rem'
   },
-  container: { maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 },
-  title: { color: '#fff', fontSize: 36, fontWeight: 800, marginBottom: '2rem' },
-  filters: { display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' },
-  filterInput: { flex: 2, background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none' },
-  filterSelect: { flex: 1, background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '12px 14px', color: '#fff', fontSize: 14, outline: 'none' },
+  title: {
+    color: '#0f172a',
+    fontSize: '2.25rem',
+    fontWeight: '800',
+    letterSpacing: '-0.02em',
+    margin: 0
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.95rem',
+    marginTop: '0.4rem',
+    margin: 0
+  },
+  filtersCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    padding: '1.25rem',
+    display: 'flex',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+    flexWrap: 'wrap',
+    alignItems: 'flex-end',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)'
+  },
+  inputGroup: {
+    flex: '2 1 180px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  },
+  dropdownGroup: {
+    flex: '1 1 150px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  },
+  inputLabel: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    color: '#64748b',
+    letterSpacing: '0.04em'
+  },
+  filterInput: {
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: 6,
+    padding: '10px 12px',
+    color: '#0f172a',
+    fontSize: '0.875rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+    width: '100%'
+  },
   searchBtn: {
-    background: '#2563eb',
+    background: '#0f172a',
     border: 'none',
-    borderRadius: 8,
-    padding: '0 24px',
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 500,
+    borderRadius: 6,
+    padding: '10px 22px',
+    color: '#ffffff',
+    fontSize: '0.875rem',
+    fontWeight: '600',
     cursor: 'pointer',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    height: '40px',
+    whiteSpace: 'nowrap',
+    transition: 'all 0.15s ease'
   },
-  count: { color: '#666', fontSize: 14, marginBottom: '1rem' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' },
-  emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+  searchBtnHover: {
+    background: '#1e293b',
+    transform: 'translateY(-1px)'
+  },
+  countRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1.25rem'
+  },
+  countText: {
+    color: '#64748b',
+    fontSize: '0.875rem'
+  },
+  clearFiltersLink: {
+    background: 'none',
+    border: 'none',
+    color: '#1e40af',
+    fontSize: '0.825rem',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+    gap: '1.25rem'
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '3.5rem 2rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    color: '#64748b'
+  },
+  emptyTitle: {
+    fontSize: '1.2rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.5rem'
+  },
+  emptySubtitle: {
+    fontSize: '0.9rem',
+    color: '#64748b',
+    marginBottom: '1.5rem'
+  },
   clearBtn: {
-    background: '#2563eb',
+    background: '#0f172a',
     border: 'none',
-    borderRadius: 8,
+    borderRadius: 6,
     padding: '10px 20px',
-    color: '#fff',
+    color: '#ffffff',
     cursor: 'pointer',
-    marginTop: '1rem',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    transition: 'all 0.15s ease'
   },
-  pagination: { display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '2rem' },
-  pageBtn: { background: '#161616', border: '0.5px solid #2a2a2a', borderRadius: 8, padding: '8px 16px', color: '#fff', cursor: 'pointer' },
-  pageInfo: { color: '#666', fontSize: 14 },
+  clearBtnHover: {
+    background: '#1e293b'
+  },
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '1rem',
+    marginTop: '2.5rem'
+  },
+  pageBtn: {
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: 6,
+    padding: '8px 16px',
+    color: '#0f172a',
+    fontSize: '0.85rem',
+    fontWeight: '500',
+    cursor: 'pointer'
+  },
+  pageBtnDisabled: {
+    background: '#f1f5f9',
+    color: '#94a3b8',
+    borderColor: '#e2e8f0',
+    cursor: 'not-allowed'
+  },
+  pageInfo: {
+    color: '#64748b',
+    fontSize: '0.85rem',
+    fontWeight: '500'
+  }
 };
 
 export default JobListPage;

@@ -8,9 +8,9 @@ function SkillChip({ skill, index = 0 }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         ...styles.chip,
-        ...(hovered ? { borderColor: '#2563eb' } : {}),
+        ...(hovered ? { borderColor: '#93c5fd', background: '#eff6ff', color: '#1d4ed8' } : {}),
         animation: 'scaleIn 0.2s ease both',
-        animationDelay: `${Math.min(index * 0.04, 0.3)}s`
+        animationDelay: `${Math.min(index * 0.03, 0.3)}s`
       }}
     >
       {skill}
@@ -21,16 +21,16 @@ function SkillChip({ skill, index = 0 }) {
 const styles = {
   chip: {
     display: 'inline-block',
-    background: '#0c1a2e',
-    border: '0.5px solid #1e3a5f',
-    color: '#93c5fd',
-    borderRadius: 20,
-    padding: '4px 12px',
+    background: '#f1f5f9',
+    border: '1px solid #e2e8f0',
+    color: '#334155',
+    borderRadius: 6,
+    padding: '4px 10px',
     fontSize: 12,
     fontWeight: 500,
-    marginRight: 8,
-    marginBottom: 8,
-    transition: 'border-color 0.2s ease'
+    marginRight: 6,
+    marginBottom: 6,
+    transition: 'all 0.15s ease'
   }
 };
 

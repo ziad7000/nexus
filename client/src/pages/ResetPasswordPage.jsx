@@ -27,7 +27,7 @@ function ResetPasswordPage() {
       setSuccess(true);
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Link expired');
+      setError(err.response?.data?.message || 'Password reset link is invalid or expired');
     } finally {
       setLoading(false);
     }
@@ -36,38 +36,43 @@ function ResetPasswordPage() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>{success ? 'Success!' : 'Reset Password'}</h1>
-        <p style={styles.subtitle}>{success ? 'Redirecting...' : 'Enter new password'}</p>
+        <h1 style={styles.title}>{success ? 'Password Updated' : 'Set New Password'}</h1>
+        <p style={styles.subtitle}>{success ? 'Redirecting to your workspace...' : 'Enter your new secure password credentials'}</p>
         <ErrorAlert message={error} />
         {!success && (
           <form onSubmit={handleSubmit}>
-            <input
-              style={{
-                ...styles.input,
-                ...(focusedField === 'password' ? styles.inputFocused : {})
-              }}
-              type="password"
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
-              required
-            />
-            <div style={{ margin: '10px 0' }} />
-            <input
-              style={{
-                ...styles.input,
-                ...(focusedField === 'confirm' ? styles.inputFocused : {})
-              }}
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              onFocus={() => setFocusedField('confirm')}
-              onBlur={() => setFocusedField(null)}
-              required
-            />
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={styles.label}>New Password</label>
+              <input
+                style={{
+                  ...styles.input,
+                  ...(focusedField === 'password' ? styles.inputFocused : {})
+                }}
+                type="password"
+                placeholder="Minimum 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
+                required
+              />
+            </div>
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={styles.label}>Confirm New Password</label>
+              <input
+                style={{
+                  ...styles.input,
+                  ...(focusedField === 'confirm' ? styles.inputFocused : {})
+                }}
+                type="password"
+                placeholder="Re-enter password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onFocus={() => setFocusedField('confirm')}
+                onBlur={() => setFocusedField(null)}
+                required
+              />
+            </div>
             <button
               type="submit"
               disabled={loading}
@@ -75,14 +80,10 @@ function ResetPasswordPage() {
               onMouseLeave={() => setBtnHovered(false)}
               style={{
                 ...styles.btn,
-                marginTop: '20px',
-                ...(btnHovered && !loading ? {
-                  transform: 'translateY(-1px)',
-                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
-                } : {})
+                ...(btnHovered && !loading ? styles.btnHover : {})
               }}
             >
-              {loading ? <LoadingSpinner /> : 'Update Password'}
+              {loading ? 'Updating Credentials...' : 'Save New Password'}
             </button>
           </form>
         )}
@@ -92,36 +93,73 @@ function ResetPasswordPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', padding: '2rem' },
-  card: { background: '#161616', border: '1px solid #2a2a2a', borderRadius: 16, padding: '2.5rem', width: '100%', maxWidth: 400, animation: 'scaleIn 0.4s ease both' },
-  title: { fontSize: 24, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', marginBottom: '2rem' },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2.5rem 1.5rem'
+  },
+  card: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    padding: '2.5rem',
+    width: '100%',
+    maxWidth: 420,
+    boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.05)'
+  },
+  title: {
+    fontSize: '1.45rem',
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: '0.35rem',
+    letterSpacing: '-0.01em'
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.85rem',
+    marginBottom: '1.75rem'
+  },
+  label: {
+    display: 'block',
+    color: '#475569',
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    marginBottom: '6px',
+    textTransform: 'uppercase'
+  },
   input: {
     width: '100%',
-    background: '#1e1e1e',
-    border: '1px solid #2a2a2a',
-    borderRadius: 8,
-    padding: '12px',
-    color: '#fff',
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: 6,
+    padding: '11px 13px',
+    color: '#0f172a',
+    fontSize: '0.875rem',
     outline: 'none',
     boxSizing: 'border-box',
-    transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
+    transition: 'all 0.15s ease'
   },
   inputFocused: {
-    borderColor: '#3b82f6',
-    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.15)'
+    borderColor: '#2563eb',
+    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.12)'
   },
   btn: {
     width: '100%',
-    background: '#2563eb',
+    background: '#0f172a',
     border: 'none',
-    borderRadius: 8,
-    padding: 12,
-    color: '#fff',
-    fontWeight: 600,
+    borderRadius: 6,
+    padding: '11px',
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: '0.9rem',
     cursor: 'pointer',
-    boxSizing: 'border-box',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+    transition: 'all 0.15s ease'
+  },
+  btnHover: {
+    background: '#1e293b'
   }
 };
 

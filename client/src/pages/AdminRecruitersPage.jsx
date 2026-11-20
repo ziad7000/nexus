@@ -54,29 +54,27 @@ function AdminRecruitersPage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.orb1} />
-      <div style={styles.orb2} />
-
       <div style={styles.container}>
         <div style={styles.header}>
-          <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Dashboard</Link>
-          <h1 style={styles.title}>Manage Recruiters</h1>
-          <p style={styles.subtitle}>Approve or reject recruiter accounts</p>
+          <Link to="/admin/dashboard" style={styles.backBtn}>← Back to Overview</Link>
+          <span style={styles.preTitle}>EMPLOYER ONBOARDING</span>
+          <h1 style={styles.title}>Recruiter Verification Queue</h1>
+          <p style={styles.subtitle}>Audit employer applications and manage vacancy publication authorizations</p>
         </div>
 
         <ErrorAlert message={error} />
 
         {recruiters.length === 0 ? (
-          <div style={styles.emptyState}>No recruiters found.</div>
+          <div style={styles.emptyState}>No recruiters found in the system.</div>
         ) : (
-          <div style={styles.tableContainer}>
+          <div style={styles.tableCard} className="table-responsive">
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Joined</th>
+                  <th>Employer Representative</th>
+                  <th>Contact Email</th>
+                  <th>Authorization Status</th>
+                  <th>Registered</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -84,55 +82,42 @@ function AdminRecruitersPage() {
                 {recruiters.map(recruiter => (
                   <tr key={recruiter._id}>
                     <td style={styles.nameCell}>{recruiter.name}</td>
-                    <td>{recruiter.email}</td>
+                    <td style={styles.emailCell}>{recruiter.email}</td>
                     <td>
                       <span style={{
                         ...styles.statusBadge,
-                        background: recruiter.status === 'approved' ? '#0a2a1a' :
-                                   recruiter.status === 'pending' ? '#0c1a2e' : '#1a0a0a',
-                        color: recruiter.status === 'approved' ? '#4ade80' :
-                               recruiter.status === 'pending' ? '#93c5fd' : '#f87171'
+                        background: recruiter.status === 'approved' ? '#ecfdf5' :
+                                   recruiter.status === 'pending' ? '#eff6ff' : '#fef2f2',
+                        border: `1px solid ${
+                          recruiter.status === 'approved' ? '#a7f3d0' :
+                          recruiter.status === 'pending' ? '#bfdbfe' : '#fecaca'
+                        }`,
+                        color: recruiter.status === 'approved' ? '#065f46' :
+                               recruiter.status === 'pending' ? '#1d4ed8' : '#991b1b'
                       }}>
-                        {recruiter.status}
+                        {recruiter.status === 'approved' ? 'Approved' :
+                         recruiter.status === 'pending' ? 'Pending Review' : 'Rejected'}
                       </span>
                     </td>
-                    <td>{new Date(recruiter.createdAt).toLocaleDateString()}</td>
+                    <td style={styles.dateCell}>{new Date(recruiter.createdAt).toLocaleDateString()}</td>
                     <td>
-                      <div style={styles.actions}>
+                      <div style={styles.actionButtons}>
                         {recruiter.status === 'pending' && (
-                          <>
-                            <button
-                              onClick={() => updateStatus(recruiter._id, 'approved')}
-                              disabled={updating === recruiter._id}
-                              style={styles.approveBtn}
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => updateStatus(recruiter._id, 'rejected')}
-                              disabled={updating === recruiter._id}
-                              style={styles.rejectBtn}
-                            >
-                              Reject
-                            </button>
-                          </>
+                          <button
+                            onClick={() => updateStatus(recruiter._id, 'approved')}
+                            style={styles.approveBtn}
+                            disabled={updating === recruiter._id}
+                          >
+                            Approve
+                          </button>
                         )}
                         {recruiter.status === 'approved' && (
                           <button
                             onClick={() => updateStatus(recruiter._id, 'rejected')}
-                            disabled={updating === recruiter._id}
                             style={styles.rejectBtn}
-                          >
-                            Reject
-                          </button>
-                        )}
-                        {recruiter.status === 'rejected' && (
-                          <button
-                            onClick={() => updateStatus(recruiter._id, 'approved')}
                             disabled={updating === recruiter._id}
-                            style={styles.approveBtn}
                           >
-                            Approve
+                            Revoke
                           </button>
                         )}
                         <button
@@ -155,23 +140,121 @@ function AdminRecruitersPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#08090d', padding: '2rem', position: 'relative', overflow: 'hidden' },
-  orb1: { position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: '#2563eb', filter: 'blur(120px)', opacity: 0.1, top: -100, left: -100, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  orb2: { position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: '#1d4ed8', filter: 'blur(100px)', opacity: 0.1, bottom: -80, right: -80, pointerEvents: 'none', animation: 'gentlePulse 6s ease-in-out infinite' },
-  container: { maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1, animation: 'fadeIn 0.3s ease' },
-  header: { marginBottom: '2rem' },
-  backBtn: { color: '#666', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: '1rem' },
-  title: { color: '#fff', fontSize: 32, fontWeight: 800, marginBottom: 8 },
-  subtitle: { color: '#666', fontSize: 14 },
-  tableContainer: { overflowX: 'auto', animation: 'fadeIn 0.3s ease' },
-  table: { width: '100%', borderCollapse: 'collapse', background: '#161616', borderRadius: 16, overflow: 'hidden' },
-  nameCell: { fontWeight: 600 },
-  statusBadge: { padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 500, display: 'inline-block' },
-  actions: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
-  approveBtn: { background: '#0a2a1a', border: '0.5px solid #1a5c35', color: '#4ade80', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12 },
-  rejectBtn: { background: '#1a0a0a', border: '0.5px solid #3d1515', color: '#f87171', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12 },
-  deleteBtn: { background: '#2a0a0a', border: '0.5px solid #5c1a1a', color: '#f87171', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12 },
-  emptyState: { textAlign: 'center', padding: '3rem', background: '#161616', borderRadius: 12, color: '#666' },
+  page: {
+    minHeight: '100vh',
+    background: '#f8fafc',
+    padding: '2.5rem 1.5rem 5rem',
+    position: 'relative'
+  },
+  container: {
+    maxWidth: 1100,
+    margin: '0 auto',
+    position: 'relative',
+    zIndex: 1
+  },
+  header: {
+    marginBottom: '2rem'
+  },
+  backBtn: {
+    color: '#64748b',
+    textDecoration: 'none',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    display: 'inline-block',
+    marginBottom: '0.75rem'
+  },
+  preTitle: {
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    color: '#1e40af',
+    letterSpacing: '0.08em',
+    marginBottom: '0.25rem',
+    display: 'block'
+  },
+  title: {
+    color: '#0f172a',
+    fontSize: '2rem',
+    fontWeight: '800',
+    letterSpacing: '-0.02em',
+    margin: 0
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: '0.9rem',
+    marginTop: '0.35rem',
+    margin: 0
+  },
+  tableCard: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    overflow: 'hidden',
+    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    textAlign: 'left',
+    fontSize: '0.85rem'
+  },
+  nameCell: {
+    fontWeight: '600',
+    color: '#0f172a'
+  },
+  emailCell: {
+    color: '#64748b'
+  },
+  statusBadge: {
+    padding: '2px 8px',
+    borderRadius: 4,
+    fontSize: '0.75rem',
+    fontWeight: '600'
+  },
+  dateCell: {
+    color: '#64748b'
+  },
+  actionButtons: {
+    display: 'flex',
+    gap: '0.5rem',
+    alignItems: 'center'
+  },
+  approveBtn: {
+    background: '#ecfdf5',
+    border: '1px solid #a7f3d0',
+    color: '#065f46',
+    padding: '4px 10px',
+    borderRadius: 4,
+    cursor: 'pointer',
+    fontSize: 12,
+    fontWeight: '600'
+  },
+  rejectBtn: {
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    color: '#991b1b',
+    padding: '4px 10px',
+    borderRadius: 4,
+    cursor: 'pointer',
+    fontSize: 12,
+    fontWeight: '600'
+  },
+  deleteBtn: {
+    background: 'transparent',
+    border: '1px solid #cbd5e1',
+    color: '#64748b',
+    padding: '4px 10px',
+    borderRadius: 4,
+    cursor: 'pointer',
+    fontSize: 12
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '3rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 10,
+    color: '#64748b'
+  }
 };
 
 export default AdminRecruitersPage;
