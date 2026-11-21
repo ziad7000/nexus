@@ -47,7 +47,7 @@ function LoginPage() {
         <ErrorAlert message={error} />
         <form onSubmit={handleSubmit}>
           <div style={styles.field}>
-            <label style={styles.label}>Corporate or Personal Email</label>
+            <label style={styles.label}>Email</label>
             <input
               style={getInputStyle('email')}
               type="email"

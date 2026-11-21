@@ -75,7 +75,7 @@ function RegisterPage() {
           <span style={styles.logoName}>Nexus</span>
         </div>
         <h1 style={styles.title}>Create your account</h1>
-        <p style={styles.subtitle}>Join the executive technical talent network</p>
+        <p style={styles.subtitle}>Join our talent network</p>
         <ErrorAlert message={error} />
         <form onSubmit={handleSubmit}>
           <div style={styles.field}>
@@ -83,7 +83,7 @@ function RegisterPage() {
             <input
               style={getInputStyle('name')}
               type="text"
-              placeholder="e.g. Alex Morgan"
+              placeholder="e.g. Ziad Islam"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onFocus={() => setFocusedField('name')}
@@ -92,11 +92,11 @@ function RegisterPage() {
             />
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>Work or Personal Email</label>
+            <label style={styles.label}>Email</label>
             <input
               style={getInputStyle('email')}
               type="email"
-              placeholder="alex@example.com"
+              placeholder="ziad@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}
@@ -124,19 +124,19 @@ function RegisterPage() {
                 style={{ ...styles.roleOption, ...(role === 'jobSeeker' ? styles.roleActive : {}) }}
                 onClick={() => setRole('jobSeeker')}
               >
-                <span style={styles.roleLabel}>Engineering Candidate</span>
+                <span style={styles.roleLabel}>Job Seeker</span>
               </div>
               <div
                 style={{ ...styles.roleOption, ...(role === 'recruiter' ? styles.roleActive : {}) }}
                 onClick={() => setRole('recruiter')}
               >
-                <span style={styles.roleLabel}>Technical Recruiter</span>
+                <span style={styles.roleLabel}>Recruiter</span>
               </div>
             </div>
           </div>
           {role === 'recruiter' && (
             <div style={styles.notice}>
-              Technical recruiter accounts undergo brief administrative verification prior to posting openings.
+              Recruiter accounts must undergo verification by an admin before being able to post openings.
             </div>
           )}
           <button
