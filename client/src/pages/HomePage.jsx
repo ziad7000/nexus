@@ -41,7 +41,10 @@ export default function HomePage() {
   const [scrollArrowHovered, setScrollArrowHovered] = useState(false);
 
   const [bannerRef, bannerInView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const heroSectionRef = useRef(null);
+  const aiSectionRef = useRef(null);
   const jobsSectionRef = useRef(null);
+  const isSnappingRef = useRef(false);
 
   const categories = [
     { id: 'All', label: 'All Roles' },
@@ -59,17 +62,75 @@ export default function HomePage() {
     { value: 'internship', label: 'Internship' }
   ];
 
-  const scrollToJobs = () => {
-    if (jobsSectionRef.current) {
-      const headerOffset = 90;
-      const elementPosition = jobsSectionRef.current.getBoundingClientRect().top;
-      const targetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: Math.max(0, targetPosition),
-        behavior: 'smooth'
-      });
+  const slowScrollTo = useCallback((targetY, duration = 850) => {
+    if (isSnappingRef.current) return;
+    isSnappingRef.current = true;
+
+    const startY = window.pageYOffset || document.documentElement.scrollTop;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 5) {
+      isSnappingRef.current = false;
+      return;
     }
-  };
+
+    let startTime = null;
+
+    const step = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      // easeInOutCubic easing for slow, luxurious smooth glide
+      const ease = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      window.scrollTo(0, startY + distance * ease);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        window.scrollTo(0, targetY);
+        setTimeout(() => {
+          isSnappingRef.current = false;
+        }, 150);
+      }
+    };
+
+    requestAnimationFrame(step);
+  }, []);
+
+  const getSectionPositions = useCallback(() => {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const headerOffset = 70;
+
+    const heroTop = 0;
+    const hasAI = isAuthenticated && user?.role === 'jobSeeker' && aiSectionRef.current;
+    const aiTop = hasAI
+      ? Math.max(0, aiSectionRef.current.getBoundingClientRect().top + scrollY - headerOffset)
+      : null;
+    const jobsTop = jobsSectionRef.current
+      ? Math.max(0, jobsSectionRef.current.getBoundingClientRect().top + scrollY - headerOffset)
+      : 0;
+
+    return { heroTop, aiTop, jobsTop };
+  }, [isAuthenticated, user?.role]);
+
+  const scrollToNextSection = useCallback(() => {
+    const { aiTop, jobsTop } = getSectionPositions();
+    if (aiTop !== null) {
+      slowScrollTo(aiTop, 850);
+    } else {
+      slowScrollTo(jobsTop, 850);
+    }
+  }, [getSectionPositions, slowScrollTo]);
+
+  const scrollToJobsDirectly = useCallback(() => {
+    const { jobsTop } = getSectionPositions();
+    slowScrollTo(jobsTop, 850);
+  }, [getSectionPositions, slowScrollTo]);
+
+  const scrollToJobs = scrollToNextSection;
 
   const fetchJobs = useCallback(async (overrides = {}) => {
     setLoadingJobs(true);
@@ -124,12 +185,112 @@ export default function HomePage() {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    let lastWheelTime = 0;
+
+    const handleWheel = (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+      const { heroTop, aiTop, jobsTop } = getSectionPositions();
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (isSnappingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      if (Math.abs(e.deltaY) < 18) return;
+
+      const now = Date.now();
+      if (now - lastWheelTime < 100) return;
+      lastWheelTime = now;
+
+      // Section 0 (Hero): scroll down snaps to AI section (if job seeker) or All Jobs
+      if (scrollY < 60) {
+        if (e.deltaY > 0) {
+          e.preventDefault();
+          if (aiTop !== null) {
+            slowScrollTo(aiTop, 850);
+          } else {
+            slowScrollTo(jobsTop, 850);
+          }
+        }
+        return;
+      }
+
+      // Section 1 (AI Recommendations):
+      if (aiTop !== null && Math.abs(scrollY - aiTop) < 90) {
+        if (e.deltaY > 0) {
+          e.preventDefault();
+          slowScrollTo(jobsTop, 850);
+        } else if (e.deltaY < 0) {
+          e.preventDefault();
+          slowScrollTo(heroTop, 850);
+        }
+        return;
+      }
+
+      // Section 2 (All Jobs Section):
+      if (scrollY <= jobsTop + 30) {
+        if (e.deltaY < 0) {
+          e.preventDefault();
+          if (aiTop !== null) {
+            slowScrollTo(aiTop, 850);
+          } else {
+            slowScrollTo(heroTop, 850);
+          }
+          return;
+        }
+      }
+    };
+
+    let touchStartY = null;
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      if (touchStartY === null || !e.changedTouches || e.changedTouches.length === 0) return;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffY = touchStartY - touchEndY;
+      touchStartY = null;
+
+      if (Math.abs(diffY) < 45 || isSnappingRef.current) return;
+
+      const { heroTop, aiTop, jobsTop } = getSectionPositions();
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollY < 60 && diffY > 0) {
+        if (aiTop !== null) slowScrollTo(aiTop, 850);
+        else slowScrollTo(jobsTop, 850);
+      } else if (aiTop !== null && Math.abs(scrollY - aiTop) < 90) {
+        if (diffY > 0) slowScrollTo(jobsTop, 850);
+        else slowScrollTo(heroTop, 850);
+      } else if (scrollY <= jobsTop + 30 && diffY < 0) {
+        if (aiTop !== null) slowScrollTo(aiTop, 850);
+        else slowScrollTo(heroTop, 850);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [getSectionPositions, slowScrollTo]);
+
   const handleSearch = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     setPage(1);
     fetchJobs({ page: 1 });
     setTimeout(() => {
-      scrollToJobs();
+      scrollToJobsDirectly();
     }, 50);
   };
 
@@ -139,7 +300,7 @@ export default function HomePage() {
     setPage(1);
     fetchJobs({ category: newCategory, page: 1 });
     setTimeout(() => {
-      scrollToJobs();
+      scrollToJobsDirectly();
     }, 50);
   };
 
@@ -180,7 +341,7 @@ export default function HomePage() {
     setPage(newPage);
     fetchJobs({ page: newPage });
     setTimeout(() => {
-      scrollToJobs();
+      scrollToJobsDirectly();
     }, 50);
   };
 
@@ -188,23 +349,109 @@ export default function HomePage() {
 
   return (
     <div style={styles.pageWrapper}>
-      {/* Corporate Header Section */}
-      <section style={styles.heroSection}>
+      {/* Corporate Header Section (Hero) */}
+      <section ref={heroSectionRef} style={styles.heroSection}>
         <div style={styles.container}>
-          <div style={styles.heroBadge}>
-            <span style={styles.badgeDot}></span>
-            <span>ENTERPRISE CAREER PLATFORM • VERIFIED OPPORTUNITIES</span>
+          <div style={styles.heroTopRow} className="hero-top-row">
+            <div style={styles.heroTextCol}>
+              <div style={styles.heroBadge}>
+                <span style={styles.badgeDot}></span>
+                <span>ENTERPRISE CAREER PLATFORM • VERIFIED OPPORTUNITIES</span>
+              </div>
+
+              <h1 style={styles.heroTitle}>
+                Connecting you to your <br />
+                next <span style={{ color: '#1e40af' }}>career opportunity</span>
+              </h1>
+
+              <p style={styles.heroSubtitle}>
+                Direct company openings with transparent job posts, get automatically
+                AI-matched to jobs by your skills powered by Hugging Face AI.
+              </p>
+            </div>
+
+            {/* Modern Blue Magnifying Glass Graphic */}
+            <div style={styles.heroGraphicCol} className="hero-graphic-col">
+              <div style={styles.graphicCard}>
+                <svg
+                  width="150"
+                  height="150"
+                  viewBox="0 0 160 160"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={styles.magnifierSvg}
+                >
+                  <defs>
+                    <linearGradient id="lensRingGrad" x1="20" y1="20" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#1e40af" />
+                    </linearGradient>
+                    <linearGradient id="handleGrad" x1="90" y1="90" x2="145" y2="145" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#1e40af" />
+                      <stop offset="100%" stopColor="#172554" />
+                    </linearGradient>
+                    <radialGradient id="lensGleam" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#dbeafe" stopOpacity="0.85" />
+                      <stop offset="70%" stopColor="#eff6ff" stopOpacity="0.45" />
+                      <stop offset="100%" stopColor="#bfdbfe" stopOpacity="0.65" />
+                    </radialGradient>
+                    <filter id="glassShadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#1e40af" floodOpacity="0.18" />
+                    </filter>
+                  </defs>
+
+                  {/* Tech Radar Guides */}
+                  <circle cx="65" cy="65" r="54" stroke="#bfdbfe" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+                  <circle cx="65" cy="65" r="42" stroke="#93c5fd" strokeWidth="1" opacity="0.4" />
+
+                  {/* Magnifier Handle */}
+                  <path
+                    d="M96 96 L134 134 C138 138 138 144 134 148 C130 152 124 152 120 148 L82 110"
+                    stroke="url(#handleGrad)"
+                    strokeWidth="14"
+                    strokeLinecap="round"
+                    filter="url(#glassShadow)"
+                  />
+                  <line x1="86" y1="104" x2="98" y2="92" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+
+                  {/* Glass Lens */}
+                  <circle cx="65" cy="65" r="38" fill="url(#lensGleam)" />
+
+                  {/* Lens Rim */}
+                  <circle
+                    cx="65"
+                    cy="65"
+                    r="38"
+                    stroke="url(#lensRingGrad)"
+                    strokeWidth="7"
+                    filter="url(#glassShadow)"
+                  />
+
+                  {/* Crosshair AI Reticle */}
+                  <line x1="65" y1="45" x2="65" y2="52" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="65" y1="78" x2="65" y2="85" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="45" y1="65" x2="52" y2="65" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="78" y1="65" x2="85" y2="65" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="65" cy="65" r="3.5" fill="#1e40af" />
+
+                  {/* Glass Highlight Gleam */}
+                  <path
+                    d="M44 48 A30 30 0 0 1 78 37"
+                    stroke="#ffffff"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    opacity="0.85"
+                  />
+                  <circle cx="85" cy="42" r="2" fill="#ffffff" opacity="0.9" />
+                </svg>
+
+                <div style={styles.graphicBadge}>
+                  <span style={styles.graphicBadgeDot} />
+                  <span style={styles.graphicBadgeText}>Smart Search</span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <h1 style={styles.heroTitle}>
-            Connecting you to your <br />
-            next <span style={{ color: '#1e40af' }}>career opportunity</span>
-          </h1>
-
-          <p style={styles.heroSubtitle}>
-            Direct company openings with transparent job posts, get automatically
-            AI-matched to jobs by your skills powered by Hugging Face AI.
-          </p>
 
           {/* Search Console Card */}
           <form onSubmit={handleSearch} style={styles.searchConsole}>
@@ -277,18 +524,18 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Clickable Blue Down Arrow Indicator */}
+          {/* Clickable Blue Down Arrow Indicator (Static Arrow, No Movement) */}
           <div style={styles.scrollIndicatorRow}>
             <button
               type="button"
-              onClick={scrollToJobs}
+              onClick={scrollToNextSection}
               onMouseEnter={() => setScrollArrowHovered(true)}
               onMouseLeave={() => setScrollArrowHovered(false)}
               style={{
                 ...styles.scrollIndicatorBtn,
                 ...(scrollArrowHovered ? styles.scrollIndicatorBtnHover : {})
               }}
-              title="View Open Positions"
+              title="Explore Open Positions"
               aria-label="Scroll down to open positions"
             >
               <span style={styles.scrollIndicatorLabel}>Explore Open Positions</span>
@@ -302,7 +549,7 @@ export default function HomePage() {
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={styles.bouncingArrow}
+                  style={styles.staticArrow}
                 >
                   <path d="M7 10l5 5 5-5" />
                 </svg>
@@ -316,7 +563,7 @@ export default function HomePage() {
       <div style={styles.container}>
         {/* AI RECOMMENDED SECTION (FOR AUTHENTICATED CANDIDATES) */}
         {isAuthenticated && user?.role === 'jobSeeker' && (
-          <section style={styles.sectionBlock}>
+          <section ref={aiSectionRef} style={styles.aiSectionBlock}>
             <div style={styles.sectionHeader}>
               <div>
                 <div style={styles.sectionPre}>AI RECOMMENDATIONS</div>
@@ -349,12 +596,26 @@ export default function HomePage() {
                 ))}
               </div>
             )}
+
+            <div style={styles.aiContinueRow}>
+              <button
+                type="button"
+                onClick={scrollToJobsDirectly}
+                style={styles.aiContinueBtn}
+                title="View All Open Positions"
+              >
+                <span>Explore All Open Positions Below</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1e40af" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 10l5 5 5-5" />
+                </svg>
+              </button>
+            </div>
           </section>
         )}
 
 
         {/* ALL POSITIONS SECTION */}
-        <section ref={jobsSectionRef} style={styles.sectionBlock}>
+        <section ref={jobsSectionRef} style={styles.jobsSectionBlock}>
           <div style={styles.sectionHeader}>
             <div>
               <div style={styles.sectionPre}>JOB POSITIONS</div>
@@ -507,10 +768,70 @@ const styles = {
     position: 'relative'
   },
   heroSection: {
+    minHeight: 'calc(100vh - 68px)',
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
     background: '#ffffff',
     borderBottom: '1px solid #e2e8f0',
-    padding: '4rem 0 3.5rem',
-    marginBottom: '3rem'
+    padding: '2.5rem 0 2rem',
+    marginBottom: '1rem',
+    scrollMarginTop: '70px'
+  },
+  heroTopRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '2.5rem',
+    marginBottom: '1.75rem'
+  },
+  heroTextCol: {
+    flex: '1 1 580px',
+    maxWidth: '720px'
+  },
+  heroGraphicCol: {
+    flexShrink: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  graphicCard: {
+    position: 'relative',
+    padding: '1.25rem 1.75rem',
+    background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.75) 0%, rgba(219, 234, 254, 0.45) 100%)',
+    border: '1px solid #bfdbfe',
+    borderRadius: '20px',
+    boxShadow: '0 15px 35px -10px rgba(30, 64, 175, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.65rem'
+  },
+  magnifierSvg: {
+    display: 'block'
+  },
+  graphicBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.45rem',
+    background: '#ffffff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '9999px',
+    padding: '0.25rem 0.75rem',
+    boxShadow: '0 2px 6px rgba(30, 64, 175, 0.08)'
+  },
+  graphicBadgeDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: '#1e40af'
+  },
+  graphicBadgeText: {
+    color: '#1e40af',
+    fontSize: '0.725rem',
+    fontWeight: '700',
+    letterSpacing: '-0.01em'
   },
   heroBadge: {
     display: 'inline-flex',
@@ -542,11 +863,11 @@ const styles = {
     maxWidth: '900px'
   },
   heroSubtitle: {
-    fontSize: '1.1rem',
+    fontSize: '1.05rem',
     color: '#475569',
     lineHeight: '1.6',
     maxWidth: '750px',
-    marginBottom: '2.25rem'
+    marginBottom: '1.5rem'
   },
   searchConsole: {
     background: '#ffffff',
@@ -685,39 +1006,47 @@ const styles = {
     justifyContent: 'center',
     boxShadow: '0 1px 3px rgba(30, 64, 175, 0.12)'
   },
-  bouncingArrow: {
-    animation: 'floatDown 1.8s ease-in-out infinite'
+  staticArrow: {
+    display: 'block'
   },
-  statsStrip: {
+  aiSectionBlock: {
+    minHeight: 'calc(100vh - 68px)',
+    boxSizing: 'border-box',
     display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: '2.5rem 0',
+    scrollMarginTop: '70px',
+    borderBottom: '1px solid #f1f5f9'
+  },
+  aiContinueRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '2rem'
+  },
+  aiContinueBtn: {
+    display: 'inline-flex',
     alignItems: 'center',
-    gap: '2rem',
-    paddingTop: '1.75rem',
-    borderTop: '1px solid #f1f5f9',
-    flexWrap: 'wrap'
+    gap: '0.65rem',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '9999px',
+    padding: '0.55rem 1.35rem',
+    color: '#1e40af',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    boxShadow: '0 2px 6px rgba(30, 64, 175, 0.08)'
   },
-  statItem: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  statNumber: {
-    color: '#0f172a',
-    fontSize: '1.25rem',
-    fontWeight: '800',
-    lineHeight: '1.1'
-  },
-  statLabel: {
-    color: '#64748b',
-    fontSize: '0.75rem',
-    fontWeight: '500'
-  },
-  statDivider: {
-    width: '1px',
-    height: '28px',
-    background: '#e2e8f0'
+  jobsSectionBlock: {
+    minHeight: 'calc(100vh - 68px)',
+    boxSizing: 'border-box',
+    padding: '2.5rem 0 4rem',
+    scrollMarginTop: '70px'
   },
   sectionBlock: {
-    scrollMarginTop: '95px',
+    scrollMarginTop: '70px',
     marginBottom: '3.5rem'
   },
   sectionHeader: {

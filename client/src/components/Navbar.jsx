@@ -86,7 +86,7 @@ const Navbar = () => {
               }}
               title="View Architecture, Diagnostics & Engineering Docs"
             >
-              <span style={styles.pulseDot}></span>
+              <span style={{ ...styles.pulseDot, ...(isActive('/project-info') ? { background: '#93c5fd' } : {}) }}></span>
               <span>Project Docs</span>
             </Link>
           )}
@@ -233,10 +233,12 @@ const Navbar = () => {
               ...(isActive('/project-info') ? styles.mobileLinkActive : styles.mobileLink),
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem'
+              gap: '0.5rem',
+              color: '#1e40af',
+              fontWeight: '600'
             }}
           >
-            <span style={styles.pulseDot}></span>
+            <span style={{ ...styles.pulseDot, ...(isActive('/project-info') ? { background: '#93c5fd' } : {}) }}></span>
             <span>Project Docs & Architecture</span>
           </Link>
 
@@ -385,39 +387,42 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.45rem',
-    padding: '0.3rem 0.75rem',
-    background: '#f8fafc',
-    border: '1px solid #e2e8f0',
+    padding: '0.35rem 0.8rem',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
     borderRadius: '6px',
-    color: '#475569',
+    color: '#1e40af',
     fontSize: '0.75rem',
     fontWeight: '600',
     textDecoration: 'none',
-    transition: 'all 0.15s ease'
+    transition: 'all 0.15s ease',
+    boxShadow: '0 1px 2px rgba(30, 64, 175, 0.05)'
   },
   projectInfoBtnHover: {
-    background: '#f1f5f9',
-    color: '#0f172a',
-    borderColor: '#cbd5e1'
+    background: '#dbeafe',
+    color: '#1d4ed8',
+    borderColor: '#93c5fd',
+    boxShadow: '0 2px 4px rgba(30, 64, 175, 0.1)'
   },
   projectInfoBtnActive: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.45rem',
-    padding: '0.3rem 0.75rem',
-    background: '#eff6ff',
-    border: '1px solid #bfdbfe',
+    padding: '0.35rem 0.8rem',
+    background: '#1e40af',
+    border: '1px solid #1e40af',
     borderRadius: '6px',
-    color: '#1d4ed8',
+    color: '#ffffff',
     fontSize: '0.75rem',
     fontWeight: '600',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    boxShadow: '0 2px 4px rgba(30, 64, 175, 0.2)'
   },
   pulseDot: {
     width: '6px',
     height: '6px',
     borderRadius: '50%',
-    background: '#059669'
+    background: '#2563eb'
   },
   nav: {
     display: 'flex',
