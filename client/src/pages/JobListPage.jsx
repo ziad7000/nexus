@@ -320,7 +320,7 @@ const styles = {
     width: '100%'
   },
   searchBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 6,
     padding: '10px 22px',
@@ -333,7 +333,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   searchBtnHover: {
-    background: '#1e293b',
+    background: '#1d4ed8',
     transform: 'translateY(-1px)'
   },
   countRow: {
@@ -379,7 +379,7 @@ const styles = {
     marginBottom: '1.5rem'
   },
   clearBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 6,
     padding: '10px 20px',
@@ -390,7 +390,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   clearBtnHover: {
-    background: '#1e293b'
+    background: '#1d4ed8'
   },
   pagination: {
     display: 'flex',

@@ -38,6 +38,7 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [searchHovered, setSearchHovered] = useState(false);
+  const [scrollArrowHovered, setScrollArrowHovered] = useState(false);
 
   const [bannerRef, bannerInView] = useInView({ threshold: 0.1, triggerOnce: true });
   const jobsSectionRef = useRef(null);
@@ -57,6 +58,18 @@ export default function HomePage() {
     { value: 'part-time', label: 'Part-Time' },
     { value: 'internship', label: 'Internship' }
   ];
+
+  const scrollToJobs = () => {
+    if (jobsSectionRef.current) {
+      const headerOffset = 90;
+      const elementPosition = jobsSectionRef.current.getBoundingClientRect().top;
+      const targetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const fetchJobs = useCallback(async (overrides = {}) => {
     setLoadingJobs(true);
@@ -115,9 +128,9 @@ export default function HomePage() {
     if (e && e.preventDefault) e.preventDefault();
     setPage(1);
     fetchJobs({ page: 1 });
-    if (jobsSectionRef.current) {
-      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setTimeout(() => {
+      scrollToJobs();
+    }, 50);
   };
 
   const handleCategoryClick = (catId) => {
@@ -125,9 +138,9 @@ export default function HomePage() {
     setCategory(newCategory);
     setPage(1);
     fetchJobs({ category: newCategory, page: 1 });
-    if (jobsSectionRef.current) {
-      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setTimeout(() => {
+      scrollToJobs();
+    }, 50);
   };
 
   const handleTypeChange = (newType) => {
@@ -166,9 +179,9 @@ export default function HomePage() {
   const handlePageChange = (newPage) => {
     setPage(newPage);
     fetchJobs({ page: newPage });
-    if (jobsSectionRef.current) {
-      jobsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setTimeout(() => {
+      scrollToJobs();
+    }, 50);
   };
 
   const hasActiveFilters = Boolean(keyword.trim() || location.trim() || type || (category && category !== 'All'));
@@ -184,13 +197,13 @@ export default function HomePage() {
           </div>
 
           <h1 style={styles.heroTitle}>
-            Connecting Senior Engineers with <br />
-            Tier-1 Engineering Teams
+            Connecting you to your <br />
+            next <span style={{ color: '#1e40af' }}>career opportunity</span>
           </h1>
 
           <p style={styles.heroSubtitle}>
-            Direct company openings with transparent compensation bands, real-time verified slot
-            capacity, and semantic vector matching backed by Hugging Face AI.
+            Direct company openings with transparent job posts, get automatically
+            AI-matched to jobs by your skills powered by Hugging Face AI.
           </p>
 
           {/* Search Console Card */}
@@ -201,7 +214,7 @@ export default function HomePage() {
                 <input
                   style={styles.searchInput}
                   type="text"
-                  placeholder="e.g. Distributed Systems, Go, PyTorch"
+                  placeholder="e.g. Backend, Python, Machine Learning"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                 />
@@ -214,7 +227,7 @@ export default function HomePage() {
                 <input
                   style={styles.searchInput}
                   type="text"
-                  placeholder="e.g. New York, London, Remote"
+                  placeholder="e.g. New York, Cairo, Remote"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
@@ -264,28 +277,39 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Executive Stats Strip */}
-          <div style={styles.statsStrip}>
-            <div style={styles.statItem}>
-              <span style={styles.statNumber}>100%</span>
-              <span style={styles.statLabel}>Direct Employer Postings</span>
-            </div>
-            <div style={styles.statDivider} />
-            <div style={styles.statItem}>
-              <span style={styles.statNumber}>Zero</span>
-              <span style={styles.statLabel}>Ghost Listings or Bots</span>
-            </div>
-            <div style={styles.statDivider} />
-            <div style={styles.statItem}>
-              <span style={styles.statNumber}>ACID</span>
-              <span style={styles.statLabel}>Atomic Slot Capacity Tracking</span>
-            </div>
-            <div style={styles.statDivider} />
-            <div style={styles.statItem}>
-              <span style={styles.statNumber}>BART</span>
-              <span style={styles.statLabel}>Hugging Face AI Classification</span>
-            </div>
+          {/* Clickable Blue Down Arrow Indicator */}
+          <div style={styles.scrollIndicatorRow}>
+            <button
+              type="button"
+              onClick={scrollToJobs}
+              onMouseEnter={() => setScrollArrowHovered(true)}
+              onMouseLeave={() => setScrollArrowHovered(false)}
+              style={{
+                ...styles.scrollIndicatorBtn,
+                ...(scrollArrowHovered ? styles.scrollIndicatorBtnHover : {})
+              }}
+              title="View Open Positions"
+              aria-label="Scroll down to open positions"
+            >
+              <span style={styles.scrollIndicatorLabel}>Explore Open Positions</span>
+              <div style={styles.scrollArrowIconWrap}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#1e40af"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={styles.bouncingArrow}
+                >
+                  <path d="M7 10l5 5 5-5" />
+                </svg>
+              </div>
+            </button>
           </div>
+
         </div>
       </section>
 
@@ -296,8 +320,8 @@ export default function HomePage() {
             <div style={styles.sectionHeader}>
               <div>
                 <div style={styles.sectionPre}>AI RECOMMENDATIONS</div>
-                <h2 style={styles.sectionHeading}>Matched to Your Technical Profile</h2>
-                <p style={styles.sectionSub}>Derived from cosine similarity across your profile skills and job embeddings</p>
+                <h2 style={styles.sectionHeading}>Matched to Your Skills</h2>
+                <p style={styles.sectionSub}>Based on your profile skills, matched by AI</p>
               </div>
               <Link to="/profile" style={styles.syncSkillsBtn}>
                 Update Profile Skills →
@@ -328,40 +352,14 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* VALUE PILLARS STRIP */}
-        <section style={styles.valueSection}>
-          <div style={styles.valueCard}>
-            <div style={styles.valueBadge}>TRANSPARENCY</div>
-            <h4 style={styles.valueTitle}>Verified Compensation & Slots</h4>
-            <p style={styles.valueDesc}>
-              Every role includes clear salary ranges and active vacancy slot tracking. Never submit an application into an undefined pipeline.
-            </p>
-          </div>
-
-          <div style={styles.valueCard}>
-            <div style={styles.valueBadge}>INTELLIGENCE</div>
-            <h4 style={styles.valueTitle}>Zero-Shot AI Domain Classification</h4>
-            <p style={styles.valueDesc}>
-              Leveraging transformer models (facebook/bart-large-mnli) to categorize openings precisely without manual taxonomy bias.
-            </p>
-          </div>
-
-          <div style={styles.valueCard}>
-            <div style={styles.valueBadge}>ENGINEERING</div>
-            <h4 style={styles.valueTitle}>Concurrency-Safe Atomic Allocation</h4>
-            <p style={styles.valueDesc}>
-              Database engine-level conditional decrements guarantee zero-oversubscription during high-velocity simultaneous submissions.
-            </p>
-          </div>
-        </section>
 
         {/* ALL POSITIONS SECTION */}
         <section ref={jobsSectionRef} style={styles.sectionBlock}>
           <div style={styles.sectionHeader}>
             <div>
-              <div style={styles.sectionPre}>CAREER DIRECTORY</div>
+              <div style={styles.sectionPre}>JOB POSITIONS</div>
               <h2 style={styles.sectionHeading}>
-                {hasActiveFilters ? 'Filtered Search Results' : 'Open Engineering Positions'}
+                {hasActiveFilters ? 'Filtered Search Results' : 'All Open Positions'}
               </h2>
               <p style={styles.sectionSub}>
                 {loadingJobs
@@ -476,10 +474,10 @@ export default function HomePage() {
           }}
         >
           <div style={styles.recruiterContent}>
-            <span style={styles.recruiterTag}>FOR TECHNICAL HIRING MANAGERS & FOUNDERS</span>
-            <h3 style={styles.recruiterTitle}>Sourcing Senior Technical Talent?</h3>
+            <span style={styles.recruiterTag}>FOR HIRING MANAGERS & RECRUITERS</span>
+            <h3 style={styles.recruiterTitle}>Looking for talent?</h3>
             <p style={styles.recruiterDesc}>
-              Post openings with automated AI taxonomy tagging, review applications with direct skill matching, and manage candidates through an executive dashboard.
+              Post job openings with automated AI tagging, review applications with direct skill matching, and manage candidates through an executive dashboard.
             </p>
           </div>
           <Link
@@ -603,7 +601,7 @@ const styles = {
     padding: '4px 0'
   },
   searchBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     color: '#ffffff',
     border: 'none',
     borderRadius: '7px',
@@ -615,14 +613,15 @@ const styles = {
     whiteSpace: 'nowrap'
   },
   searchBtnHover: {
-    background: '#1e293b',
+    background: '#1d4ed8',
     transform: 'translateY(-1px)'
   },
   categoryPills: {
     display: 'flex',
     gap: '0.5rem',
     flexWrap: 'wrap',
-    marginBottom: '2.5rem'
+    marginBottom: '1.5rem',
+    justifyContent: 'center'
   },
   categoryPill: {
     background: '#f8fafc',
@@ -636,14 +635,58 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   categoryPillActive: {
-    background: '#0f172a',
-    border: '1px solid #0f172a',
+    background: '#1e40af',
+    border: '1px solid #1e40af',
     color: '#ffffff',
     padding: '0.45rem 0.95rem',
     borderRadius: '6px',
     fontSize: '0.825rem',
     fontWeight: '600',
     cursor: 'pointer'
+  },
+  scrollIndicatorRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '0.75rem',
+    paddingTop: '0.5rem'
+  },
+  scrollIndicatorBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '9999px',
+    padding: '0.5rem 1.15rem 0.5rem 1.25rem',
+    color: '#1e40af',
+    fontSize: '0.825rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 6px rgba(30, 64, 175, 0.08)'
+  },
+  scrollIndicatorBtnHover: {
+    background: '#dbeafe',
+    borderColor: '#93c5fd',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 12px rgba(30, 64, 175, 0.15)'
+  },
+  scrollIndicatorLabel: {
+    letterSpacing: '-0.01em'
+  },
+  scrollArrowIconWrap: {
+    width: '22px',
+    height: '22px',
+    borderRadius: '50%',
+    background: '#ffffff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 1px 3px rgba(30, 64, 175, 0.12)'
+  },
+  bouncingArrow: {
+    animation: 'floatDown 1.8s ease-in-out infinite'
   },
   statsStrip: {
     display: 'flex',
@@ -674,6 +717,7 @@ const styles = {
     background: '#e2e8f0'
   },
   sectionBlock: {
+    scrollMarginTop: '95px',
     marginBottom: '3.5rem'
   },
   sectionHeader: {
@@ -770,7 +814,7 @@ const styles = {
   },
   primaryCtaSmall: {
     display: 'inline-block',
-    background: '#0f172a',
+    background: '#1e40af',
     color: '#ffffff',
     padding: '0.55rem 1.25rem',
     borderRadius: '6px',
@@ -892,7 +936,7 @@ const styles = {
   },
   recruiterBtn: {
     background: '#ffffff',
-    color: '#0f172a',
+    color: '#1e40af',
     padding: '0.85rem 1.6rem',
     borderRadius: '7px',
     fontWeight: '700',

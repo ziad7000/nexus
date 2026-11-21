@@ -283,7 +283,7 @@ const styles = {
   },
   emptyBtn: {
     display: 'inline-block',
-    background: '#0f172a',
+    background: '#1e40af',
     color: '#ffffff',
     padding: '10px 22px',
     borderRadius: 6,
@@ -293,7 +293,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   emptyBtnHover: {
-    background: '#1e293b'
+    background: '#1d4ed8'
   },
   errorBox: {
     background: '#fef2f2',

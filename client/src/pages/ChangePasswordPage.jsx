@@ -185,7 +185,7 @@ const styles = {
   },
   saveBtn: {
     width: '100%',
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 6,
     padding: '11px',
@@ -196,7 +196,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   saveBtnHover: {
-    background: '#1e293b'
+    background: '#1d4ed8'
   },
   success: {
     background: '#ecfdf5',

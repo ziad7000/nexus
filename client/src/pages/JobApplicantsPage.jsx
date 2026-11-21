@@ -195,7 +195,7 @@ const styles = {
   avatar: {
     width: 48,
     height: 48,
-    background: '#0f172a',
+    background: '#1e40af',
     borderRadius: 8,
     display: 'flex',
     alignItems: 'center',

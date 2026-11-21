@@ -141,7 +141,7 @@ const styles = {
     width: '28px',
     height: '28px',
     borderRadius: '6px',
-    background: '#0f172a',
+    background: '#1e40af',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

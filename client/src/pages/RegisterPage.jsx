@@ -193,7 +193,7 @@ const styles = {
   logoDot: {
     width: 32,
     height: 32,
-    background: '#0f172a',
+    background: '#1e40af',
     borderRadius: 6,
     display: 'flex',
     alignItems: 'center',
@@ -277,8 +277,8 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   roleActive: {
-    borderColor: '#0f172a',
-    background: '#f1f5f9'
+    borderColor: '#1e40af',
+    background: '#eff6ff'
   },
   roleLabel: {
     fontSize: '0.825rem',
@@ -300,7 +300,7 @@ const styles = {
     textAlign: 'center',
     textDecoration: 'none',
     width: '100%',
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 6,
     padding: '11px',
@@ -313,7 +313,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   btnHover: {
-    background: '#1e293b',
+    background: '#1d4ed8',
     transform: 'translateY(-1px)'
   },
   divider: {

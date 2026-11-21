@@ -186,7 +186,7 @@ const styles = {
         margin: 0
     },
     createBtn: {
-        background: '#0f172a',
+        background: '#1e40af',
         color: '#ffffff',
         padding: '10px 20px',
         borderRadius: 6,
@@ -196,7 +196,7 @@ const styles = {
         transition: 'all 0.15s ease'
     },
     createBtnHover: {
-        background: '#1e293b'
+        background: '#1d4ed8'
     },
     jobsList: {
         display: 'flex',
@@ -308,7 +308,7 @@ const styles = {
     },
     emptyBtn: {
         display: 'inline-block',
-        background: '#0f172a',
+        background: '#1e40af',
         color: '#ffffff',
         padding: '10px 22px',
         borderRadius: 6,
@@ -318,7 +318,7 @@ const styles = {
         transition: 'all 0.15s ease'
     },
     emptyBtnHover: {
-        background: '#1e293b'
+        background: '#1d4ed8'
     },
     pendingBanner: {
         textAlign: 'center',

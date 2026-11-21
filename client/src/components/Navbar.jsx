@@ -191,7 +191,7 @@ const Navbar = () => {
                   onMouseLeave={() => setSignUpHovered(false)}
                   style={{
                     ...styles.signUpBtn,
-                    ...(signUpHovered ? { background: '#1e293b', transform: 'translateY(-1px)' } : {})
+                    ...(signUpHovered ? { background: '#1d4ed8', transform: 'translateY(-1px)' } : {})
                   }}
                 >
                   Create Account
@@ -354,7 +354,7 @@ const styles = {
     width: '32px',
     height: '32px',
     borderRadius: '6px',
-    background: '#0f172a',
+    background: '#1e40af',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -476,7 +476,7 @@ const styles = {
     transition: 'color 0.15s ease'
   },
   signUpBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     color: '#ffffff',
     fontSize: '0.875rem',
     fontWeight: '600',
@@ -630,7 +630,7 @@ const styles = {
     flex: 1,
     textAlign: 'center',
     padding: '0.6rem 1rem',
-    background: '#0f172a',
+    background: '#1e40af',
     borderRadius: '6px',
     color: '#ffffff',
     fontWeight: '600',

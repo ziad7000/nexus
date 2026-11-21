@@ -208,8 +208,8 @@ const styles = {
         cursor: 'pointer'
     },
     filterActive: {
-        background: '#0f172a',
-        borderColor: '#0f172a',
+        background: '#1e40af',
+        borderColor: '#1e40af',
         color: '#ffffff'
     },
     tableCard: {

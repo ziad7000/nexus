@@ -447,7 +447,7 @@ const styles = {
     borderTop: '1px solid #e2e8f0'
   },
   applyBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 8,
     padding: '14px 28px',
@@ -459,7 +459,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   applyBtnHover: {
-    background: '#1e293b',
+    background: '#1d4ed8',
     transform: 'translateY(-1px)'
   },
   loginPrompt: {
@@ -470,7 +470,7 @@ const styles = {
     border: '1px solid #e2e8f0'
   },
   loginBtn: {
-    background: '#0f172a',
+    background: '#1e40af',
     color: '#ffffff',
     border: 'none',
     borderRadius: 6,
@@ -614,7 +614,7 @@ const styles = {
     marginBottom: '1.25rem'
   },
   modalSubmit: {
-    background: '#0f172a',
+    background: '#1e40af',
     border: 'none',
     borderRadius: 6,
     padding: '9px 20px',
@@ -625,7 +625,7 @@ const styles = {
     transition: 'all 0.15s ease'
   },
   modalSubmitHover: {
-    background: '#1e293b'
+    background: '#1d4ed8'
   }
 };
 

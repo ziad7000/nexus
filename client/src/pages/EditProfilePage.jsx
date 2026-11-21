@@ -246,7 +246,7 @@ const styles = {
         marginTop: '1.75rem'
     },
     saveBtn: {
-        background: '#0f172a',
+        background: '#1e40af',
         color: '#ffffff',
         border: 'none',
         borderRadius: 6,
@@ -257,7 +257,7 @@ const styles = {
         transition: 'all 0.15s ease'
     },
     saveBtnHover: {
-        background: '#1e293b'
+        background: '#1d4ed8'
     },
     cancelBtn: {
         background: 'transparent',

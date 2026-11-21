@@ -181,7 +181,7 @@ const styles = {
         gap: '0.75rem'
     },
     editBtn: {
-        background: '#0f172a',
+        background: '#1e40af',
         color: '#ffffff',
         padding: '8px 18px',
         borderRadius: 6,
@@ -191,7 +191,7 @@ const styles = {
         transition: 'all 0.15s ease'
     },
     editBtnHover: {
-        background: '#1e293b'
+        background: '#1d4ed8'
     },
     passwordBtn: {
         background: '#ffffff',
@@ -220,7 +220,7 @@ const styles = {
     avatar: {
         width: 68,
         height: 68,
-        background: '#0f172a',
+        background: '#1e40af',
         borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
