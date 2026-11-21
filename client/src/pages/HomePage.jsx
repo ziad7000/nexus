@@ -404,15 +404,37 @@ export default function HomePage() {
                   <circle cx="65" cy="65" r="54" stroke="#bfdbfe" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
                   <circle cx="65" cy="65" r="42" stroke="#93c5fd" strokeWidth="1" opacity="0.4" />
 
-                  {/* Magnifier Handle */}
-                  <path
-                    d="M96 96 L134 134 C138 138 138 144 134 148 C130 152 124 152 120 148 L82 110"
+                  {/* Magnifier Handle: seamlessly connected and tucked behind the lens rim */}
+                  <line
+                    x1="86"
+                    y1="86"
+                    x2="134"
+                    y2="134"
                     stroke="url(#handleGrad)"
-                    strokeWidth="14"
+                    strokeWidth="13"
                     strokeLinecap="round"
                     filter="url(#glassShadow)"
                   />
-                  <line x1="86" y1="104" x2="98" y2="92" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+                  {/* Subtle inner highlight along handle */}
+                  <line
+                    x1="94"
+                    y1="91"
+                    x2="128"
+                    y2="125"
+                    stroke="rgba(255, 255, 255, 0.25)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
+                  {/* Sleek connector collar at base of rim */}
+                  <line
+                    x1="86"
+                    y1="86"
+                    x2="95"
+                    y2="95"
+                    stroke="#3b82f6"
+                    strokeWidth="14"
+                    strokeLinecap="round"
+                  />
 
                   {/* Glass Lens */}
                   <circle cx="65" cy="65" r="38" fill="url(#lensGleam)" />
@@ -427,13 +449,6 @@ export default function HomePage() {
                     filter="url(#glassShadow)"
                   />
 
-                  {/* Crosshair AI Reticle */}
-                  <line x1="65" y1="45" x2="65" y2="52" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="65" y1="78" x2="65" y2="85" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="45" y1="65" x2="52" y2="65" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="78" y1="65" x2="85" y2="65" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="65" cy="65" r="3.5" fill="#1e40af" />
-
                   {/* Glass Highlight Gleam */}
                   <path
                     d="M44 48 A30 30 0 0 1 78 37"
@@ -444,11 +459,6 @@ export default function HomePage() {
                   />
                   <circle cx="85" cy="42" r="2" fill="#ffffff" opacity="0.9" />
                 </svg>
-
-                <div style={styles.graphicBadge}>
-                  <span style={styles.graphicBadgeDot} />
-                  <span style={styles.graphicBadgeText}>Smart Search</span>
-                </div>
               </div>
             </div>
           </div>
@@ -798,40 +808,17 @@ const styles = {
   },
   graphicCard: {
     position: 'relative',
-    padding: '1.25rem 1.75rem',
+    padding: '1.25rem',
     background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.75) 0%, rgba(219, 234, 254, 0.45) 100%)',
     border: '1px solid #bfdbfe',
     borderRadius: '20px',
     boxShadow: '0 15px 35px -10px rgba(30, 64, 175, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '0.65rem'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   magnifierSvg: {
     display: 'block'
-  },
-  graphicBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.45rem',
-    background: '#ffffff',
-    border: '1px solid #bfdbfe',
-    borderRadius: '9999px',
-    padding: '0.25rem 0.75rem',
-    boxShadow: '0 2px 6px rgba(30, 64, 175, 0.08)'
-  },
-  graphicBadgeDot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    background: '#1e40af'
-  },
-  graphicBadgeText: {
-    color: '#1e40af',
-    fontSize: '0.725rem',
-    fontWeight: '700',
-    letterSpacing: '-0.01em'
   },
   heroBadge: {
     display: 'inline-flex',
