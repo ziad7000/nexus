@@ -471,7 +471,7 @@ export default function HomePage() {
                 <input
                   style={styles.searchInput}
                   type="text"
-                  placeholder="e.g. Backend, Python, Machine Learning"
+                  placeholder="e.g. Backend, Python"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                 />
@@ -484,7 +484,7 @@ export default function HomePage() {
                 <input
                   style={styles.searchInput}
                   type="text"
-                  placeholder="e.g. New York, Cairo, Remote"
+                  placeholder="e.g. Cairo, Remote"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />

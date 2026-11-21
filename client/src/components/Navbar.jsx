@@ -96,7 +96,7 @@ const Navbar = () => {
         {!isMobile && (
           <nav style={styles.nav}>
             <NavLinkItem to="/" active={isActive('/')}>
-              Explore
+              Home
             </NavLinkItem>
             <NavLinkItem to="/jobs" active={isActive('/jobs')}>
               All Jobs

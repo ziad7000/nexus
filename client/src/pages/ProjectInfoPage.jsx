@@ -99,7 +99,7 @@ export default function ProjectInfoPage() {
         {/* Navigation Bar */}
         <div style={styles.breadcrumbRow}>
           <Link to="/" style={styles.backBtn}>
-            ← Return to Explorer
+            ← Return to Home
           </Link>
           <span style={styles.specTag}>SYSTEM DOCUMENTATION & SPECIFICATIONS</span>
         </div>
