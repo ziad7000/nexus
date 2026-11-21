@@ -51,7 +51,7 @@ function LoginPage() {
             <input
               style={getInputStyle('email')}
               type="email"
-              placeholder="name@company.com"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}

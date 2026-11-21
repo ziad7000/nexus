@@ -96,7 +96,7 @@ function RegisterPage() {
             <input
               style={getInputStyle('email')}
               type="email"
-              placeholder="ziad@example.com"
+              placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}
